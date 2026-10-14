@@ -137,7 +137,7 @@ pcb/m5-pantilt-v1.0/
 └── 其他工程配套文件（lib/sym-lib-table/cache 等）
 ```
 
-**重要**：铜层 Gerber 官方没有提交（`.gitignore` 只忽略 `generated/`），需要自己生成——这正是"自己打"的第一步。
+**重要**：官方仓库只提交了丝印 + 钻孔（铜层 Gerber 在 `.gitignore` 里）。**本包已用 kicad-cli 生成全套制造文件**（`manufacture/jlcpcb/`，含铜层），不装 KiCad 也能直接下单；想自己生成或改板后重出，再用下面两种方法。
 
 ### 4.3 步骤一：生成制造文件（Gerber + BOM + 坐标）
 
@@ -161,16 +161,18 @@ pcb/m5-pantilt-v1.0/
 
 ### 4.4 步骤二：核对元件清单（BOM）
 
-仓库贴片坐标文件（CPL）里只有 3 个 SMD 件，其余都是手插件——所以这块板**非常适合手挫**：
+**本包已生成完整制造文件**（`pcb/m5-pantilt-v1.0/manufacture/jlcpcb/`，由官方 KiCad 工程用 kicad-cli 导出）：Gerber zip、带 LCSC 编号的 BOM、贴片坐标 CPL，下单流程与跳线说明见 `pcb/m5-pantilt-v1.0/manufacture/README.md`。
 
-| 位号 | 值/型号 | 封装 | 面别 | 说明 |
-|---|---|---|---|---|
-| J1 | 2×15 排母（Conn_02x15） | SMD 立贴 | **bottom（背面）** | M5Stack 从上面插下去的插座 |
-| R1 | 1kΩ | 0603（手焊盘） | top | — |
-| R2 | 100Ω | 0603（手焊盘） | top | — |
+完整 BOM 共 23 组（详见 `manufacture/jlcpcb/BOM.md`），核心元件：
 
-手插件（对照原理图 PDF 与实拍图核对）：舵机 3P 连接座 ×2、PH2.0-2P 电池座、跳线帽/排针、（串行版）NL27WZ125 电平缓冲（SOT-23）、2SA1015（SOT-23）、可选拨动开关。
-> BOM 官方页面标注"建设中"，下单前**务必用 `m5-pantilt.pdf` 或 KiCad 原理图核对一遍**，缺件补件。
+| 类别 | 元件 |
+|---|---|
+| IC | U1 = MAX3485（半双工收发）、Q1 = IRLML6402（电源软开关）、Q2 = BC857（方向控制） |
+| 二极管 | D1 = SS54、D2 = PMEG3030EP |
+| 阻容 | 100µ×4、0.1µ×1；0603 电阻×15（**R13/R14 = 0Ω 跳线，串行舵机模式必装；R9–R12 = PWM 模式跳线，串行模式不装**） |
+| 连接器 | J1/J2 = 2×15 M-BUS 排母/排针（**J1 在背面**）、J3/J8 = 舵机 3P 口、J5 = PH2.0 电池、J7 = XH 5V；手插件：J6、SW1 |
+
+> 官方仓库自带的旧版 CPL 只有 3 个件，不完整；以生成版为准，下单前仍建议对照原理图 PDF 抽查。
 
 ### 4.5 步骤三：嘉立创下单（两种玩法）
 
@@ -555,7 +557,8 @@ stackchan-diy-guide/  （本仓库）
 │   ├── images/       （20 张：K151 官方产品图 + 文档截图）
 │   └── datasheets/   （7 份 PDF：SCS0009 舵机、PY32L020、INA226、Si12T、ST25R3916、IRM56384、AW9523B）
 ├── pcb/
-│   └── m5-pantilt-v1.0/  （KiCad 完整工程 + 原理图 PDF + 贴片坐标 CSV + kibot 配置 + 丝印/钻孔）
+│   └── m5-pantilt-v1.0/  （KiCad 完整工程 + 原理图 PDF + kibot 配置 + 丝印/钻孔）
+│       └── manufacture/  （已生成的嘉立创制造文件：Gerber zip + BOM(含LCSC号) + CPL + BOM.md + 下单说明）
 └── firmware/
     ├── stack-chan-firmware-v1.1.0.zip        （官方预编译固件，4 目标 ×3 件，SHA-256 已验）
     └── stack-chan-firmware-v1.1.0.zip.sha256

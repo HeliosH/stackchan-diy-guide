@@ -100,8 +100,9 @@
 KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)。要点先记住：
 
 - 两层板，~¥30（打样）+ 可选 ~¥20（SMT 经济套餐）
-- 串行舵机模式跳线：**短接 R13/R14**；CoreS3 用 **R9/R11**（短 R10 是 Core2）
+- 串行舵机模式跳线：**只装 R13/R14**（0Ω）；**R9–R12 不装**——它们是 PWM/SG90 模式下选 Core 型号用的（R10=Core2，R9+R11=其他），串行模式用不到
 - XL330 @1Mbps 是这块板的**原生设计工况**（自动换向电路就是为 Dynamixel 设计的），无需降速
+- **制造文件已生成好**：`../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/`（Gerber zip + 带 LCSC 号的 BOM + 贴片坐标，嘉立创直接上传，见 5.1.3）
 
 ![底板正面](images/m5-pantilt-top.png)
 
@@ -142,9 +143,11 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 └── 其他工程配套文件（lib/sym-lib-table/cache 等）
 ```
 
-**重要**：铜层 Gerber 官方没有提交（`.gitignore` 只忽略 `generated/`），需要自己生成——这正是下单的第一步。
+**制造文件已生成好，无需自己导出**：[`manufacture/jlcpcb/`](../pcb/m5-pantilt-v1.0/manufacture/) 里有嘉立创三件套——`m5-pantilt-gerbers-jlcpcb.zip`（Gerber+钻孔）、`m5-pantilt-bom-jlc.csv`（BOM，**含官方原理图自带的 LCSC 编号**）、`m5-pantilt-cpl-jlc.csv`（贴片坐标），以及人类可读的 [`BOM.md`](../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md) 和下单注意事项 [`manufacture/README.md`](../pcb/m5-pantilt-v1.0/manufacture/README.md)。直接跳到 5.1.4 下单即可。
 
-#### 5.1.3 步骤一：生成制造文件（Gerber + BOM + 坐标）
+> 官方仓库只提交了丝印 + 钻孔（铜层 Gerber 在 `.gitignore` 里），上述文件是用 `kicad-cli` 从官方 KiCad 工程生成的，复现命令在 manufacture/README.md 文末。想自己生成（或改板后重出）再看下面两种方法。
+
+#### 5.1.3 （可选）自己生成制造文件
 
 **方法 A：KiBot 一键生成（推荐，配置官方已写好）**
 
@@ -164,21 +167,21 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 2. 贴片坐标：文件 → 制造输出 → 元件位置文件（.pos / .csv）；也可以直接用官方给的 `m5-pantilt-all-pos.csv`。
 3. BOM：原理图工具 → BOM 导出（或直接对照 `m5-pantilt.pdf` 手抄，见 5.1.4）。
 
-#### 5.1.4 步骤二：核对元件清单（BOM）
+#### 5.1.4 核对元件清单（BOM）
 
-仓库贴片坐标文件（CPL）里只有 3 个 SMD 件，其余都是手插件——所以这块板**非常适合手挫**：
+完整 BOM（23 组、带 LCSC 号）见 [`manufacture/jlcpcb/BOM.md`](../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md)，由 KiCad 原理图自动生成。核心构成：
 
-| 位号 | 值/型号 | 封装 | 面别 | 说明 |
-|---|---|---|---|---|
-| J1 | 2×15 排母（Conn_02x15） | SMD 立贴 | **bottom（背面）** | M5Stack 从上面插下去的插座 |
-| R1 | 1kΩ | 0603（手焊盘） | top | — |
-| R2 | 100Ω | 0603（手焊盘） | top | — |
+| 类别 | 元件 |
+|---|---|
+| IC | **U1 = MAX3485**（SO-8，半双工收发）、Q1 = IRLML6402（电源软开关）、Q2 = BC857（方向控制） |
+| 二极管 | D1 = SS54、D2 = PMEG3030EP |
+| 阻容 | 100µ×4、0.1µ×1；0603 电阻×15（其中 **R13/R14 = 0Ω 跳线，串行模式必装**） |
+| 连接器 | J1/J2 = 2×15 M-BUS 排母/排针（**J1 在背面**）、J3/J8 = JST EH 3pin 舵机口、J5 = PH2.0 电池、J7 = XH 5V |
+| 手插件 | J6（PH 4pin）、SW1（SPDT 开关，可选） |
 
-手插件（对照原理图 PDF 与实拍图核对）：舵机 3P 连接座 ×2（即 J3/J8）、PH2.0-2P 电池座、跳线帽/排针、串行版的 **NL27WZ125 电平缓冲（SOT-23）**、**2SA1015（SOT-23）**、可选拨动开关。
+> 官方仓库自带的旧版 CPL 只有 3 个件，不完整；以本包生成的 BOM 为准，下单前仍建议对照原理图 PDF 抽查一遍。
 
-> BOM 官方页面标注"建设中"，下单前**务必用 `m5-pantilt.pdf` 或 KiCad 原理图核对一遍**，缺件补件。
-
-#### 5.1.5 步骤三：嘉立创下单（两种玩法）
+#### 5.1.5 嘉立创下单（两种玩法）
 
 **玩法 1：只打裸板，全部手焊（最省钱，元件少到 15 分钟焊完）**
 
@@ -186,12 +189,12 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 2. 上传 5.1.3 生成的 Gerber 压缩包 → 自动解析。
 3. 参数：2 层、板厚 1.6mm（按个人喜好 1.0 也行）、表面处理默认喷锡、数量 5 片。
 4. 新客常有 5 片 ¥2 级别活动；提交付款，一般 2–4 天到货。
-5. 到货后手焊：先 SMD（R1/R2/J1），再插件。**J1 在背面立贴，焊接时注意方向**（照 `images/m5-pantilt-bottom.png`）；串行版别忘了焊 NL27WZ125、2SA1015 并按 5.1 开头说的设跳线。
+5. 到货后手焊：先 SMD（U1/Q1/Q2/阻容/R13/R14 跳线），再插件。**J1 在背面立贴，焊接时注意方向**（照 `images/m5-pantilt-bottom.png`）。
 
 **玩法 2：让嘉立创 SMT 贴片（省焊接）**
 
 1. PCB 下单时勾选 **SMT 贴片**，上传 BOM + 坐标（用 `m5-pantilt-all-pos.csv` 或方法 A 生成的 JLC 格式坐标）。
-2. 元件匹配页面确认 J1/R1/R2。**注意 J1 在 bottom 面**：经济型贴装只贴单面，要么选双面贴装（贵一点），要么把 J1 改为免贴、到手自己焊。
+2. 元件匹配页面按 LCSC 号确认各元件。**两个关键点**：① J1 在 bottom 面——经济贴装只贴单面，建议 J1 免贴到手自己焊（或选双面贴装加价）；② **把 R9/R10/R11/R12 设为"不贴"**（串行模式不用，见 5.1 跳线说明）。
 3. 付款等待，到手后手焊剩余插件件。
 
 **打样完成后**：万用表蜂鸣档查 5V/GND 是否短路，再上 M5Stack 试机。
@@ -368,7 +371,7 @@ npm run deploy                     # 烧录
 | `images/`（27 个） | 官方 v1.0 装配图 dynamixel_01–10、成品图 front/side、Dynamixel Wizard 截图、底板实拍、打印方向、bracket/shell 装配动图等（均取自官方仓库 `case/docs/images/`，已在本包 images/ 中，此处为路线独立副本） |
 | `reference/` | 官方 v1.0 装配指南原文（英文/日文 Markdown，`stack-chan` 仓库 `case/v1/dynamixel.md`） |
 | `../stl/v1-xl330/`（8 件 STL + gear 备选） | v1.0 外壳官方原版 |
-| `../pcb/m5-pantilt-v1.0/` | 底板 KiCad 完整工程 + Gerber + 原理图 PDF |
+| `../pcb/m5-pantilt-v1.0/` | 底板 KiCad 完整工程 + 原理图 PDF + **已生成的嘉立创制造文件包**（Gerber zip / BOM / CPL，见其 `manufacture/`） |
 | `../firmware/` | 官方固件 v1.1.0 离线包（SHA-256 已验） |
 
 ## 附录 B：来源
