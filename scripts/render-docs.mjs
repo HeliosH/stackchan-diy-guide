@@ -9,6 +9,8 @@ export const documents = [
   'v1-xl330-route/README.md', 'v0-sg90-route/README.md',
   'scs0009-serial-route/README.md', 'k151-body-route/README.md',
   'hermes-integration/README.md', 'pcb/m5-pantilt-v1.0/manufacture/README.md',
+  'pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md',
+  'pcb/m5-pantilt-v1.0/manufacture/jlcpcb/ASSEMBLY.md',
 ]
 const htmlPath = file => file.endsWith('README.md')
   ? file.slice(0, -'README.md'.length) + 'index.html' : file.replace(/\.md$/, '.html')

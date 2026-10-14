@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>m5-pantilt v1.0 元件清单</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f8fa;color:#17202a;font:16px/1.75 system-ui,-apple-system,"PingFang SC",sans-serif}
+main{max-width:1120px;margin:32px auto;padding:32px;background:white;border:1px solid #dce3eb;border-radius:12px}
+h1,h2,h3{line-height:1.35;scroll-margin-top:20px}h1{font-size:30px}h2{margin-top:36px;border-bottom:1px solid #e4e8ee;padding-bottom:10px}
+a{color:#175ca3;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}blockquote{border-left:4px solid #528abf;padding:8px 18px;margin:16px 0;background:#eef5fc}
+pre{overflow:auto;background:#f0f3f7;padding:16px;border-radius:8px;line-height:1.55}code{font:13px/1.55 ui-monospace,monospace}p code,li code,td code{background:#f0f3f7;padding:2px 4px}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px;border:1px solid #d6dee8;text-align:left;vertical-align:top}th{background:#eef3f9}
+img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px auto}nav,footer{font-size:14px;color:#596a7c}nav{padding-bottom:16px;border-bottom:1px solid #e4e8ee}footer{margin-top:36px;border-top:1px solid #e4e8ee;padding-top:16px}
+@media(max-width:640px){main{margin:0;padding:20px;border:0;border-radius:0}h1{font-size:25px}pre{font-size:12px}}
+</style></head><body><main><nav><a href="../../../../index.html">指南首页</a> · <a href="BOM.md">Markdown 源文档</a></nav><h1 id="m5-pantilt-v10-元件清单">m5-pantilt v1.0 元件清单</h1>
+<blockquote>
+<p>LCSC 编号来自官方原理图元件库 + 本仓库补充核实（J3/J8、J6 为 2026-10 经嘉立创元件库逐一验证的原厂 JST 料）；<strong>匹配编号后仍须检查实际型号/封装，是否可机器装配以嘉立创当前服务为准</strong>。
+<code>SMD 可贴</code> = 嘉立创 SMT 可贴装；<code>THT 手焊</code> = 通孔件到手手焊；<code>来料</code> = 不在默认商城清单，自购后手焊；完整代工清单则列入客户供料，由工厂另安排装配。<strong>LOGO 丝印图形不是元件。</strong></p>
+</blockquote>
+<h2 id="一贴片订单内smt随-pcb-一起贴">一、贴片订单内（SMT，随 PCB 一起贴）</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>位号</th>
+<th>值</th>
+<th>封装</th>
+<th>LCSC</th>
+<th>装配</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>C1,C2,C3,C4</td>
+<td>100µ</td>
+<td>C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</td>
+<td>C15008</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>C5</td>
+<td>0.1µ</td>
+<td>C_0603_1608Metric</td>
+<td>C14663</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>D1</td>
+<td>SS54</td>
+<td>D_SMA</td>
+<td>C2931790</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>PMEG3030EP</td>
+<td>D_SOD-128</td>
+<td>C255587</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>Q1</td>
+<td>IRLML6402</td>
+<td>SOT-23</td>
+<td>C2886430</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>Q2</td>
+<td>BC857</td>
+<td>SOT-23</td>
+<td>C2139</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>10k</td>
+<td>R_0603_1608Metric</td>
+<td>C25804</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>5.1k</td>
+<td>R_0603_1608Metric</td>
+<td>C23186</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>R3,R4</td>
+<td>1k</td>
+<td>R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</td>
+<td>C21190</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>47k</td>
+<td>R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</td>
+<td>C25819</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>2k</td>
+<td>R_0603_1608Metric</td>
+<td>C22975</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>R7</td>
+<td>20k</td>
+<td>R_0603_1608Metric</td>
+<td>C4184</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td>R8,R15</td>
+<td>2.2k</td>
+<td>R_0603_1608Metric</td>
+<td>C4190</td>
+<td>SMD 可贴</td>
+</tr>
+<tr>
+<td><strong>R13,R14</strong></td>
+<td><strong>0Ω</strong></td>
+<td>R_0603_1608Metric</td>
+<td>C21189</td>
+<td>SMD 可贴（串行舵机版必装）</td>
+</tr>
+<tr>
+<td>U1</td>
+<td>MAX3485</td>
+<td><strong>SOIC-8_3.9x4.9mm_P1.27mm（窄体）</strong></td>
+<td>C668204</td>
+<td>SMD 可贴</td>
+</tr>
+</tbody></table></div>
+<blockquote>
+<p><strong>R9–R12（0Ω）不在贴装清单里</strong>：它们是 PWM/SG90 版的 Core 型号选择跳线（Core Basic/Gray 短 R9+R11，Core2/CoreS3 短 R10+R12）。串行舵机版（本路线默认）<strong>不装</strong>。如果你做 PWM 版，自行购买 0603 0Ω 手焊即可（LCSC C21189）。</p>
+</blockquote>
+<h2 id="二通孔件有料号另安排采购与插件焊接或到手手焊">二、通孔件（有料号，另安排采购与插件焊接或到手手焊）</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>位号</th>
+<th>值</th>
+<th>封装</th>
+<th>LCSC</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>J3,J8</td>
+<td>Conn_01x03</td>
+<td>JST EH B3B-EH-A（通孔直立 2.5mm）</td>
+<td><strong>C160259</strong></td>
+<td>舵机口 ×2（JST 原厂）</td>
+</tr>
+<tr>
+<td>J5</td>
+<td>BAT</td>
+<td>JST PH B2B-PH-K（通孔直立 2.0mm）</td>
+<td>C2319</td>
+<td>电池口（Boom Precision PH-2A）</td>
+</tr>
+<tr>
+<td>J6</td>
+<td>Conn_01x04</td>
+<td>JST PH S4B-PH-K（通孔侧入 2.0mm）</td>
+<td><strong>C157926</strong></td>
+<td>PH 4pin（JST 原厂，侧入式）</td>
+</tr>
+<tr>
+<td>J7</td>
+<td>5V_POWER</td>
+<td>JST XH B2B-XH-A（通孔直立 2.5mm）</td>
+<td>C20079</td>
+<td>5V 外供电口</td>
+</tr>
+</tbody></table></div>
+<h2 id="三来料自备件不在-smt-订单里自购后手焊">三、来料/自备件（不在 SMT 订单里，自购后手焊）</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>位号</th>
+<th>规格</th>
+<th>采购建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>J1</td>
+<td>2×15 P2.54 <strong>贴片</strong>排针（焊在背面 Bottom）</td>
+<td>M-BUS 引出。采购 <strong>2×15、P2.54、直立 SMD</strong> 排针，按 PCB 焊盘及机身空间核对尺寸；不能用单排通孔排针裁切替代（<a href="https://www.lcsc.com/product-detail/C2337.html">C2337 实际为通孔 1×40</a>）。采购前核对下方焊盘尺寸</td>
+</tr>
+<tr>
+<td>J2</td>
+<td>2×15 P2.54 <strong>贴片</strong>排母</td>
+<td>M5Stack 主机插这里。采购 <strong>2×15、P2.54、直立 SMD</strong> 排母；针脚形状和排母高度必须与 PCB 焊盘、主机和外壳匹配，不能仅凭“2x15”选择通孔排母</td>
+</tr>
+<tr>
+<td>SW1</td>
+<td>C&amp;K OS102011MA1QN1（SPDT 侧拨，弯脚）</td>
+<td>LCSC 在售直脚版 OS102011MS2QN1（C221829），<strong>封装不同不能直接换</strong>；弯脚原版建议淘宝购 C&amp;K 原厂或国产同尺寸仿品（搜&quot;OS102011&quot;）</td>
+</tr>
+</tbody></table></div>
+<blockquote>
+<p>J1/J2 官方原理图也未指定料号（M-BUS 连接器高度随机箱结构而定），故按来料处理。
+<strong>LOGO 丝印图形不是元件</strong>；Hole1–Hole4 为安装孔，不在贴装坐标（CPL）内。</p>
+</blockquote>
+<h3 id="自备件焊盘尺寸与装配验收">自备件焊盘尺寸与装配验收</h3>
+<p>下表直接取自本仓库 PCB。P2.54 指相邻触点节距；两列 SMD 焊盘中心距约 5.05mm，<strong>不是触点排距</strong>。让供应商提供底部焊脚尺寸图，并确认脚位编号、针高和机身空间；未确认的连接器不能用“同针数”自动替换。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>位号</th>
+<th>装配面</th>
+<th>PCB 焊盘要求</th>
+<th>数量/板</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>J1</td>
+<td>Bottom，直立 SMD 排针</td>
+<td>2×15；纵向节距 2.54mm；焊盘两列中心距 5.05mm；每焊盘 3.15×1.00mm</td>
+<td>1</td>
+</tr>
+<tr>
+<td>J2</td>
+<td>Top，直立 SMD 排母</td>
+<td>2×15；纵向节距 2.54mm；焊盘两列中心距 5.04mm；每焊盘 3.00×1.00mm</td>
+<td>1</td>
+</tr>
+<tr>
+<td>SW1</td>
+<td>Top，侧拨通孔开关</td>
+<td>3 个信号脚节距 2.00mm / 孔径 0.90mm；两固定脚 x=-2.10 / +6.10mm、孔径 1.50mm；型号 OS102011MA1QN1</td>
+<td>1</td>
+</tr>
+</tbody></table></div>
+<p>完整代工的 29 件 BOM 和双面坐标见 <a href="../index.html#%E5%AE%8C%E6%95%B4%E4%BB%A3%E5%B7%A5%E9%9C%80%E8%A1%A5%E5%85%85%E7%9A%84%E6%9D%90%E6%96%99">制造说明</a>。J1/J2 的实际采购型号与高度仍须按尺寸图和主机/外壳试装确认；本表给出匹配条件，不声称已完成实物签核。</p>
+<footer>由 Markdown 自动生成。PDF 保持历史版本，接线与固件以本页面为准。自制路线尚需实物验收。</footer></main></body></html>

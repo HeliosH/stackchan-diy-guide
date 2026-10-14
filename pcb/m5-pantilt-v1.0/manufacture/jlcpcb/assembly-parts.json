@@ -1,0 +1,8 @@
+{
+  "lcsc_overrides": {"J3": "C160259", "J8": "C160259", "J6": "C157926"},
+  "customer_parts": {
+    "J1": {"spec": "2x15 P2.54 vertical SMD male, Bottom; pad centers x=+/-2.525mm, pad 3.15x1mm; contact row pitch 2.54mm; select pin height to fit M-BUS/case; supplier drawing/sample required"},
+    "J2": {"spec": "2x15 P2.54 vertical SMD female, Top; pad centers x=+/-2.52mm, pad 3x1mm; contact row pitch 2.54mm; select socket height to fit M-BUS/case; supplier drawing/sample required"},
+    "SW1": {"spec": "C&K OS102011MA1QN1 SPDT angled THT; signal pins P2mm/drill0.9mm, mounting pins x=-2.1/6.1mm drill1.5mm; not OS102011MS2QN1"}
+  }
+}

@@ -1,11 +1,11 @@
-%TF.GenerationSoftware,KiCad,Pcbnew,7.0.11+dfsg-1build4*%
-%TF.CreationDate,2026-10-14T18:29:56+08:00*%
+%TF.GenerationSoftware,KiCad,Pcbnew,10.0.7*%
+%TF.CreationDate,2026-10-14T18:53:49+08:00*%
 %TF.ProjectId,m5-pantilt,6d352d70-616e-4746-996c-742e6b696361,1*%
 %TF.SameCoordinates,Original*%
 %TF.FileFunction,AssemblyDrawing,Top*%
 %FSLAX46Y46*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by KiCad (PCBNEW 7.0.11+dfsg-1build4) date 2026-10-14 18:29:56*
+G04 Created by KiCad (PCBNEW 10.0.7) date 2026-10-14 18:53:49*
 %MOMM*%
 %LPD*%
 G01*
@@ -6530,8 +6530,8 @@ X139183390Y-62711904D02*
 X139754819Y-63283332D01*
 X139754819Y-63283332D02*
 X139754819Y-62664285D01*
-D15*
 %TO.C,J6*%
+D15*
 X138550000Y-56350000D02*
 X138550000Y-48750000D01*
 X138550000Y-48750000D02*

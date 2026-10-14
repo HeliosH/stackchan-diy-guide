@@ -142,7 +142,7 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 - 外部 5V 供电口、电池供电，充电由实际主机电源管理器完成，需核对电池保护及主机设置
 - （可选）电源开关
 
-信号与供电细节见原理图截图（下图）与完整原理图 PDF（`../pcb/m5-pantilt-v1.0/m5-pantilt.pdf`）。
+信号与供电以当前 `.kicad_sch` / `.kicad_pcb` 为准；下图及原理图 PDF 保留作历史参考，其 Q2/R2 参数有差异。
 
 ![原理图](images/m5-pantilt-sch.png)
 
@@ -151,7 +151,7 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 ```
 ../pcb/m5-pantilt-v1.0/
 ├── m5-pantilt.kicad_pro / .kicad_sch / .kicad_pcb   ← KiCad 工程（main 分支 = v1.0 规格）
-├── m5-pantilt.pdf                                    ← 原理图 PDF（核对元件用）
+├── m5-pantilt.pdf                                    ← 原理图 PDF（历史参考，制造以当前 KiCad 工程为准）
 ├── m5-pantilt-all-pos.csv                            ← 贴片坐标（CPL），仓库官方提供
 ├── m5-pantilt.kibot.yaml                             ← KiBot 一键生成嘉立创制造文件的配置
 ├── gerber/                                           ← 仓库只提交了丝印 + 钻孔
@@ -170,7 +170,7 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 
 **方法 A：KiBot 一键生成（推荐，配置官方已写好）**
 
-1. 安装 [KiCad](https://www.kicad.org/)（使用与工程格式兼容的版本）与 KiBot：
+1. 安装 [KiCad](https://www.kicad.org/)（本 PCB 保留 KiCad 7 格式；本仓库导出脚本需要 KiCad 10 的自动铺铜功能）与 KiBot：
    ```bash
    pip install kibot
    ```
@@ -182,23 +182,23 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 
 **方法 B：KiCad 手动导出（不装 KiBot）**
 
-1. 用 KiCad 打开 `m5-pantilt.kicad_pcb` → 文件 → 制造输出 → Gerbers（导出含铜层+丝印+阻焊+钻孔，打包 zip）。
-2. 贴片坐标：文件 → 制造输出 → 元件位置文件（.pos / .csv）；也可以直接用官方给的 `m5-pantilt-all-pos.csv`。
-3. BOM：原理图工具 → BOM 导出（或直接对照 `m5-pantilt.pdf` 手抄，见 5.1.4）。
+1. 用 KiCad 打开 `m5-pantilt.kicad_pcb` → 重新填充全部铜区（B）→ 运行 DRC，解决短路/间距/未连接问题并保存 → 文件 → 制造输出 → Gerbers（导出铜层+丝印+阻焊，另导出钻孔，打包 zip）。
+2. 贴片坐标：文件 → 制造输出 → 元件位置文件（.pos / .csv）；修改板后必须重新导出，不能沿用旧 `m5-pantilt-all-pos.csv`。
+3. BOM：原理图工具 → BOM 导出（以当前 `.kicad_sch` 为准，旧 PDF 保留作历史参考）。
 
 #### 5.1.4 核对元件清单（BOM）
 
-完整 BOM 见 [`manufacture/jlcpcb/BOM.md`](../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md)：**SMT 贴装 19 组**（全部带验证过的 LCSC 号）+ **通孔采购 4 组**（J3/J8/J5/J6/J7）+ **来料自备 3 件**（J1/J2/SW1）。核心构成：
+完整 BOM 见 [`manufacture/jlcpcb/BOM.md`](../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md)：**SMT 15 组 / 21 件** + **通孔 4 组 / 5 件**（J3/J8/J5/J6/J7），共 **19 组 / 26 件带 LCSC 号**；另有 **自备 3 件**（J1/J2/SW1），需要单独采购和安排焊接。核心构成：
 
 | 类别 | 元件 |
 |---|---|
 | IC | **U1 = MAX3485**（窄体 SOIC-8，半双工收发；注意 C668204 是窄体 3.9×4.9mm 封装，PCB 已按窄体出 Gerber）、Q1 = IRLML6402（电源软开关）、Q2 = BC857（方向控制） |
 | 二极管 | D1 = SS54、D2 = PMEG3030EP |
-| 阻容 | 100µ×4、0.1µ×1；0603 电阻×15（其中 **R13/R14 = 0Ω 跳线，串行模式必装**；R9–R12 不在贴装清单） |
+| 阻容 | 100µ×4、0.1µ×1；0603 电阻×11（其中 **R13/R14 = 0Ω 跳线，串行模式必装**；R9–R12 不在贴装清单） |
 | 连接器 | J1/J2 = 2×15 M-BUS 排母/排针（**J1 在背面**）、J3/J8 = JST EH 3pin 舵机口、J5 = PH2.0 电池、J7 = XH 5V |
-| 手插件 | J6（PH 4pin）、SW1（SPDT 开关，可选） |
+| 手插件 | J6（PH 4pin）、SW1（弯脚 SPDT 开关） |
 
-> 官方仓库自带的旧版 CPL 只有 3 个件，不完整；以本包生成的 BOM 为准，下单前仍建议对照原理图 PDF 抽查一遍。
+> 官方仓库自带的旧版 CPL 只有 3 个件，不完整；以本包生成的 BOM、当前 `.kicad_sch` / `.kicad_pcb` 为准；旧 PDF 参数有差异，不能据其手抄制造清单。
 
 #### 5.1.5 嘉立创下单（两种玩法）
 
@@ -214,9 +214,9 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 
 1. PCB 下单时勾选 **SMT 贴片**，上传 `manufacture/jlcpcb/m5-pantilt-bom-jlc.csv` 和 `m5-pantilt-cpl-jlc.csv`；不要用旧版不完整坐标（`m5-pantilt-all-pos.csv` 仅为官方原始全量坐标）。
 2. 元件匹配页面按 LCSC 号确认各元件，**匹配后仍须抽查实际型号/封装**。R9–R12（PWM 模式跳线）**已从 BOM/坐标里剔除**，不会出现在匹配页；J1/J2/SW1 为来料件也不在订单里，到手自己焊（J1 在背面立贴，注意方向，照 `images/m5-pantilt-bottom.png`）。
-3. 付款等待，到手后手焊剩余插件件。
+3. 确认只装配选定器件后付款；到手后手焊剩余器件。若要求工厂全部焊好，使用 [完整代工说明](../pcb/m5-pantilt-v1.0/manufacture/README.md#完整代工需补充的材料)，单独安排双面/插件/来料装配，默认清单不等于全装配订单。
 
-**打样完成后**：万用表蜂鸣档查 5V/GND 是否短路，再上 M5Stack 试机。
+**打样完成后**：断电查 5V/GND、3.3V/GND 是否短路，核对极性和跳线，再限流供电检查电压，最后连接 M5Stack 和舵机试机。
 
 ### 5.2 买现成套件
 

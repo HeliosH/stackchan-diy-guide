@@ -4,7 +4,11 @@
   "type": "module",
   "scripts": {
     "docs:build": "node scripts/render-docs.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "manufacture:build": "python3 scripts/build-manufacture.py",
+    "manufacture:check": "python3 scripts/check-manufacture.py"
   },
-  "devDependencies": { "marked": "17.0.5" }
+  "devDependencies": {
+    "marked": "17.0.5"
+  }
 }

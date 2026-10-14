@@ -1,53 +1,51 @@
 # 制造文件包（下单前核对装配）
 
-> 由官方 KiCad 工程（本目录上级）用 `kicad-cli 7.0` 于 2026-10 生成，**无需再装 KiCad/KiBot**。
-> 生成命令见文末，可复现。
+> 当前 PCB 用 KiCad 10.0.7 重新填充铜区并导出。PCB 保留原有 KiCad 7 格式；仅更新铜区填充，孔、焊盘和走线保持当前基准。只上传现成制造包无需安装 KiCad。
+> 原有 PDF 保留历史版本；制造以当前 PCB、原理图、BOM 和坐标为准。
 
 ## 文件清单
 
 | 文件 | 用途 |
 |---|---|
-| `jlcpcb/m5-pantilt-gerbers-jlcpcb.zip` | **PCB 下单用**：铜层×2 + 阻焊×2 + 丝印×2 + 钢网×2 + 板边 + 钻孔（PTH/NPTH 分离），嘉立创上传页直接拖入 |
-| `jlcpcb/m5-pantilt-cpl-jlc.csv` | **SMT 贴片坐标**（26 个贴装位；已剔除 LOGO 丝印图形、Hole1–Hole4 安装孔、R9–R12 串行版跳线、J1/J2/SW1 来料件） |
-| `jlcpcb/m5-pantilt-bom-jlc.csv` | **SMT 物料表（匹配编号后仍须检查实际型号/封装）**（19 组，全部带经嘉立创元件库验证的 LCSC 编号；J3/J8=C160259、J6=C157926 为本仓库补充核实） |
-| `jlcpcb/BOM.md` | 人类可读版 BOM（含手插件清单） |
-| `jlcpcb/gerbers/` | Gerber/钻孔散文件（含官方图纸里没提交的铜层，以及 Courtyard/Fab 等非制造层，zip 里已剔除） |
-| `jlcpcb/cpl/pos-both.csv` | kicad-cli 原始坐标输出（全量，未转 JLC 格式） |
-| `jlcpcb/python-bom.csv` | 原理图网表 XML（元件/网络级数据，核对用） |
+| `jlcpcb/m5-pantilt-gerbers-jlcpcb.zip` | PCB：铜层×2、阻焊×2、丝印×2、焊膏×2、板边、PTH/NPTH 钻孔，共 11 个文件 |
+| `jlcpcb/m5-pantilt-bom-jlc.csv` | 商城采购/部分装配：19 组 / 26 件；SMT 15 组 / 21 件 + 通孔 4 组 / 5 件，均带 LCSC 号 |
+| `jlcpcb/m5-pantilt-cpl-jlc.csv` | 上述 26 件的坐标；通孔件需另安排插件焊接或手焊，不会因存在坐标就自动机贴 |
+| `jlcpcb/m5-pantilt-bom-full-assembly.csv` | 完整代工报价/工程审核：22 组 / 29 件，包含 J1/J2/SW1 客户供料和采购规格 |
+| `jlcpcb/m5-pantilt-cpl-full-assembly.csv` | 完整 29 件双面坐标：J1 Bottom，其余 Top；不含机械孔、丝印和 R9–R12 |
+| `jlcpcb/BOM.md` / `jlcpcb/ASSEMBLY.md` | 元件选型、自备件焊盘尺寸和完整代工装配要求 |
+| `jlcpcb/assembly-parts.json` | 缺省料号补充、自备件采购规格；供导出脚本使用 |
+| `jlcpcb/gerbers/` | Gerber/钻孔散文件；ZIP 不含非制造层和历史 PDF 钻孔图 |
+| `jlcpcb/cpl/pos-both.csv` / `jlcpcb/python-bom.csv` | 当前工程导出的全量坐标、XML 网表；全量坐标需过滤后才能下单 |
+| `checks/drc.json` / `checks/erc.json` / `checks/parity.json` | KiCad 检查记录，对应源文件/输出的 SHA256 见 `checks/manifest.json`，具体结论见文末 |
 
-## 下单流程
+## 部分装配下单流程
 
-1. 嘉立创 https://www.jlc.com → PCB 下单 → 上传 `m5-pantilt-gerbers-jlcpcb.zip`。
-   参数：**2 层、1.6mm、喷锡（HASL）、5 片**。
-2. 勾选 **SMT 贴片** → 上传 `m5-pantilt-bom-jlc.csv` + `m5-pantilt-cpl-jlc.csv` → 元件匹配页逐项确认 LCSC 编号。
-3. **跳线已按串行版处理（无需再改）**：串行舵机版（CoreS3 + XL330 / SCS0009）**只装 R13、R14**（0Ω）；R9–R12 是 PWM 模式的 Core 型号选择跳线，**已从 BOM/CPL 中剔除**，匹配页不会再出现。
-   - 若你要做 **PWM/SG90 版**：不装 R13/R14（下单时手动设不贴），自行购买 4 颗 0603 0Ω（LCSC C21189）手焊——Core Basic/Gray 短 R9+R11，Core2/CoreS3 短 R10+R12，并在固件显式指定 PWM 类型和引脚；详见 [自制配置表](../../../DIY_FIRMWARE.md#1-台架接线)。
-4. **J1/J2/SW1 为来料件**（不在 BOM/CPL 里）：J1 是背面（bottom）2×15 贴片排针，到手自己焊（方向照实拍图 `../../../images/m5-pantilt-bottom.png`）；J2 排母、SW1 开关同样自备手焊，采购规格见 `jlcpcb/BOM.md` 第三节。
-5. 通孔件 J3/J8/J5/J6/J7 有 LCSC 料号且嘉立创库内现货、装配属性为 **THT（可机器插件焊接）**：想省动手就勾选"**通孔插件（THT）装配**"交给代工（加收插件费），想省钱就到手手焊；封装分类与来料清单见 `BOM.md`。
+1. 嘉立创 https://www.jlc.com → PCB 下单 → 上传 `m5-pantilt-gerbers-jlcpcb.zip`。参数：2 层、1.6mm；数量及表面处理按订单确认。
+2. 勾选 SMT，上传 `m5-pantilt-bom-jlc.csv` + `m5-pantilt-cpl-jlc.csv`，确认商城型号、封装、极性和贴装角度。实际机贴范围为 21 个 SMD 器件；5 个通孔件另安排插件焊接或自行采购手焊，不把“料号可采购”当作“经济 SMT 可贴”。
+3. 串行舵机版只装 R13/R14（0Ω）；R9–R12 已从清单剔除。若做 PWM/SG90：不装 R13/R14，另备 2 颗 0603 0Ω（C21189）——旧 Core 装 R9/R11，Core2/CoreS3 装 R10/R12，并修改固件类型和引脚，见 [配置表](../../../DIY_FIRMWARE.md#1-台架接线)。
+4. J1/J2/SW1 不在默认商城清单内，单独采购并手焊；J1 在 Bottom，J2 在 Top。按 `BOM.md` 尺寸核对 SMD 焊脚及主机/外壳高度。C2337 是通孔单排件，不能裁切代替 J1。
+5. 焊后核对极性和跳线，断电检查 5V/GND、3.3V/GND，再限流供电确认电压，最后连接主机和舵机测试。
 
-## 元件速览（详表见 jlcpcb/BOM.md）
+## 完整代工需补充的材料
 
-- U1 = MAX3485（**窄体 SOIC-8 3.9×4.9mm**，半双工收发；C668204 为窄体 SOP-8，PCB 封装已由宽体 SO-8 修正，**2026-10 已重新填充 GND 铜区**——焊盘与铺铜 0 短路、全网表 0 断连，Gerber/CPL/zip 均为重导出版）、Q1 = IRLML6402（电源软开关）、Q2 = BC857（方向控制）
-- D1 = SS54、D2 = PMEG3030EP（电源路径）
-- 电容 100µ×4 + 0.1µ×1、电阻 0603 ×15（R13/R14 为串行版 0Ω 跳线；R9–R12 不贴）
-- J1/J2 = 2×15 排针/排母（M-BUS，来料）、J3/J8 = JST EH 3pin 舵机口（C160259）、J5 = PH2.0 电池（C2319）、J6 = PH 4pin 侧贴（C157926）、J7 = XH 5V（C20079）、SW1 = SPDT 开关（来料）
+要求工厂全部焊好时，改用 `*-full-assembly.csv`，并附 [ASSEMBLY.md](jlcpcb/ASSEMBLY.md)。该清单包含全部 29 个串行版电气器件，J1/J2/SW1 按客户供料处理，不假造商城编号。
 
-## 复现命令（kicad-cli 7.0）
+J1/J2 的供应商尺寸图、确定的型号和针高/插合高度仍需在采购时确认，并与主机和外壳试装；SW1 使用弯脚 OS102011MA1QN1。按装配板数和工厂余量要求准备来料。让工厂工程审核确认双面 SMT、通孔焊接、来料器件、角度和实际装配范围后再付款。[嘉立创官方说明](https://www.jlc.com/portal/server_guide_19327.html)支持双面贴片/插件及客户寄料，具体器件支持和报价以订单审核为准。
+
+## 复现与验证
+
+从仓库根目录执行，需要 Python 3 和 KiCad 10.0.7（或支持以下命令的兼容版本）：
 
 ```bash
-cd pcb/m5-pantilt-v1.0
-mkdir -p manufacture/jlcpcb/gerbers
-kicad-cli pcb export gerbers --output manufacture/jlcpcb/gerbers m5-pantilt.kicad_pcb
-kicad-cli pcb export drill --generate-map --excellon-separate-th \
-  --output "$(pwd)/manufacture/jlcpcb/gerbers/" m5-pantilt.kicad_pcb
-kicad-cli pcb export pos --format csv --units mm --side both \
-  --output manufacture/jlcpcb/cpl/pos-both.csv m5-pantilt.kicad_pcb
-kicad-cli sch export python-bom --output manufacture/jlcpcb/python-bom.csv m5-pantilt.kicad_sch
-# zip 打包 + JLC 格式 BOM/CPL 转换由脚本完成（剔除 LOGO/Hole1-4/R9-R12/J1/J2/SW1，见 jlcpcb/BOM.md）
+python3 scripts/build-manufacture.py --kicad-cli /path/to/kicad-cli
+python3 scripts/check-manufacture.py
+npm run docs:build
 ```
 
-## 制造基准与未完成验证
+脚本先在临时工程副本执行 `pcb drc --refill-zones --save-board`，把原生引擎生成的 `filled_polygon` 铜区填充复制回原 PCB，保留原有文件格式，再对实际 PCB 运行 DRC。存在 DRC 错误就停止；随后运行 ERC，同样在存在错误时停止。检查通过后导出 Gerber/钻孔/坐标/XML，并生成两套 BOM/CPL、11 文件 ZIP。不会生成或修改 PDF。
 
-采用当前 `.kicad_sch` / `.kicad_pcb` 和导出的制造文件作为同一基准；旧 PDF 原理图的 Q2/R2 参数与当前工程有差异，不混用其元件清单。尚未完成 DRC/ERC、实板签核及总线波形测试。提交订单前检查铜层/板边、孔径、极性、焊盘方向、跳线和全部料号。`../gerber/` 仅有历史丝印及钻孔，不能直接制板。
+`check-manufacture.py` 核对两套 BOM/CPL 的位号、数量、封装、坐标、角度和层，检查安装孔保留、ZIP 一致性，并独立检查 U1 非 GND 焊盘内部点在 PCB 铺铜和导出 Gerber 中均不落入 GND。该回归检查防止旧铺铜短路重现，不能代替完整 DRC。
 
-BOM 的 J3/J8/J5 为通孔封装，不能据表中“SMD 可贴”文字认定支持经济贴片；J1/J2 为 SMD 排针/排母，但需确认供货和贴装能力。THT/人工装配项按当前服务实际支持处理。
+## 检查结果与实物验证
+
+KiCad 10.0.7 检查结果：**DRC 0 错误、0 未连接，43 条警告；ERC 0 错误、30 条警告**；PCB/原理图对应检查 0 错误、39 条元数据/机械件警告。DRC 的 32 条为旧版/定制封装与 KiCad 10 标准库差异，1 条为旧 SW1 库名缺失，另有 8 条接口/开关轮廓越过板边和 2 条丝印重叠；ERC 为 29 条旧符号库差异及同一 SW1 库名问题。这些警告保留在原始报告中，不等同于零警告签核；本次制造使用工程内嵌的焊盘几何，没有自动用新库替换它们。详情见 [检查说明](checks/README.md)。当前工程与检查记录一起提交；实板签核、连接器试装、总线波形及整机功能测试需要实物完成。历史 `../gerber/` 缺少铜层，不能用于制板；旧 PDF 的 Q2/R2 参数与当前工程有差异。
