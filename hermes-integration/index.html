@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Stack-chan × Hermes 联动指南（把 Hermes 当她的大脑）</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f8fa;color:#17202a;font:16px/1.75 system-ui,-apple-system,"PingFang SC",sans-serif}
+main{max-width:1120px;margin:32px auto;padding:32px;background:white;border:1px solid #dce3eb;border-radius:12px}
+h1,h2,h3{line-height:1.35;scroll-margin-top:20px}h1{font-size:30px}h2{margin-top:36px;border-bottom:1px solid #e4e8ee;padding-bottom:10px}
+a{color:#175ca3;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}blockquote{border-left:4px solid #528abf;padding:8px 18px;margin:16px 0;background:#eef5fc}
+pre{overflow:auto;background:#f0f3f7;padding:16px;border-radius:8px;line-height:1.55}code{font:13px/1.55 ui-monospace,monospace}p code,li code,td code{background:#f0f3f7;padding:2px 4px}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px;border:1px solid #d6dee8;text-align:left;vertical-align:top}th{background:#eef3f9}
+img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px auto}nav,footer{font-size:14px;color:#596a7c}nav{padding-bottom:16px;border-bottom:1px solid #e4e8ee}footer{margin-top:36px;border-top:1px solid #e4e8ee;padding-top:16px}
+@media(max-width:640px){main{margin:0;padding:20px;border:0;border-radius:0}h1{font-size:25px}pre{font-size:12px}}
+</style></head><body><main><nav><a href="../index.html">指南首页</a> · <a href="README.md">Markdown 源文档</a></nav><h1 id="stack-chan-hermes-联动指南把-hermes-当她的大脑">Stack-chan × Hermes 联动指南（把 Hermes 当她的大脑）</h1>
+<blockquote>
+<p>进阶玩法：Stack-chan 出&quot;眼·耳·口·身体&quot;，<a href="https://hermes-agent.nousresearch.com/docs/user-guide/features/api-server">HermesAgent</a>（Nous Research 的 Hermes 智能体）出&quot;大脑&quot;。
+网上有两个开源案例，技术路线一重一轻，本文整理两者做法、架构与上手路径。
+整理自 2026-10，两个仓库均为社区项目，使用前先读各自 README 与安全说明。</p>
+</blockquote>
+<hr>
+<h2 id="0-先搞清楚hermes-是什么角色">0. 先搞清楚：Hermes 是什么角色</h2>
+<p>Stack-chan 原生固件的对话链路本来就是&quot;可插拔&quot;的：<code>tts.type: remote</code> 可指向自建服务器，ChatService 支持外部后端（见 <a href="../firmware-docs/README.md"><code>../firmware-docs/</code></a>）。所以接 Hermes 的本质是：</p>
+<pre><code>Stack-chan（传感器/执行器） ←实时通道→ 桥接进程（协议转换 + 语音管线） ←HTTP/SSE→ Hermes API（LLM 大脑）
+</code></pre>
+<p>机器人只负责：收音、拍照、动脖子、放音、显示表情；Hermes 负责&quot;想&quot;；中间的桥负责把两边说的话翻译成彼此听得懂的格式。</p>
+<p><strong>Hermes 侧唯一的准备</strong>：安装 HermesAgent 并开启 API Server——</p>
+<pre><code class="language-dotenv"># ~/.hermes/.env
+API_SERVER_ENABLED=true
+API_SERVER_HOST=127.0.0.1
+API_SERVER_PORT=8642
+API_SERVER_KEY=&lt;自己生成的长随机串&gt;
+</code></pre>
+<pre><code class="language-bash">hermes gateway
+</code></pre>
+<p>桥接方主要用它的三个接口：<code>/health</code>、<code>/v1/capabilities</code>、<code>/v1/responses</code>（SSE 流式 + session key；图像理解需配视觉模型）。</p>
+<hr>
+<h2 id="1-案例一penpenguinstackchan-hermes完整方案配官方-k151">1. 案例一：penpenguin/stackchan-hermes（完整方案，配官方 K151）</h2>
+<p>仓库：<a href="https://github.com/penpenguin/stackchan-hermes">https://github.com/penpenguin/stackchan-hermes</a> （日文文档）</p>
+<p><strong>定位</strong>：M5Stack <strong>官方 StackChan（K151 / CoreS3）</strong> 整机作为 HermesAgent 的化身。工程化程度最高：认证、固件备份、健康诊断、断线重连、故障注入测试都有。</p>
+<h3 id="11-架构三层三端口">1.1 架构（三层三端口）</h3>
+<pre><code>┌─────────────┐  WebSocket:8765   ┌──────────────────┐  HTTP/SSE:8642  ┌──────────┐
+│ StackChan    │ ◄──────────────► │ Python Bridge     │ ◄─────────────► │ Hermes   │
+│ (CFW 固件)   │  图片上传同通道    │ (Mac/Linux/WSL2)  │                 │ Agent    │
+│ 眼/耳/口/身体 │                  │ 管理:8766 / MCP   │                 │ 大脑     │
+└─────────────┘                   └──────────────────┘                 └──────────┘
+</code></pre>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>端口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0.0.0.0:8765</code></td>
+<td>Device Gateway：设备 WebSocket 接入 + 摄像头图片上传</td>
+</tr>
+<tr>
+<td><code>127.0.0.1:8766</code></td>
+<td>Control API：本地管理、<strong>12 个 stdio MCP tool</strong>、health/metrics</td>
+</tr>
+<tr>
+<td><code>127.0.0.1:8642</code></td>
+<td>转发 Hermes API（对话 / 图像理解）</td>
+</tr>
+</tbody></table></div>
+<h3 id="12-固件层cfw">1.2 固件层（CFW）</h3>
+<ul>
+<li><p>基于官方 vendor 快照的 CoreS3 固件，<strong>ESP-IDF v5.5.4</strong> 构建；</p>
+</li>
+<li><p><strong>砍掉云功能与 OTA</strong>，全部本地化（网络方针见其 <code>docs/network-policy.md</code>）；</p>
+</li>
+<li><p>内置：Bridge 客户端、官方 HAL 适配、NVS/USB 供电配置、mDNS、语音、摄像头、显示；</p>
+</li>
+<li><p>配网：开机变本地热点设 Wi-Fi；设备 ID / 主机 IP / token 通过 USB 串口 REPL 写入：</p>
+<pre><code class="language-text">stackchan-hermes set-device-id stackchan-001
+（再写入主机 LAN IP 与 token，详见其 firmware/README.md）
+</code></pre>
+</li>
+<li><p><strong>烧录纪律（仓库强制）</strong>：先做 16 MiB factory 备份 + 确认唯一串口，才允许 flash。</p>
+</li>
+</ul>
+<h3 id="13-bridge-层python-312-uv">1.3 Bridge 层（Python 3.12 + uv）</h3>
+<p>语音回路：<strong>麦克风 → VAD → Opus → STT → Hermes → TTS → 喇叭</strong></p>
+<ul>
+<li>STT：默认 mock；实战用本地 faster-whisper（<code>uv sync --locked --extra stt-local</code>）或任意 HTTP 服务；</li>
+<li>TTS：VOICEVOX Engine（<code>:50021</code>）、Irodori-TTS-Server（OpenAI 兼容 <code>/v1/audio/speech</code>）、或 mock；</li>
+<li>认证双重：<strong>设备 token</strong>（<code>uv run stackchan-bridge token create --device-id stackchan-001</code>）与 <strong>Hermes <code>API_SERVER_KEY</code></strong> 是两个不同的值，分别放 <code>.env</code> 的 <code>STACKCHAN_DEVICE_TOKEN</code> / <code>HERMES_API_KEY</code>。</li>
+</ul>
+<h3 id="14-上手顺序">1.4 上手顺序</h3>
+<pre><code class="language-bash">git clone https://github.com/penpenguin/stackchan-hermes &amp;&amp; cd stackchan-hermes
+# ① 无硬件先跑通 E2E（Simulator + Mock Hermes + Mock STT/TTS，不需要任何 API key）
+./scripts/run-simulator-e2e.sh
+# ② 起 Hermes API（见 §0），然后配置 Bridge
+cp config.example.toml config.toml &amp;&amp; cp .env.example .env &amp;&amp; chmod 600 .env config.toml
+uv run --locked stackchan-bridge token create --device-id stackchan-001   # 填入 .env
+uv run --locked --env-file .env stackchan-bridge serve --config config.toml
+# ③ 另开终端诊断
+uv run --locked --env-file .env stackchan-bridge doctor --config config.toml --json
+curl -fsS http://127.0.0.1:8766/health/ready
+# ④ 固件：ESP-IDF 5.5.4 → fetch_repos.py → idf.py reconfigure → verify-firmware.sh → 备份 → flash
+</code></pre>
+<p><strong>适合</strong>：有官方 K151 整机、需要诊断/重连/认证机制（仍须实机验证）、能接受 ESP-IDF 工具链的用户。</p>
+<hr>
+<h2 id="2-案例二tiudsngstack-chan-hermes轻量方案社区固件-mod">2. 案例二：tiudsng/stack-chan-hermes（轻量方案，社区固件 + MOD）</h2>
+<p>仓库：<a href="https://github.com/tiudsng/stack-chan-hermes">https://github.com/tiudsng/stack-chan-hermes</a></p>
+<p><strong>定位</strong>：官方 <strong>Moddable 社区固件的 fork</strong>，用 <a href="../index.html">MOD 热装机制</a>实现，改动量很小。适合<strong>自制路线</strong>（CoreS3 + 社区固件，即本仓库方案 B/D/E 的主机，但需完成 <a href="../DIY_FIRMWARE.html">自制固件验证</a>并核对 fork 的平台配置）。</p>
+<p>做法（看它的提交记录一目了然）：</p>
+<ol>
+<li><strong>复用官方示例 MOD <code>cheerup_ws</code></strong>（本来就是 WebSocket 客户端示例），把 WebSocket URL 指向 Hermes bridge（<code>ws://&lt;主机&gt;:8000</code>）；</li>
+<li>在 <code>mod.js</code> 里加 <strong>TTS handler</strong>（本地 TTS，注释称 &quot;CVM brain integration&quot;）；</li>
+<li>内嵌官方 <strong><code>mcp</code> MOD</strong>（MCP Server 示例，见 <a href="../firmware-docs/README.md"><code>../firmware-docs/README.md</code></a> 的示例索引）；</li>
+<li>构建期把 <strong>Wi-Fi 凭据预烧进 NVS</strong>（仅当 NVS 为空时生效），CI 自动产出 cores3 固件 bin。</li>
+</ol>
+<p>要点：机器人端没有任何新协议——就是&quot;一个 WebSocket MOD + Hermes 后端&quot;，桥接服务在主机侧（端口 8000）。</p>
+<p><strong>适合</strong>：已经按本仓库方案 B/D/E 做好自制 Stack-chan、想快速接 Hermes 试玩的玩家。</p>
+<hr>
+<h2 id="3-两案例对比与选型">3. 两案例对比与选型</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>penpenguin（案例一）</th>
+<th>tiudsng（案例二）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目标硬件</td>
+<td>官方 K151 / CoreS3 整机</td>
+<td>CoreS3 + 社区固件（自制机身即可）</td>
+</tr>
+<tr>
+<td>固件路线</td>
+<td>CFW（vendor 快照 + ESP-IDF 5.5.4）</td>
+<td>Moddable fork + MOD 热装</td>
+</tr>
+<tr>
+<td>机器人↔桥通道</td>
+<td>WebSocket :8765（认证 token + 图片上传）</td>
+<td>WebSocket :8000（cheerup_ws MOD）</td>
+</tr>
+<tr>
+<td>语音管线</td>
+<td>Bridge 内建：VAD/Opus/STT/TTS 全套（faster-whisper + VOICEVOX/Irodori）</td>
+<td>MOD 内 TTS handler，管线简单</td>
+</tr>
+<tr>
+<td>视觉</td>
+<td>摄像头拍照上传 Hermes（视觉模型）</td>
+<td>无（纯对话）</td>
+</tr>
+<tr>
+<td>MCP</td>
+<td>12 个 stdio MCP tool</td>
+<td>内嵌 mcp 示例 MOD</td>
+</tr>
+<tr>
+<td>无硬件试跑</td>
+<td>✅ Simulator + Mock 全家桶</td>
+<td>❌ 需真机</td>
+</tr>
+<tr>
+<td>安全/运维</td>
+<td>认证、factory 备份、doctor、重连、故障注入</td>
+<td>基本 CI 构建</td>
+</tr>
+<tr>
+<td>复杂度</td>
+<td>高</td>
+<td>低</td>
+</tr>
+</tbody></table></div>
+<p><strong>选型</strong>：</p>
+<ul>
+<li>官方 K151 整机、需要完整桥接机制 → 案例一（先做 Mock 和实机验收）；</li>
+<li>自制 CoreS3 机器人、快速试 → 案例二；</li>
+<li>两个都想要的思路：先用案例二的 MOD 方式验证对话链路，再迁移到案例一的完整 Bridge。</li>
+</ul>
+<hr>
+<h2 id="4-与本仓库方案的衔接">4. 与本仓库方案的衔接</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>本仓库方案</th>
+<th>可否接 Hermes</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A · K151 整机</td>
+<td>✅ 案例一的原生目标</td>
+<td>刷 CFW 前先做 factory 备份（恢复出厂见 <a href="../k151-kit-route/index.html">A 方案 §4</a>）</td>
+</tr>
+<tr>
+<td>B · v1.0 + XL330</td>
+<td>✅ 案例二路线</td>
+<td>需验证固件 fork/XS 版本、总线驱动和实际桥接配置</td>
+</tr>
+<tr>
+<td>D · SCS0009 / E · K151 复刻</td>
+<td>✅ 案例二路线</td>
+<td>需先跑通本指南的自定义 host/驱动，再验证 fork、MOD、SDK 和桥接的兼容性</td>
+</tr>
+<tr>
+<td>C · v0 + SG90（Core 主机）</td>
+<td>⚠️ 需验证</td>
+<td>社区固件支持 Core 系列，但两案例都在 CoreS3 上开发</td>
+</tr>
+</tbody></table></div>
+<p>前置知识：MOD 机制与官方 API 见 <a href="../firmware-docs/README.md"><code>../firmware-docs/</code></a>；刷社区固件见主指南 §4.4。</p>
+<hr>
+<h2 id="5-风险与注意">5. 风险与注意</h2>
+<ul>
+<li><strong>两个均为社区项目</strong>，非官方出品，版本迭代快，动手前读原仓库最新 README；</li>
+<li>案例一会<strong>替换官方出厂固件</strong>（删除云功能与 OTA）——务必先 factory 备份；</li>
+<li>Hermes API key、设备 token 都是凭据，<code>.env</code> 权限 600，不要提交进任何仓库；</li>
+<li>摄像头/麦克风数据会发给 Hermes 侧的 LLM，注意隐私边界（案例一有专门的 <code>docs/network-policy.md</code> 通信方针文档，建议先读）；</li>
+<li>国内网络环境：HermesAgent 与视觉模型服务需自行解决连通性。</li>
+</ul>
+<footer>由 Markdown 自动生成。PDF 保持历史版本，接线与固件以本页面为准。自制路线尚需实物验收。</footer></main></body></html>

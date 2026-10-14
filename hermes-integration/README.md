@@ -94,7 +94,7 @@ curl -fsS http://127.0.0.1:8766/health/ready
 # ④ 固件：ESP-IDF 5.5.4 → fetch_repos.py → idf.py reconfigure → verify-firmware.sh → 备份 → flash
 ```
 
-**适合**：有官方 K151 整机、想要产品级稳定（诊断/重连/认证齐备）、能接受 ESP-IDF 工具链的用户。
+**适合**：有官方 K151 整机、需要诊断/重连/认证机制（仍须实机验证）、能接受 ESP-IDF 工具链的用户。
 
 ---
 
@@ -102,7 +102,7 @@ curl -fsS http://127.0.0.1:8766/health/ready
 
 仓库：https://github.com/tiudsng/stack-chan-hermes
 
-**定位**：官方 **Moddable 社区固件的 fork**，用 [MOD 热装机制](../README.md)实现，改动量很小。适合**自制路线**（CoreS3 + 社区固件，即本仓库方案 B/D/E 的主机）。
+**定位**：官方 **Moddable 社区固件的 fork**，用 [MOD 热装机制](../README.md)实现，改动量很小。适合**自制路线**（CoreS3 + 社区固件，即本仓库方案 B/D/E 的主机，但需完成 [自制固件验证](../DIY_FIRMWARE.md)并核对 fork 的平台配置）。
 
 做法（看它的提交记录一目了然）：
 
@@ -133,7 +133,7 @@ curl -fsS http://127.0.0.1:8766/health/ready
 
 **选型**：
 
-- 官方 K151 整机、要稳 → 案例一；
+- 官方 K151 整机、需要完整桥接机制 → 案例一（先做 Mock 和实机验收）；
 - 自制 CoreS3 机器人、快速试 → 案例二；
 - 两个都想要的思路：先用案例二的 MOD 方式验证对话链路，再迁移到案例一的完整 Bridge。
 
@@ -144,8 +144,8 @@ curl -fsS http://127.0.0.1:8766/health/ready
 | 本仓库方案 | 可否接 Hermes | 说明 |
 |---|---|---|
 | A · K151 整机 | ✅ 案例一的原生目标 | 刷 CFW 前先做 factory 备份（恢复出厂见 [A 方案 §4](../k151-kit-route/README.md)） |
-| B · v1.0 + XL330 | ✅ 案例二路线 | CoreS3 + 社区固件，改 MOD 即可 |
-| D · SCS0009 / E · K151 复刻 | ✅ 案例二路线 | 同上，主机是 CoreS3 就行 |
+| B · v1.0 + XL330 | ✅ 案例二路线 | 需验证固件 fork/XS 版本、总线驱动和实际桥接配置 |
+| D · SCS0009 / E · K151 复刻 | ✅ 案例二路线 | 需先跑通本指南的自定义 host/驱动，再验证 fork、MOD、SDK 和桥接的兼容性 |
 | C · v0 + SG90（Core 主机） | ⚠️ 需验证 | 社区固件支持 Core 系列，但两案例都在 CoreS3 上开发 |
 
 前置知识：MOD 机制与官方 API 见 [`../firmware-docs/`](../firmware-docs/README.md)；刷社区固件见主指南 §4.4。

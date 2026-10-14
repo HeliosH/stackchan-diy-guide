@@ -9,15 +9,15 @@
 
 | 项 | 内容 |
 |---|---|
-| 主机 | M5Stack CoreS3 / Core2 / Core Basic（配官方底板串行模式） |
+| 主机 | 推荐 CoreS3 + UART→TTL 半双工模块；其他主机/底板按实际 GPIO 配置 |
 | 舵机 | Feetech SCS0009 ×2（串行 TTL，半双工） |
-| 驱动方式 | 官方底板串行模式（R13/R14），或二极管半双工直连（免板） |
+| 驱动方式 | 官方底板串行模式（R13/R14），或合格的 UART→TTL 半双工模块 |
 | 打印件 | `stl/scs0009/`（4 件，官方专用机身） |
-| 固件驱动 | `scservo`（panId/tiltId） |
-| 参考角（正前） | **100°**，可动 0–200° |
+| 固件驱动 | 本指南标定版 `scservo`（raw 零位、量程和限位） |
+| 参考角（正前） | 以所购型号实测 raw 中位装配；初次 pan ±10°、tilt ±5° |
 | 难度 | ★★★ |
 
-**为什么选它**：串行总线架构（和官方 K151 整机同款舵机型号）、官方全套专用打印件、舵机国产好买。代价：改 ID 要 URT-1 调试器（一次性 ¥100 上下）；SCS0009 出厂默认 1Mbps 与官方固件 scservo 驱动匹配需核对。
+**为什么选它**：串行总线架构（和官方 K151 整机同系列舵机；K151 定制版与市售版不能直接等同）、官方全套专用打印件、舵机国产好买。代价：改 ID 要 URT-1 调试器（一次性 ¥100 上下）；SCS0009 出厂默认 1Mbps 与官方固件 scservo 驱动匹配需核对。
 
 ---
 
@@ -28,7 +28,7 @@
 | SCS0009 舵机 | 2 | 80–120/个 | 飞特淘宝店/代理；金属齿 2.3kg·cm、300° 量程、全反馈 |
 | **URT-1 调试器** | 1 | ~100 | 一次性投入：改 ID/波特率用，飞特配套 |
 | M5Stack 主机 | 1 | 100–250 | CoreS3 / Core2 / Core Basic 均可 |
-| 官方底板 | 1 | 打样 ¥30 | 串行模式（见 §3.1）；或免板直连（§3.2） |
+| 官方底板 | 1 | 打样 ¥30 | 串行模式（见 §3.1）；或 UART→TTL 半双工模块（§3.2） |
 | 电池 + 耗材 | — | 30–50 | 同 [v0 路线 §1.2](../v0-sg90-route/README.md#12-耗材)，3.7V 400–640mAh PH2.0 |
 | 舵机延长线 | 2 | — | SCS0009 配套 3P 线，长短按机身走线 |
 
@@ -55,7 +55,7 @@ shell_SCS0009、feet_SCS0009、bracket_SCS0009_f、bracket_SCS0009_b。
 3. **注意**：官方提醒**不要用飞特 GUI 的 "Recovery"**（已知会导致舵机工作异常）。
 4. 改完 ID 后**一次只连一颗**验证（同 ID 冲突会连不上）。
 
-> SCS0009 规格：300°/1024 步（约 0.293°/步）、330° 传感器、2.3kg·cm、6V、半双工 TTL、出厂默认 1Mbps、ID 范围 0–253、中位 90°（值 511）。完整数据手册：[`../k151-body-route/datasheets/SCS0009_Feetech_Servo.pdf`](../k151-body-route/datasheets/SCS0009_Feetech_Servo.pdf)。
+> SCS0009 规格：300°/1024 步（约 0.293°/步）、330° 传感器、2.3kg·cm、6V、半双工 TTL、出厂默认 1Mbps、ID 范围 0–253；规格书的中位标签与量程定义需结合实测，不把 511 当作通用 90°。完整数据手册：[`../k151-body-route/datasheets/SCS0009_Feetech_Servo.pdf`](../k151-body-route/datasheets/SCS0009_Feetech_Servo.pdf)。
 
 ---
 
@@ -65,7 +65,7 @@ shell_SCS0009、feet_SCS0009、bracket_SCS0009_f、bracket_SCS0009_b。
 
 用官方 `m5-pantilt` 底板，**制造文件已生成好**：[`pcb/m5-pantilt-v1.0/manufacture/jlcpcb/`](../pcb/m5-pantilt-v1.0/manufacture/)（Gerber zip + LCSC 号 BOM + 坐标 + 下单说明）。
 
-**串行模式跳线（关键）**：**只装 R13/R14（0Ω）**——R13 把 J3/J8 数据线并成一条半双工总线，R14 接到 MAX3485 收发线（自动换向，CoreS3 的 G17/G16）。**R9–R12 不装**（那是 PWM 模式的 Core 型号选择跳线）。
+**串行模式跳线（关键）**：**只装 R13/R14（0Ω）**——R13 把 J3/J8 数据线并成一条半双工总线，R14 接到 MAX3485 收发线（自动换向，CoreS3 的 GPIO17/18；旧 Core 才是 17/16，连接器视图需核对）。**R9–R12 不装**（那是 PWM 模式的 Core 型号选择跳线）。
 
 串行版实拍：
 
@@ -75,43 +75,30 @@ shell_SCS0009、feet_SCS0009、bracket_SCS0009_f、bracket_SCS0009_b。
 
 舵机接 J3/J8（JST EH 3P 口），电池 J5，主机插 J1（背面，注意方向）。
 
-### 3.2 免板直连：二极管半双工（K151 同款思路）
+### 3.2 免板方案：UART→TTL 半双工模块
 
-不想打板：TX/RX 各串一个二极管（1N4148）合成半双工总线，详细接线图与原理见 [K151 机身路线 §二极管半双工](../k151-body-route/README.md)（K151 机身用同款舵机，接线完全通用）。固件配置同样用 `scservo` 驱动。
+使用带 3.3V UART TX/RX 侧、单线 TTL DATA 侧、收发释放时序说明的模块。默认 CoreS3 TX6/RX7；DATA 并接两颗舵机，舵机独立 5V 供电，主机共地。完整图及要求见 [K151 结构路线 §5](../k151-body-route/README.md#5-接线)。不用 RX 串二极管或普通 USB-TTL TX/RX 短接。URT-1 用于电脑改 ID，与主机 UART 转换器分开选型。
 
 ---
 
 ## 4. 机械装配
 
 1. 舵机 ID 改好、固件刷好、**两颗舵机停在中位、方向验证正确**之后才动壳（铁律）。
-2. 摇臂/齿轮对准**参考角 100°**（SCS0009 正前方）。
+2. 用工具发 raw=512 并实测位置，再断电装摇臂，使头部正前水平。按所购舵机实测量程，不把旧驱动的 100° 或 K151 零位直接套用。
 3. 其余流程同 [v0 路线 §3](../v0-sg90-route/README.md#3-机械装配官方动图流程)：bracket 卡舵机 → feet/shell 锁螺丝 → 接线留余量 → 底板 M2×4×4 锁机身 → 插主机。
 4. 接线理顺、留活动余量，别让线卡住旋转。
 
 ---
 
-## 5. 固件
+## 5. 固件与标定
 
-- **刷机**：网页刷机 https://stack-chan.github.io/stack-chan/web/flash/ 选对应主机目标（CoreS3 → `M5Stack CoreS3`，或离线包 `com.m5stack.*` 系列，esptool 用法见 [v0 路线 §4.1](../v0-sg90-route/README.md#41-刷机三选一)）。
-- **驱动配置**（`manifest_local.json`）：
+使用 [自制固件流程](../DIY_FIRMWARE.md)：固定 v1.1.0，复制 `cores3-scs0009.json` **及** `scservo-calibrated-driver.js` 到上游 host/app，再构建通用 CoreS3。
 
-```json
-{
-  "include": ["./manifest.json"],
-  "config": {
-    "driver": {
-      "type": "scservo",
-      "panId": 1,
-      "tiltId": 2
-    }
-  }
-}
-```
+原版 SCServo 协议固定按 200°换算，本路线采购的市售规格是 300°/1024；新驱动使用 raw 命令、显式串口、实测量程和限位，不能只复制 JSON 而漏掉驱动。默认 TX6/RX7@1Mbps，若走 m5-pantilt 则改成 TX17/RX18；主机和舵机波特率必须一致，不自动降到 115200。
 
-- 用官方底板串行模式时若方向收发异常，先核对 R13/R14 焊接；`offsetPan/offsetTilt`（−90~90）可微调机械零位。
-- **验收**：A 键随机看、B 键四方看、C 键反色；会摇头 = 驱动 OK。SCS0009 有位置反馈，还可以跑 `calibration` 示例 MOD 做精确校准（见 [firmware-docs/](../firmware-docs/README.md)）。
+先确认 ID1/ID2、raw 零位及方向，再按共用流程量角；零位调 `panZeroRaw/tiltZeroRaw`，不依赖原驱动未使用的 offset 字段。首次范围 pan ±10°、tilt ±5°，运行一次左右 5°、上下 3° 的 MOD。串行应答正常、读回正确、供电及机械无干涉后才扩展范围。本标定驱动未实现电流/温度堵转保护，不宣称与 K151 定制驱动等价。
 
-> ⚠️ 安全须知（官方原文）：**Y 轴（垂直/脖子）舵机角度控制在 5°–85°**，超限可能堵转并造成永久损坏；不确定通电状态时禁止用手硬掰。
+K151 的 Y 轴 5-85°是该整机机械参考，不是本机舵机 raw 角度的通用限制；自制机按实际机构标定。
 
 ---
 
@@ -129,6 +116,6 @@ shell_SCS0009、feet_SCS0009、bracket_SCS0009_f、bracket_SCS0009_b。
 
 ## 7. 相关路线
 
-- 同款舵机的"官方整机拆解复刻"路线：[K151 机身路线](../k151-body-route/README.md)（含 K151 机身 + 开源 PCB 混合玩法）
+- K151 造型的自制结构路线：[K151 机身路线](../k151-body-route/README.md)（含 K151 机身 + 开源 PCB 混合玩法）
 - 更高阶的 Dynamixel 串行路线：[v1.0 + XL330](../v1-xl330-route/README.md)
 - 预算优先的 PWM 路线：[v0 + SG90](../v0-sg90-route/README.md)

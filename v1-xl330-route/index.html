@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>v1.0 官方外壳手搓路线（CoreS3 + XL330）：方案与完整教程</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f8fa;color:#17202a;font:16px/1.75 system-ui,-apple-system,"PingFang SC",sans-serif}
+main{max-width:1120px;margin:32px auto;padding:32px;background:white;border:1px solid #dce3eb;border-radius:12px}
+h1,h2,h3{line-height:1.35;scroll-margin-top:20px}h1{font-size:30px}h2{margin-top:36px;border-bottom:1px solid #e4e8ee;padding-bottom:10px}
+a{color:#175ca3;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}blockquote{border-left:4px solid #528abf;padding:8px 18px;margin:16px 0;background:#eef5fc}
+pre{overflow:auto;background:#f0f3f7;padding:16px;border-radius:8px;line-height:1.55}code{font:13px/1.55 ui-monospace,monospace}p code,li code,td code{background:#f0f3f7;padding:2px 4px}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px;border:1px solid #d6dee8;text-align:left;vertical-align:top}th{background:#eef3f9}
+img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px auto}nav,footer{font-size:14px;color:#596a7c}nav{padding-bottom:16px;border-bottom:1px solid #e4e8ee}footer{margin-top:36px;border-top:1px solid #e4e8ee;padding-top:16px}
+@media(max-width:640px){main{margin:0;padding:20px;border:0;border-radius:0}h1{font-size:25px}pre{font-size:12px}}
+</style></head><body><main><nav><a href="../index.html">指南首页</a> · <a href="README.md">Markdown 源文档</a></nav><h1 id="v10-官方外壳手搓路线cores3-xl330方案与完整教程">v1.0 官方外壳手搓路线（CoreS3 + XL330）：方案与完整教程</h1>
+<blockquote>
+<p>本目录是主教程《<a href="../index.html">StackChan 手挫完全指南</a>》的第二个独立子路线（另一个是 <a href="../k151-body-route/index.html"><code>k151-body-route/</code></a>）：
+<strong>stack-chan v1.0 官方开源外壳 + Robotis XL330 串行舵机 + 开源底板 + M5Stack CoreS3</strong>。
+结构件参考官方 v1.0 装配指南；CoreS3 引脚和固件按本版单独适配。静态核对已完成，尚未完成实物整机验证。</p>
+</blockquote>
+<p><img src="images/dynamixel_front.jpg" alt="v1.0 官方成品"></p>
+<hr>
+<h2 id="0-一句话结论">0. 一句话结论</h2>
+<ul>
+<li>v1.0 外壳官方文档明确**只支持 DYNAMIXEL（XL330）**舵机（<code>case/v1/dynamixel.md</code> 原文）。</li>
+<li>舵机选 <strong>XL330-M288-T</strong>×2（扭矩优先；要速度选 M077-T）。</li>
+<li>全部资料都是一手官方件：外壳 STL（开源）、底板 KiCad（开源）、固件（开源），本包已附带。</li>
+<li>供电两档：桌面用 5V USB（J7 口）；便携用 <strong>3.7V 锂电（400/640mAh，PH2.0 插头）装进官方&quot;Backpack&quot;电池背包</strong>（接底板 J5，需验证主机充电路径，见 §3.2）。</li>
+<li><strong>预算（估算）：¥700–1000+</strong>（按下表历史估算合计约679–979元起，另加元件、SMT/运费和耗材；需要实时核价）。</li>
+</ul>
+<hr>
+<h2 id="1-为什么这是官方标准配方">1. 为什么这是&quot;官方标准配方&quot;</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>环节</th>
+<th>官方出处</th>
+<th>开源状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>外壳 8 件 STL</td>
+<td><code>stack-chan/stack-chan</code> 仓库 <code>case/v1/</code>（含官方装配指南 <code>dynamixel.md</code>，本包 <a href="reference/">reference/</a> 已存档）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>底板 m5-pantilt v1.0</td>
+<td>同仓库 <code>case/pcb/m5-pantilt-v1.0/</code>（KiCad 工程 + 原理图，本包 <a href="../pcb/m5-pantilt-v1.0/"><code>../pcb/m5-pantilt-v1.0/</code></a>）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>固件</td>
+<td>同仓库 <code>firmware/</code>（预编译包 + 源码，本包 <a href="../firmware/"><code>../firmware/</code></a>）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>主控</td>
+<td>M5Stack CoreS3（商品件）</td>
+<td>硬件闭源、SDK 开放</td>
+</tr>
+</tbody></table></div>
+<p>外壳和舵机组合有官方装配参考；底板 J3/J8 提供串行模式。CoreS3 外部串口是 GPIO17/18，而通用预编译固件默认 TX7/RX6，<strong>本底板不能直接套用默认固件</strong>。按 <a href="../DIY_FIRMWARE.html">自制固件流程</a> 配置和构建，断电测出 TX/RX 连通关系后再装主机。</p>
+<hr>
+<h2 id="2-舵机选型xl330-m288-t">2. 舵机选型：XL330-M288-T</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>型号</th>
+<th>减速比</th>
+<th>堵转扭矩@5V</th>
+<th>空载转速</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>XL330-M288-T</strong></td>
+<td>288:1</td>
+<td>0.52 N·m</td>
+<td>103 RPM</td>
+<td>✅ <strong>推荐</strong>：扭矩大，转头稳，stack-chan 场景速度足够</td>
+</tr>
+<tr>
+<td>XL330-M077-T</td>
+<td>77:1</td>
+<td>0.215 N·m</td>
+<td>383 RPM</td>
+<td>要快转头/轻负载时选</td>
+</tr>
+</tbody></table></div>
+<p>共同规格（以 Robotis e-Manual 为准：<a href="https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/">https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/</a> ）：</p>
+<ul>
+<li>TTL 总线半双工，协议 2.0，<strong>出厂 ID=1、波特率 57600</strong>（都要改，见 §6）</li>
+<li>电压 3.7–6.0V，重量 18g，工程塑料齿轮，位置/速度/温度/负载全反馈</li>
+<li>采购：淘宝搜&quot;XL330-M288&quot;（Robotis 授权代理店，约 ¥100–150/只）；确认是 <strong>XL330-M288-T（TTL）</strong>，不要替换为电压或接口不同的其他型号</li>
+</ul>
+<hr>
+<h2 id="3-采购清单bom">3. 采购清单（BOM）</h2>
+<h3 id="31-核心件">3.1 核心件</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>物品</th>
+<th>规格</th>
+<th>数量</th>
+<th>参考价(¥)</th>
+<th>渠道</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>M5Stack CoreS3</td>
+<td>K128</td>
+<td>1</td>
+<td>199–249</td>
+<td>淘宝 M5Stack 官方店</td>
+</tr>
+<tr>
+<td>2</td>
+<td>XL330-M288-T</td>
+<td>TTL 串行舵机</td>
+<td>2</td>
+<td>100–150/只</td>
+<td>Robotis 淘宝代理店</td>
+</tr>
+<tr>
+<td>3</td>
+<td>m5-pantilt v1.0 底板</td>
+<td>自己打样（§5）</td>
+<td>1</td>
+<td>30–50</td>
+<td>嘉立创</td>
+</tr>
+<tr>
+<td>4</td>
+<td>TTL 通信线</td>
+<td>4cm，3 pin</td>
+<td>2</td>
+<td>5/条</td>
+<td>代理店有售 / 杜邦线代</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5V 电源</td>
+<td>稳压 5V，预留 ≥3A 并检查压降</td>
+<td>1</td>
+<td>—</td>
+<td>已有</td>
+</tr>
+<tr>
+<td>6</td>
+<td>M2×4 盘头自攻螺丝</td>
+<td>底板固定</td>
+<td>4</td>
+<td>~2</td>
+<td>螺丝包</td>
+</tr>
+<tr>
+<td>7</td>
+<td>M2.5×6 自攻螺丝</td>
+<td>舵机固定（<strong>XL330 附带</strong>）</td>
+<td>2</td>
+<td>0</td>
+<td>—</td>
+</tr>
+</tbody></table></div>
+<h3 id="32-电池便携供电可选但推荐">3.2 电池（便携供电，可选但推荐）</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>物品</th>
+<th>规格</th>
+<th>数量</th>
+<th>参考价(¥)</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>锂电池</td>
+<td>3.7V 400mAh（如 401230）或 640mAh（如 501235），<strong>PH2.0-2P 插头</strong></td>
+<td>1</td>
+<td>10–20</td>
+<td>接底板 <strong>J5 电池口</strong>；J5 接 BAT 电源路径，并不是独立充电器；需核对所用主机的充电控制、电池保护和供电方向</td>
+</tr>
+<tr>
+<td>电池背包打印件</td>
+<td>官方 <code>case/backpack/</code>（本包 <a href="../stl/backpack/"><code>../stl/backpack/</code></a>）</td>
+<td>1</td>
+<td>打印</td>
+<td>有 400mAh / 640mAh / AAA 电池盒三种规格，按买的电池选</td>
+</tr>
+<tr>
+<td>备选：AAA 版</td>
+<td><code>backpack_aaa</code> + 3×AAA/镍氢</td>
+<td>1</td>
+<td>—</td>
+<td>打印件可用；须配独立、合适的电源路径，<strong>不可把 AAA/镍氢电池接到锂电充电端</strong></td>
+</tr>
+</tbody></table></div>
+<blockquote>
+<p>不装电池也完全能用：5V 电源从底板 J7（XH 2.54-2P）或 M5Stack USB 供电，桌面场景更省心。CoreS3 / Lite / SE 的底座和电池规格不同，按实际型号核对；不能用电池容量推断舵机电流能力。</p>
+</blockquote>
+<h3 id="33-舵机调试工具改-id波特率用一次性投资">3.3 舵机调试工具（改 ID/波特率用，一次性投资）</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>物品</th>
+<th>参考价(¥)</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>U2D2 + SMPS2Dynamixel</strong>（官方推荐）</td>
+<td>200–300</td>
+<td>RoboTiS 官方调试器，Dynamixel Wizard 2 完美支持；以后玩其他 Dynamixel 设备也能用</td>
+</tr>
+<tr>
+<td>省钱替代</td>
+<td>0–15</td>
+<td>请卖家代改 ID/波特率，或使用已验证的 TTL 半双工配置工具；普通 USB-TTL 的 TX/RX <strong>不能直接短接</strong>接舵机</td>
+</tr>
+</tbody></table></div>
+<h3 id="34-打印件4">3.4 打印件（§4）</h3>
+<p>外壳 8 件：自己打印 ¥30–80（耗材），或嘉立创三维猴/淘宝代打 ¥60–120。</p>
+<p><strong>预算汇总：¥700–1000+</strong>（历史物料估算，含调试工具；未实时核价，SMT/运费另计）。</p>
+<hr>
+<h2 id="4-3d-打印">4. 3D 打印</h2>
+<p>文件在本包 <a href="../stl/v1-xl330/"><code>../stl/v1-xl330/</code></a>（官方原版）：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>部位</th>
+<th>数量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>shell.stl</td>
+<td>脸壳</td>
+<td>1</td>
+<td>0.12mm 层高 + 支撑，浅色 PETG</td>
+</tr>
+<tr>
+<td>feet_top.stl / feet_bottom.stl</td>
+<td>底座上下</td>
+<td>各 1</td>
+<td>0.16mm</td>
+</tr>
+<tr>
+<td>bracket_XL330_f / bracket_XL330_b</td>
+<td>舵机前后支架</td>
+<td>各 1</td>
+<td><strong>强度件</strong>，PLA+/PETG，40% 填充</td>
+</tr>
+<tr>
+<td>gear_XL330.stl</td>
+<td>舵机齿轮</td>
+<td>2</td>
+<td>0.12mm；<strong>孔位公差按打印精度已放大</strong></td>
+</tr>
+<tr>
+<td>gear_XL330_narrow.stl</td>
+<td>窄孔备选</td>
+<td>备用</td>
+<td>齿轮装上晃/打滑时换它</td>
+</tr>
+<tr>
+<td>horn.stl</td>
+<td>舵机角（脖子转接）</td>
+<td>1</td>
+<td>0.12mm</td>
+</tr>
+</tbody></table></div>
+<p>电池背包（本包 <a href="../stl/backpack/"><code>../stl/backpack/</code></a>，按电池规格三选一）：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>适配</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>backpack_400mah.stl</td>
+<td>400mAh 级锂电（401230 等）</td>
+</tr>
+<tr>
+<td>backpack_640mah.stl</td>
+<td>640mAh 级锂电（501235 等）</td>
+</tr>
+<tr>
+<td>backpack_aaa.stl</td>
+<td>3×AAA/镍氢电池盒</td>
+</tr>
+</tbody></table></div>
+<p><img src="images/print_orientation.jpg" alt="打印方向"></p>
+<p>打印参数：3 壁、20% 填充（强度件 40%）、PETG 或 PLA+。改尺寸需求用 STEP 源文件（仓库 <code>case/v1/</code>）在 Fusion 360/FreeCAD 里编辑。</p>
+<hr>
+<h2 id="5-底板三种选择">5. 底板：三种选择</h2>
+<h3 id="51-自己打样-m5-pantilt-v10推荐">5.1 自己打样 m5-pantilt v1.0（推荐）</h3>
+<p>KiCad 完整工程在本包 <a href="../pcb/m5-pantilt-v1.0/"><code>../pcb/m5-pantilt-v1.0/</code></a>。要点先记住：</p>
+<ul>
+<li>两层板，~¥30（打样）+ 可选 ~¥20（SMT 经济套餐）</li>
+<li>串行舵机模式跳线：<strong>只装 R13/R14</strong>（0Ω）；<strong>R9–R12 不装</strong>——它们是 PWM/SG90 模式下选 Core 型号用的（PWM 的 Core2/CoreS3 为 R10/R12，旧 Core 为 R9/R11），串行模式用不到</li>
+<li>从 1Mbps 开始验证通信；不按旧版“≤115200”说法自动降速。换向时序和回包成功率仍需实测</li>
+<li><strong>制造文件已生成好</strong>：<code>../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/</code>（Gerber zip + 带 LCSC 号的 BOM + 贴片坐标，嘉立创直接上传，见 5.1.3）</li>
+</ul>
+<p><img src="images/m5-pantilt-top.png" alt="底板正面"></p>
+<p><img src="images/m5-pantilt-bottom.png" alt="底板背面"></p>
+<p>串行版（本路线）舵机口与拨动开关实拍：</p>
+<p><img src="images/serial_ports.jpg" alt="串行版舵机口"></p>
+<p><img src="images/serial_switch.jpg" alt="串行版开关"></p>
+<h4 id="511-这块板是什么">5.1.1 这块板是什么</h4>
+<p>官方开源底板 <code>m5-pantilt</code> 的功能：</p>
+<ul>
+<li>驱动两颗串行舵机（J3/J8 两个 3-pin TTL 口，自动换向半双工总线）</li>
+<li>双 30-pin 排母（J1/J2）直插 M5Stack 背面 M-BUS</li>
+<li>外部 5V 供电口、电池供电，充电由实际主机电源管理器完成，需核对电池保护及主机设置</li>
+<li>（可选）电源开关</li>
+</ul>
+<p>信号与供电细节见原理图截图（下图）与完整原理图 PDF（<code>../pcb/m5-pantilt-v1.0/m5-pantilt.pdf</code>）。</p>
+<p><img src="images/m5-pantilt-sch.png" alt="原理图"></p>
+<h4 id="512-工程文件清单本包已附带">5.1.2 工程文件清单（本包已附带）</h4>
+<pre><code>../pcb/m5-pantilt-v1.0/
+├── m5-pantilt.kicad_pro / .kicad_sch / .kicad_pcb   ← KiCad 工程（main 分支 = v1.0 规格）
+├── m5-pantilt.pdf                                    ← 原理图 PDF（核对元件用）
+├── m5-pantilt-all-pos.csv                            ← 贴片坐标（CPL），仓库官方提供
+├── m5-pantilt.kibot.yaml                             ← KiBot 一键生成嘉立创制造文件的配置
+├── gerber/                                           ← 仓库只提交了丝印 + 钻孔
+│   ├── m5-pantilt-B_Silkscreen.gbo
+│   ├── m5-pantilt-F_Silkscreen.gto
+│   └── m5-pantilt-NPTH.drl / m5-pantilt-PTH.drl
+├── m5-pantilt.pretty/                                ← 自定义封装库
+└── 其他工程配套文件（lib/sym-lib-table/cache 等）
+</code></pre>
+<p><strong>制造文件已生成好，无需自己导出</strong>：<a href="../pcb/m5-pantilt-v1.0/manufacture/"><code>manufacture/jlcpcb/</code></a> 里有嘉立创三件套——<code>m5-pantilt-gerbers-jlcpcb.zip</code>（Gerber+钻孔）、<code>m5-pantilt-bom-jlc.csv</code>（BOM，<strong>含官方原理图自带的 LCSC 编号</strong>）、<code>m5-pantilt-cpl-jlc.csv</code>（贴片坐标），以及人类可读的 <a href="../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md"><code>BOM.md</code></a> 和下单注意事项 <a href="../pcb/m5-pantilt-v1.0/manufacture/index.html"><code>manufacture/README.md</code></a>。直接跳到 5.1.4 下单即可。</p>
+<blockquote>
+<p>官方仓库只提交了丝印 + 钻孔（铜层 Gerber 在 <code>.gitignore</code> 里），上述文件是用 <code>kicad-cli</code> 从官方 KiCad 工程生成的，复现命令在 manufacture/README.md 文末。想自己生成（或改板后重出）再看下面两种方法。</p>
+</blockquote>
+<h4 id="513-可选自己生成制造文件">5.1.3 （可选）自己生成制造文件</h4>
+<p><strong>方法 A：KiBot 一键生成（推荐，配置官方已写好）</strong></p>
+<ol>
+<li>安装 <a href="https://www.kicad.org/">KiCad</a>（使用与工程格式兼容的版本）与 KiBot：<pre><code class="language-bash">pip install kibot
+</code></pre>
+</li>
+<li>在 <code>pcb/m5-pantilt-v1.0/</code> 目录执行：<pre><code class="language-bash">kibot -c m5-pantilt.kibot.yaml -e m5-pantilt.kicad_sch -b m5-pantilt.kicad_pcb
+</code></pre>
+</li>
+<li>生成物在 <code>generated/</code> 下，其中 <code>Manufacturers/JLCPCB/</code> 是给嘉立创的 Gerber/BOM/坐标文件，另有 <code>BoM/Generic/</code> 的通用 BOM（HTML/XLSX）。</li>
+</ol>
+<p><strong>方法 B：KiCad 手动导出（不装 KiBot）</strong></p>
+<ol>
+<li>用 KiCad 打开 <code>m5-pantilt.kicad_pcb</code> → 文件 → 制造输出 → Gerbers（导出含铜层+丝印+阻焊+钻孔，打包 zip）。</li>
+<li>贴片坐标：文件 → 制造输出 → 元件位置文件（.pos / .csv）；也可以直接用官方给的 <code>m5-pantilt-all-pos.csv</code>。</li>
+<li>BOM：原理图工具 → BOM 导出（或直接对照 <code>m5-pantilt.pdf</code> 手抄，见 5.1.4）。</li>
+</ol>
+<h4 id="514-核对元件清单bom">5.1.4 核对元件清单（BOM）</h4>
+<p>完整 BOM（23 组、带 LCSC 号）见 <a href="../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md"><code>manufacture/jlcpcb/BOM.md</code></a>，由 KiCad 原理图自动生成。核心构成：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>元件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IC</td>
+<td><strong>U1 = MAX3485</strong>（SO-8，半双工收发）、Q1 = IRLML6402（电源软开关）、Q2 = BC857（方向控制）</td>
+</tr>
+<tr>
+<td>二极管</td>
+<td>D1 = SS54、D2 = PMEG3030EP</td>
+</tr>
+<tr>
+<td>阻容</td>
+<td>100µ×4、0.1µ×1；0603 电阻×15（其中 <strong>R13/R14 = 0Ω 跳线，串行模式必装</strong>）</td>
+</tr>
+<tr>
+<td>连接器</td>
+<td>J1/J2 = 2×15 M-BUS 排母/排针（<strong>J1 在背面</strong>）、J3/J8 = JST EH 3pin 舵机口、J5 = PH2.0 电池、J7 = XH 5V</td>
+</tr>
+<tr>
+<td>手插件</td>
+<td>J6（PH 4pin）、SW1（SPDT 开关，可选）</td>
+</tr>
+</tbody></table></div>
+<blockquote>
+<p>官方仓库自带的旧版 CPL 只有 3 个件，不完整；以本包生成的 BOM 为准，下单前仍建议对照原理图 PDF 抽查一遍。</p>
+</blockquote>
+<h4 id="515-嘉立创下单两种玩法">5.1.5 嘉立创下单（两种玩法）</h4>
+<p><strong>玩法 1：只打裸板，全部手焊（先核对元件与封装）</strong></p>
+<ol>
+<li>打开 <a href="https://www.jlc.com">https://www.jlc.com</a> （嘉立创）→ PCB 下单。</li>
+<li>上传 5.1.3 生成的 Gerber 压缩包 → 自动解析。</li>
+<li>参数：2 层、板厚 1.6mm（按个人喜好 1.0 也行）、表面处理默认喷锡、数量 5 片。</li>
+<li>新客常有 5 片 ¥2 级别活动；提交付款，一般 2–4 天到货。</li>
+<li>到货后手焊：先 SMD（U1/Q1/Q2/阻容/R13/R14 跳线），再插件。<strong>J1 在背面立贴，焊接时注意方向</strong>（照 <code>images/m5-pantilt-bottom.png</code>）。</li>
+</ol>
+<p><strong>玩法 2：让嘉立创 SMT 贴片（省焊接）</strong></p>
+<ol>
+<li>PCB 下单时勾选 <strong>SMT 贴片</strong>，上传 <code>manufacture/jlcpcb/m5-pantilt-bom-jlc.csv</code> 和 <code>m5-pantilt-cpl-jlc.csv</code>；不要用旧版不完整坐标。</li>
+<li>元件匹配页面按 LCSC 号确认各元件。<strong>两个关键点</strong>：① J1 在 bottom 面——经济贴装只贴单面，建议 J1 免贴到手自己焊（或选双面贴装加价）；② <strong>把 R9/R10/R11/R12 设为&quot;不贴&quot;</strong>（串行模式不用，见 5.1 跳线说明）。</li>
+<li>付款等待，到手后手焊剩余插件件。</li>
+</ol>
+<p><strong>打样完成后</strong>：万用表蜂鸣档查 5V/GND 是否短路，再上 M5Stack 试机。</p>
+<h3 id="52-买现成套件">5.2 买现成套件</h3>
+<p>mongonta（高木貴昭）的 Stack-chan 组装套件（日本 BOOTH）：<a href="https://mongonta.booth.pm/">https://mongonta.booth.pm/</a> —— 含底板和全部结构件，免去打样，但日本直邮周期长。</p>
+<h3 id="53-免板方案合格的-uartttl-半双工模块">5.3 免板方案：合格的 UART→TTL 半双工模块</h3>
+<p>采用有 3.3V TX/RX 侧、单线 TTL DATA 侧及收发切换说明的转换模块；CoreS3 使用 TX17/RX18，并按 §8 配置。舵机独立 5V 供电、主机共地。普通 RS-485 A/B 模块、USB-TTL TX/RX 短接、RX 串二极管方案均不属于本流程。U2D2 仅用于电脑配置舵机，不能默认作为 CoreS3 的 UART 模块。</p>
+<hr>
+<h2 id="6-舵机配置改-id-与波特率装车前必做">6. 舵机配置（改 ID 与波特率，装车前必做）</h2>
+<p><strong>XL330 出厂：ID=1、57600bps；stack-chan 要求：腿(pan)=ID 1、脖(tilt)=ID 2、1000000bps。</strong></p>
+<p><img src="images/dynamixel_wizard.png" alt="Dynamixel Wizard"></p>
+<p>官方流程（U2D2 + SMPS2Dynamixel + 5V 适配器）：</p>
+<ol>
+<li>装官方工具 <strong>Dynamixel Wizard 2</strong>（<a href="https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/">https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/</a> ，Win/Mac/Linux 都有）。</li>
+<li><strong>一次只接一只舵机</strong>（同 ID 冲突会搜不到），Options 选 U2D2 的串口 → Scan。</li>
+<li>选中舵机 → 把 <strong>Baud Rate 改 1000000</strong> 保存；第二只再把 <strong>ID 改 2</strong> 保存。</li>
+<li>改完用 1Mbps 重新 Scan 一次确认两只都在。</li>
+</ol>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>舵机</th>
+<th>ID</th>
+<th>波特率</th>
+<th>位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>腿（pan，水平）</td>
+<td>1</td>
+<td>1000000</td>
+<td>下层（装 gear 插 feet_top）</td>
+</tr>
+<tr>
+<td>脖（tilt，垂直）</td>
+<td>2</td>
+<td>1000000</td>
+<td>上层（装 gear + horn）</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="7-装配-10-步官方指南中文化图官方原图">7. 装配 10 步（官方指南中文化，图=官方原图）</h2>
+<p><img src="images/dynamixel_side.jpg" alt="成品侧视"></p>
+<p><strong>装腿舵机（ID=1）</strong></p>
+<ol>
+<li>把 gear_XL330（小十字件）压入 ID=1 舵机——对准齿轮上的凸台与 XL330 轴孔。</li>
+</ol>
+<p><img src="images/dynamixel_01.jpeg" alt="步骤1"></p>
+<ol start="2">
+<li>插入 feet_top（带缺口凸台的方向为前方），从背面用 M2.5×6 自攻螺丝固定；再滑入 feet_bottom。</li>
+</ol>
+<p><img src="images/dynamixel_02.jpeg" alt="步骤2"></p>
+<p><strong>装脖子舵机（ID=2）</strong></p>
+<ol start="3">
+<li><p>同样给 ID=2 舵机压入 gear_XL330，M2.5×6 螺丝固定。</p>
+</li>
+<li><p>装上 horn（脖子转接件）。</p>
+</li>
+</ol>
+<p><img src="images/dynamixel_03.jpeg" alt="步骤3"></p>
+<p><strong>合体</strong></p>
+<ol start="5">
+<li>接好两只舵机的 4cm TTL 线。</li>
+</ol>
+<p><img src="images/dynamixel_04.jpeg" alt="步骤4"></p>
+<ol start="6">
+<li>用 bracket_XL330_f（前）把上下两只舵机组合。</li>
+</ol>
+<p><img src="images/dynamixel_05.jpeg" alt="步骤5"></p>
+<ol start="7">
+<li>用 bracket_XL330_b（后）锁紧上下舵机。</li>
+</ol>
+<p><img src="images/dynamixel_06.jpeg" alt="步骤6"></p>
+<ol start="8">
+<li>底板与两只舵机用 TTL 线相连。</li>
+</ol>
+<p><img src="images/dynamixel_07.jpeg" alt="步骤7"></p>
+<ol start="9">
+<li>把 horn 滑入 shell（脸壳）。</li>
+</ol>
+<p><img src="images/dynamixel_08.jpeg" alt="步骤8"></p>
+<ol start="10">
+<li>底板与 shell 用 4 颗 M2×4 自攻螺丝固定，最后插入 CoreS3。</li>
+</ol>
+<p><img src="images/dynamixel_09.jpeg" alt="步骤9"></p>
+<p><img src="images/dynamixel_10.jpeg" alt="步骤10 完成"></p>
+<p><strong>装电池（可选）</strong>：电池装进背包打印件，PH2.0 线接底板 <strong>J5</strong>；背包装到整机背后（试装方向以实际卡位为准）。只有在主机充电路径、电池保护和极性确认后才接 USB 充电；首次建议先用桌面供电。装配顺序上建议在步骤 8（底板与舵机连线）时就把 J5 线引好，免得合壳后够不着。</p>
+<blockquote>
+<p>铁律（同主指南 §6.1）：<strong>绝不通电硬拧舵机</strong>；脖子（tilt）行程保持软件限位内。</p>
+</blockquote>
+<hr>
+<h2 id="8-固件">8. 固件</h2>
+<h3 id="81-配置与源码构建">8.1 配置与源码构建</h3>
+<p>按 <a href="../DIY_FIRMWARE.html">自制机固件流程</a> 固定社区 v1.1.0，复制 <code>firmware-configs/cores3-xl330.json</code> 到上游 <code>host/app/manifest_local.json</code>。此配置为 Dynamixel ID1/ID2、TX17/RX18、1Mbps。选择通用 <code>esp32/m5stack_cores3</code>，构建后用 esptool 烧录对应产物；不要随后执行默认 <code>npm run deploy/flash</code>，那会选 K151 目标。</p>
+<p>离线 <code>com.m5stack.cores3</code> 使用其他默认串口，不是本板可直接使用的成品；K151 专用包则锁定另一种驱动。完整命令、输出目录及 flash 偏移见链接。</p>
+<h3 id="82-零位与验收">8.2 零位与验收</h3>
+<p>XL330 两只先空载验证 ID 和位置反馈，再安装齿轮与外壳。上游 Dynamixel 驱动没有按本指南旧版承诺读取 <code>offsetPan/offsetTilt</code>，机械零位应按实际驱动参考位置、齿轮相位和舵机工具校准。</p>
+<p>安装 <a href="../DIY_FIRMWARE.html#5-%E6%97%A0%E6%8C%89%E9%94%AE%E5%B0%8F%E8%8C%83%E5%9B%B4%E9%AA%8C%E6%94%B6">小范围验收 MOD</a>：一次回中、左右各 5°、上下各 3°、回中。CoreS3 不要求 A/B/C 实体键。检查方向、应答、供电压降及机械干涉后再扩大动作；没有串口错误且位置读回一致才算通过。</p>
+<hr>
+<h2 id="9-故障排查">9. 故障排查</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>症状</th>
+<th>原因</th>
+<th>解法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Wizard 搜不到舵机</td>
+<td>波特率不匹配（出厂 57600）</td>
+<td>Scan 时勾选全波特率扫描；先 57600 连上再改 1M</td>
+</tr>
+<tr>
+<td>两只都 ID=1 搜不到</td>
+<td>同 ID 冲突</td>
+<td><strong>一次只接一只</strong>改，第二只改 ID=2</td>
+</tr>
+<tr>
+<td>刷固件后舵机不动</td>
+<td>波特率没改（还是 57600）</td>
+<td>回 §6 用 Wizard 改 1M</td>
+</tr>
+<tr>
+<td>齿轮打滑/旷量</td>
+<td>打印公差</td>
+<td>换 <code>gear_XL330_narrow.stl</code></td>
+</tr>
+<tr>
+<td>头歪了</td>
+<td>horn/gear 装配相位不准</td>
+<td>按驱动参考位置重新校准齿轮/horn 相位</td>
+</tr>
+<tr>
+<td>转头无力异响</td>
+<td>供电不足</td>
+<td>5V 电源预留 ≥3A；检查电源路径、线材压降和接触</td>
+</tr>
+<tr>
+<td>摸舵机烫</td>
+<td>长时间堵转</td>
+<td>断电检查机械干涉；XL330 有温度反馈可读</td>
+</tr>
+<tr>
+<td>电池模式开机就重启</td>
+<td>电池带不动舵机涌流</td>
+<td>检查电池放电能力、主机电源路径及压降；容量增大不保证电流足够。可先用 J7 5V 桌面电源验证</td>
+</tr>
+<tr>
+<td>电池不充电</td>
+<td>J5 线序反/电池板无保护板</td>
+<td>核对 PH2.0 正负极；确认电池带保护板</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="10-本路线-vs-其他路线">10. 本路线 vs 其他路线</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>本路线（v1.0+XL330）</th>
+<th>K151 官方机身</th>
+<th>v0+SG90</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>官方文档完备度</td>
+<td>★★★（专属装配指南）</td>
+<td>★（只有 STL）</td>
+<td>★★</td>
+</tr>
+<tr>
+<td>舵机性能</td>
+<td>高（扭矩+全反馈）</td>
+<td>高（SCS0009）</td>
+<td>低（SG90 无反馈）</td>
+</tr>
+<tr>
+<td>电子件难度</td>
+<td>打板/焊接</td>
+<td>需半双工模块及机械适配</td>
+<td>官方底板/直插</td>
+</tr>
+<tr>
+<td>预算</td>
+<td>¥700–1000+</td>
+<td>适配件与工具另核价</td>
+<td>历史估算 ¥300–500</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>完整手挫、玩 MOD、长期折腾</td>
+<td>颜值党、第二台</td>
+<td>第一台验证兴趣</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="附录-a本目录素材清单">附录 A：本目录素材清单</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>images/</code>（27 个）</td>
+<td>官方 v1.0 装配图 dynamixel_01–10、成品图 front/side、Dynamixel Wizard 截图、底板实拍、打印方向、bracket/shell 装配动图等（均取自官方仓库 <code>case/docs/images/</code>，已在本包 images/ 中，此处为路线独立副本）</td>
+</tr>
+<tr>
+<td><code>reference/</code></td>
+<td>官方 v1.0 装配指南原文（英文/日文 Markdown，<code>stack-chan</code> 仓库 <code>case/v1/dynamixel.md</code>）</td>
+</tr>
+<tr>
+<td><code>../stl/v1-xl330/</code>（8 件 STL + gear 备选）</td>
+<td>v1.0 外壳官方原版</td>
+</tr>
+<tr>
+<td><code>../stl/backpack/</code>（3 件 STL）</td>
+<td>官方电池背包（400mAh / 640mAh / AAA 三规格）</td>
+</tr>
+<tr>
+<td><code>../pcb/m5-pantilt-v1.0/</code></td>
+<td>底板 KiCad 完整工程 + 原理图 PDF + <strong>已生成的嘉立创制造文件包</strong>（Gerber zip / BOM / CPL，见其 <code>manufacture/</code>）</td>
+</tr>
+<tr>
+<td><code>../firmware/</code></td>
+<td>官方固件 v1.1.0 离线包（SHA-256 已验）</td>
+</tr>
+</tbody></table></div>
+<h2 id="附录-b来源">附录 B：来源</h2>
+<ul>
+<li>官方 v1.0 装配指南：github.com/stack-chan/stack-chan <code>case/v1/dynamixel.md</code>（BOM、ID/波特率表、10 步装配图）</li>
+<li>外壳 STL：同仓库 <code>case/v1/</code>；底板：<code>case/pcb/m5-pantilt-v1.0/</code></li>
+<li>舵机规格与出厂值（ID=1/57600bps）：Robotis e-Manual XL330 页与官方指南一致</li>
+<li>固件平台/驱动定义：同仓库 <code>firmware/docs/flashing-firmware.md</code> 及 <code>host/platforms/stackchan_rt/manifest.json</code>（dynamixel、ID 1/2、1Mbps 的官方锁定值）</li>
+<li>XL330 购买：Robotis 官方代理（淘宝）；调试器 U2D2 + SMPS2Dynamixel（官方推荐组合）</li>
+</ul>
+<p><em>本文档为社区 DIY 指南。Stack-chan、ROBOTIS DYNAMIXEL、M5Stack 商标归各自所有者。</em></p>
+<footer>由 Markdown 自动生成。PDF 保持历史版本，接线与固件以本页面为准。自制路线尚需实物验收。</footer></main></body></html>

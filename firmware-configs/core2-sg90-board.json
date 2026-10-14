@@ -1,0 +1,4 @@
+{
+  "include": ["./manifest.json"],
+  "config": { "driver": { "type": "pwm", "pwmPan": 19, "pwmTilt": 27 } }
+}

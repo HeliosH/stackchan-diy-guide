@@ -1,0 +1,10 @@
+{
+  "name": "stackchan-diy-guide-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "docs:build": "node scripts/render-docs.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": { "marked": "17.0.5" }
+}

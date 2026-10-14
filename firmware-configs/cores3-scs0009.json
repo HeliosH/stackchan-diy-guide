@@ -1,0 +1,15 @@
+{
+  "include": ["./manifest.json"],
+  "modules": { "scservo-driver": "./scservo-calibrated-driver" },
+  "config": {
+    "driver": {
+      "type": "scservo", "panId": 1, "tiltId": 2,
+      "serial": { "port": 1, "transmit": 6, "receive": 7, "baud": 1000000 },
+      "angleRangeDegrees": 300,
+      "panZeroRaw": 512, "tiltZeroRaw": 512,
+      "panDirection": -1, "tiltDirection": -1,
+      "panMin": -10, "panMax": 10,
+      "tiltMin": -5, "tiltMax": 5
+    }
+  }
+}

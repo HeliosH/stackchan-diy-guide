@@ -1,7 +1,7 @@
 # m5-pantilt v1.0 元件清单（由 KiCad 原理图自动生成）
 
 > 生成命令：`kicad-cli sch export python-bom`；LCSC 编号来自官方原理图元件库。
-> `Assembly=SMD` 可交给嘉立创贴片；`THT` 建议到手手焊。**LOGO 丝印图形不是元件。**
+> 装配类型按实际封装区分；是否可机器装配以当前服务为准。THT 连接器建议手焊。**LOGO 丝印图形不是元件。**
 
 | 位号 | 值 | 封装 | LCSC | 装配 |
 |---|---|---|---|---|
@@ -9,10 +9,10 @@
 | C5 | 0.1u | C_0603_1608Metric | C14663 | SMD 可贴 |
 | D1 | SS54 | D_SMA | C2931790 | SMD 可贴 |
 | D2 | PMEG3030EP | D_SOD-128 | C255587 | SMD 可贴 |
-| J1 | Conn_02x15_Odd_Even | PinHeader_2x15_P2.54mm_Vertical_SMD | — | THT 手焊 |
+| J1 | Conn_02x15_Odd_Even | PinHeader_2x15_P2.54mm_Vertical_SMD | — | SMD 排针，按服务能力/手焊 |
 | J2 | Conn_02x15_Odd_Even | PinSocket_2x15_P2.54mm_Vertical_SMD | — | SMD 可贴 |
-| J3,J8 | Conn_01x03 | JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical | — | SMD 可贴 |
-| J5 | BAT | JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical | C2319 | SMD 可贴 |
+| J3,J8 | Conn_01x03 | JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical | — | THT，按服务能力/手焊 |
+| J5 | BAT | JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical | C2319 | THT，按服务能力/手焊 |
 | J6 | Conn_01x04 | JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal | — | THT 手焊 |
 | J7 | 5V_POWER | JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical | C20079 | THT 手焊 |
 | Q1 | IRLML6402 | SOT-23 | C2886430 | SMD 可贴 |

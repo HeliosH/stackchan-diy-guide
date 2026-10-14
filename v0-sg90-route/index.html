@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>路线 C：v0 经典机身 + SG90 舵机（性价比之手）</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f8fa;color:#17202a;font:16px/1.75 system-ui,-apple-system,"PingFang SC",sans-serif}
+main{max-width:1120px;margin:32px auto;padding:32px;background:white;border:1px solid #dce3eb;border-radius:12px}
+h1,h2,h3{line-height:1.35;scroll-margin-top:20px}h1{font-size:30px}h2{margin-top:36px;border-bottom:1px solid #e4e8ee;padding-bottom:10px}
+a{color:#175ca3;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}blockquote{border-left:4px solid #528abf;padding:8px 18px;margin:16px 0;background:#eef5fc}
+pre{overflow:auto;background:#f0f3f7;padding:16px;border-radius:8px;line-height:1.55}code{font:13px/1.55 ui-monospace,monospace}p code,li code,td code{background:#f0f3f7;padding:2px 4px}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px;border:1px solid #d6dee8;text-align:left;vertical-align:top}th{background:#eef3f9}
+img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px auto}nav,footer{font-size:14px;color:#596a7c}nav{padding-bottom:16px;border-bottom:1px solid #e4e8ee}footer{margin-top:36px;border-top:1px solid #e4e8ee;padding-top:16px}
+@media(max-width:640px){main{margin:0;padding:20px;border:0;border-radius:0}h1{font-size:25px}pre{font-size:12px}}
+</style></head><body><main><nav><a href="../index.html">指南首页</a> · <a href="README.md">Markdown 源文档</a></nav><h1 id="路线-cv0-经典机身-sg90-舵机性价比之手">路线 C：v0 经典机身 + SG90 舵机（性价比之手）</h1>
+<blockquote>
+<p>Stack-chan 最经典、最便宜的自制路线：<strong>v0 官方外壳 + 两颗 SG90 PWM 舵机 + M5Stack Core（Basic/Gray）或 Core2</strong>。
+含两个省钱变体：<strong>C1 直插</strong>（零 PCB，杜邦线直插）和 <strong>M5GO Bottom 版</strong>（mongonta 方案）。
+预算约 <strong>¥300–500</strong>（含主机；已有主机 + 丐版直插只要 <strong>+¥30</strong>），工期 1 个周末。</p>
+</blockquote>
+<p><img src="images/case.jpg" alt="v0 整机"></p>
+<h2 id="0-本路线一览">0. 本路线一览</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主机</td>
+<td>M5Stack Core Basic / Gray（最便宜）或 Core2（带电池喇叭）</td>
+</tr>
+<tr>
+<td>舵机</td>
+<td>SG90 ×2（¥5–15/个）；<strong>推荐 MG90S 金属齿</strong></td>
+</tr>
+<tr>
+<td>驱动方式</td>
+<td>PWM（丐版直插免底板；或官方底板 PWM 模式）</td>
+</tr>
+<tr>
+<td>打印件</td>
+<td><code>stl/v0-sg90/</code>（5 件）</td>
+</tr>
+<tr>
+<td>固件构建</td>
+<td>通用 <code>m5stack</code>（Core）或 <code>m5stack_core2</code>（Core2），显式 PWM 配置</td>
+</tr>
+<tr>
+<td>参考角（正前）</td>
+<td>90°起测，动作范围按驱动限位及实际机构验证</td>
+</tr>
+<tr>
+<td>难度</td>
+<td>★★★（打板装壳）/ ★（丐版直插）</td>
+</tr>
+</tbody></table></div>
+<p><strong>为什么选它</strong>：主机便宜（Core Basic 二手/闲鱼更便宜）、舵机白菜价、外壳是&quot;纸书封面同款&quot;经典造型。代价：SG90 不能读角度、涌流可能拉掉主机电源、堵转会过热冒烟（官方警告）。</p>
+<hr>
+<h2 id="1-物料清单bom">1. 物料清单（BOM）</h2>
+<h3 id="11-核心件">1.1 核心件</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>物品</th>
+<th>数量</th>
+<th>参考价(¥)</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>M5Stack Core Basic / Gray</td>
+<td>1</td>
+<td>100–200</td>
+<td>Gray 带九轴 IMU；闲鱼收 Basic 更省</td>
+</tr>
+<tr>
+<td>M5Stack Core2（可选替代）</td>
+<td>1</td>
+<td>200+</td>
+<td>内置电池 + 喇叭，免外接电池</td>
+</tr>
+<tr>
+<td>SG90 / MG90S 舵机</td>
+<td>2</td>
+<td>10–30</td>
+<td>MG90S 金属齿更耐用</td>
+</tr>
+<tr>
+<td>官方底板（可选，路线 C 正式版）</td>
+<td>1</td>
+<td>打样 ¥30</td>
+<td>见 §3；丐版直插不需要</td>
+</tr>
+<tr>
+<td>锂电池（Core Basic 用户）</td>
+<td>1</td>
+<td>10–20</td>
+<td>3.7V 400mAh（401230），PH2.0-2P 插头，装 backpack</td>
+</tr>
+</tbody></table></div>
+<h3 id="12-耗材">1.2 耗材</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>物料</th>
+<th>规格</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>螺丝</td>
+<td>M2×4 自攻×4（底板）、M2×8 自攻×2（feet/shell）；可选 M3×15×2 锁主机</td>
+</tr>
+<tr>
+<td>杜邦线</td>
+<td>母对母/公对母若干（丐版必备）</td>
+</tr>
+<tr>
+<td>PH2.0 端子线</td>
+<td>2P 若干</td>
+</tr>
+<tr>
+<td>3D 打印</td>
+<td>PLA/PETG 约 30–50g</td>
+</tr>
+</tbody></table></div>
+<h3 id="13-打印件本包-stlv0-sg90">1.3 打印件（本包 <code>stl/v0-sg90/</code>）</h3>
+<p>shell_SG90、feet_SG90、bracket_SG90_f、bracket_SG90_b、backpack_400mah（电池背包；640mAh/AAA/卡西欧版在 <code>stl/backpack/</code> 按电池换）。</p>
+<ul>
+<li>材料 PLA 即可，层高 0.2mm，薄壁件 3 层周壁。</li>
+<li><strong>官方推荐打印方向</strong>（摆错强度差很多）：<img src="images/print_orientation.jpg" alt="打印方向"></li>
+<li>没有打印机：嘉立创三维猴 <a href="https://3d.jlcpcb.com">https://3d.jlcpcb.com</a> 传 STL 即可，全套几十元；或淘宝&quot;3D打印代打&quot;。</li>
+<li>STEP 源文件在官方仓库 <code>case/case_SG90/</code>（与本包 STL 同名），想改外形用 Fusion 360 / FreeCAD 打开。</li>
+</ul>
+<hr>
+<h2 id="2-舵机接线">2. 舵机接线</h2>
+<h3 id="21-变体-c1直插零-pcb30-玩起来">2.1 变体 C1：直插（零 PCB，+¥30 玩起来）</h3>
+<p>官方固件文档明确给出直插引脚（<code>manifest_local.json</code> 配 <code>driver.type: &quot;pwm&quot;</code>）：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>主机</th>
+<th>端口</th>
+<th>pan（水平）引脚</th>
+<th>tilt（垂直）引脚</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>M5Stack Core2</td>
+<td>Port.A</td>
+<td><strong>GPIO 33</strong></td>
+<td><strong>GPIO 32</strong></td>
+</tr>
+<tr>
+<td>M5Stack Core2</td>
+<td>Port.C</td>
+<td><strong>GPIO 13</strong></td>
+<td><strong>GPIO 14</strong></td>
+</tr>
+<tr>
+<td>M5Stack Core Basic/Gray</td>
+<td>Port.C</td>
+<td><strong>GPIO 16</strong></td>
+<td><strong>GPIO 17</strong></td>
+</tr>
+</tbody></table></div>
+<p>每颗 SG90 三根线：<strong>信号（橙）接上表引脚、VCC（红）接 5V、GND（棕）接 GND</strong>。舵机吃电流，强烈建议<strong>外接 5V</strong>（合适线径直接配电，不能用电阻分压供电）并<strong>共地</strong>，否则 SG90 启动瞬间可能把主机拉掉电。</p>
+<h3 id="22-变体-c2官方底板-pwm-模式">2.2 变体 C2：官方底板 PWM 模式</h3>
+<p>用官方 <code>m5-pantilt</code> 底板（<code>pcb/m5-pantilt-v1.0/</code>），<strong>制造文件已生成好</strong>：Gerber zip + 带 LCSC 号 BOM + 贴片坐标在 <a href="../pcb/m5-pantilt-v1.0/manufacture/"><code>pcb/m5-pantilt-v1.0/manufacture/jlcpcb/</code></a>，下单流程见其 <a href="../pcb/m5-pantilt-v1.0/manufacture/index.html">README</a>（2 层 1.6mm，5 片打样约 ¥30）。</p>
+<p><strong>PWM 模式跳线（关键）</strong>：不装 R13/R14（那是串行模式跳线），<strong>按主机型号装 0Ω 跳线</strong>：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>主机</th>
+<th>装哪两个</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Core Basic / Gray（PWM1_C1/PWM2_C1 路径）</td>
+<td><strong>R9 + R11</strong></td>
+</tr>
+<tr>
+<td>Core2 / CoreS3（PWM1_C2/PWM2_C2 路径）</td>
+<td><strong>R10 + R12</strong></td>
+</tr>
+</tbody></table></div>
+<p>PWM 版实拍（器件面/排座/跳线位置）：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>端口</th>
+<th>开关</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="images/pwm_ports.jpg" alt="pwm ports"></td>
+<td><img src="images/pwm_switch.jpg" alt="pwm switch"></td>
+</tr>
+</tbody></table></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>2x15 排座</th>
+<th>跳线</th>
+<th>元件面</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="images/pwm_2x15.jpg" alt="pwm 2x15"></td>
+<td><img src="images/pwm_jumper.jpg" alt="pwm jumper"></td>
+<td><img src="images/pwm_parts.jpg" alt="pwm parts"></td>
+</tr>
+</tbody></table></div>
+<p>舵机 3P 头直接插 J3/J8 舵机口，电池接 J5（PH2.0），主机插 J1 排母（J1 在<strong>背面</strong>，注意方向）。</p>
+<h3 id="23-变体m5go-bottom-版mongonta-方案免自制板">2.3 变体：M5GO Bottom 版（mongonta 方案，免自制板）</h3>
+<p>M5GO Bottom 底座 + SG90，日本 mongonta 的成熟方案，装配图 11 张：</p>
+<p><img src="images/m5go_assembly01.jpg" alt="M5GO 装配 1"> <img src="images/m5go_assembly02.jpg" alt="M5GO 装配 2"> <img src="images/m5go_assembly03.jpg" alt="M5GO 装配 3"></p>
+<p>（全套：<code>images/m5go_assembly01.jpg</code> ~ <code>m5go_assembly11.jpg</code>，本目录已存；带猫耳/河马耳/LEGO 孔装饰件。套件代购 <a href="https://mongonta.booth.pm/">https://mongonta.booth.pm/</a> ）</p>
+<hr>
+<h2 id="3-机械装配官方动图流程">3. 机械装配（官方动图流程）</h2>
+<p><strong>三条铁律</strong>（官方原文）：</p>
+<ol>
+<li><strong>先刷固件、舵机方向验证正确，再固定进壳</strong>——装反通电就顶壳。</li>
+<li>摇臂对准<strong>参考角 90°</strong>（SG90 正前方）再装十字盘。</li>
+<li>接线理顺、留活动余量，别让线卡住旋转。</li>
+</ol>
+<p>官方装配动图：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>1. 舵机卡进 bracket + 电池入 backpack</th>
+<th>2. feet 与 shell 锁螺丝</th>
+<th>3. 接底板 + 装 M5Stack</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="images/bracket.gif" alt="bracket"></td>
+<td><img src="images/shell_and_feet.gif" alt="shell feet"></td>
+<td><img src="images/m5stack_and_board.gif" alt="board"></td>
+</tr>
+</tbody></table></div>
+<p>文字版：</p>
+<ol>
+<li><p>舵机先<strong>不上壳</strong>：接好线、刷固件，确认两颗舵机停在中位、方向正确。</p>
+</li>
+<li><p>对准 90° 参考角装摇臂（十字盘凸起对齐）。</p>
+</li>
+<li><p>两颗 SG90 卡进 bracket；电池塞进 backpack，卡进 bracket。</p>
+</li>
+<li><p>feet 和 shell 用 M2×8 各 1 颗固定。</p>
+</li>
+<li><p>舵机线、电池线接底板（<strong>仔细核对插针方向</strong>）：</p>
+<p><img src="images/connect.jpg" alt="接线"></p>
+</li>
+<li><p>底板 M2×4 ×4 锁到机身，M5Stack 插到 J1 排母上；想锁死主机用底部两孔 M3×15。</p>
+</li>
+</ol>
+<hr>
+<h2 id="4-固件">4. 固件</h2>
+<h3 id="41-明确选择-pwm再构建">4.1 明确选择 PWM，再构建</h3>
+<p>通用 Core/Core2 目标只预置部分引脚，<strong>不保证默认 driver.type 是 pwm</strong>。直插和底板也使用不同 GPIO，必须按 <a href="../DIY_FIRMWARE.html#1-%E5%8F%B0%E6%9E%B6%E6%8E%A5%E7%BA%BF">自制固件配置表</a> 选择 JSON。</p>
+<ul>
+<li>Core Basic/Gray Port.C 直插：<code>core-sg90-portc.json</code>（pan16 / tilt17）。</li>
+<li>Core2 Port.A 直插：<code>core2-sg90-porta.json</code>（pan33 / tilt32）；Port.C 则自行改成 pan13 / tilt14。</li>
+<li>官方底板：旧 Core 用 <code>core-sg90-board.json</code>（5/2），Core2 用 <code>core2-sg90-board.json</code>（19/27）；CoreS3 用 <code>cores3-sg90-board.json</code>（7/6），并对应上述跳线。</li>
+</ul>
+<p>按 <a href="../DIY_FIRMWARE.html#4-%E6%9E%84%E5%BB%BA%E5%8F%8A%E7%83%A7%E5%BD%95">构建及烧录流程</a>，将配置复制为上游 <code>manifest_local.json</code>，明确指定通用主机，烧录该输出。网页/离线只选择主机型号不能替代驱动配置；旧 NVS 的 driver.type 也可能覆盖新配置，需检查设置。</p>
+<p>Takao 的 Core2 + SG90 有专用目标（pan19 / tilt27），只适用于接线一致的板：<code>npm run flash:takao_core2_sg90</code>。它不适用于 Port.A 直插。</p>
+<h3 id="42-小范围验收">4.2 小范围验收</h3>
+<p>先不上摇臂，确认两颗舵机回参考中位，再装摇臂。执行 <a href="../DIY_FIRMWARE.html#5-%E6%97%A0%E6%8C%89%E9%94%AE%E5%B0%8F%E8%8C%83%E5%9B%B4%E9%AA%8C%E6%94%B6">无按键小范围 MOD</a>；不要要求所有主机都有 A/B/C 三个实体键。检查动作方向、主机复位和机械干涉。SG90 没有位置反馈，不能用软件姿态估计当作实测反馈，也不能靠 setTorque(false) 真正切断其电源。装配时必须断开舵机供电。</p>
+<hr>
+<h2 id="5-常见坑">5. 常见坑</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>症状</th>
+<th>原因</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一动就黑屏重启</td>
+<td>SG90 涌流拉掉主机电源</td>
+<td>外接 5V 供电 + 共地；或走底板（有电源路径管理）</td>
+</tr>
+<tr>
+<td>舵机抖个不停</td>
+<td>PWM 引脚配置错</td>
+<td>核对 manifest_local 的 pwmPan/pwmTilt</td>
+</tr>
+<tr>
+<td>摇臂方向反了</td>
+<td>没对 90° 参考角</td>
+<td>重刷固件回中位后重装摇臂，勿硬掰</td>
+</tr>
+<tr>
+<td>摇臂装不进</td>
+<td>公差问题</td>
+<td>用锉/刀轻扩孔；别换错件</td>
+</tr>
+<tr>
+<td>堵转发烫</td>
+<td>机械卡死</td>
+<td><strong>立即断电</strong>——SG90 堵转可能冒烟（官方警告）</td>
+</tr>
+</tbody></table></div>
+<h2 id="6-想升级">6. 想升级？</h2>
+<ul>
+<li>嫌 SG90 没反馈/不够精致 → 看串行舵机路线：<a href="../scs0009-serial-route/index.html">SCS0009 串行路线</a> 或 <a href="../v1-xl330-route/index.html">v1.0 + XL330 路线</a>。</li>
+<li>底板老规格（v0.2.1 时代图纸）在官方仓库 tag <code>v0.2.1</code>：<a href="https://github.com/stack-chan/stack-chan/tree/v0.2.1/schematics">https://github.com/stack-chan/stack-chan/tree/v0.2.1/schematics</a> （与 main 分支 v1.0 板不通用，本路线用 main 分支板即可）。</li>
+<li>MOD 玩法/进阶固件文档：见 <a href="../firmware-docs/README.md">firmware-docs/</a>。</li>
+</ul>
+<footer>由 Markdown 自动生成。PDF 保持历史版本，接线与固件以本页面为准。自制路线尚需实物验收。</footer></main></body></html>

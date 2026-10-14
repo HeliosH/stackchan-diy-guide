@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>路线 D：SCS0009 串行舵机机身（国产串行总线 · 免打板也能玩）</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f8fa;color:#17202a;font:16px/1.75 system-ui,-apple-system,"PingFang SC",sans-serif}
+main{max-width:1120px;margin:32px auto;padding:32px;background:white;border:1px solid #dce3eb;border-radius:12px}
+h1,h2,h3{line-height:1.35;scroll-margin-top:20px}h1{font-size:30px}h2{margin-top:36px;border-bottom:1px solid #e4e8ee;padding-bottom:10px}
+a{color:#175ca3;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}blockquote{border-left:4px solid #528abf;padding:8px 18px;margin:16px 0;background:#eef5fc}
+pre{overflow:auto;background:#f0f3f7;padding:16px;border-radius:8px;line-height:1.55}code{font:13px/1.55 ui-monospace,monospace}p code,li code,td code{background:#f0f3f7;padding:2px 4px}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px;border:1px solid #d6dee8;text-align:left;vertical-align:top}th{background:#eef3f9}
+img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px auto}nav,footer{font-size:14px;color:#596a7c}nav{padding-bottom:16px;border-bottom:1px solid #e4e8ee}footer{margin-top:36px;border-top:1px solid #e4e8ee;padding-top:16px}
+@media(max-width:640px){main{margin:0;padding:20px;border:0;border-radius:0}h1{font-size:25px}pre{font-size:12px}}
+</style></head><body><main><nav><a href="../index.html">指南首页</a> · <a href="README.md">Markdown 源文档</a></nav><h1 id="路线-dscs0009-串行舵机机身国产串行总线-免打板也能玩">路线 D：SCS0009 串行舵机机身（国产串行总线 · 免打板也能玩）</h1>
+<blockquote>
+<p><strong>Feetech SCS0009 串行舵机 ×2 + 官方专用机身 + M5Stack 主机</strong>。这是官方仓库认可的&quot;国产串行舵机&quot;路线：
+舵机深圳飞特（Feetech）出品、淘宝直购，能读角度、限流限速、有全状态反馈，比 SG90 高一个档次，比 XL330 便宜且好买。
+附 <strong>RS30X（Futaba）变体</strong>（日规串行舵机，同思路）。
+预算约 <strong>¥350–550</strong>（含主机），工期 1 个周末。</p>
+</blockquote>
+<h2 id="0-本路线一览">0. 本路线一览</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主机</td>
+<td>推荐 CoreS3 + UART→TTL 半双工模块；其他主机/底板按实际 GPIO 配置</td>
+</tr>
+<tr>
+<td>舵机</td>
+<td>Feetech SCS0009 ×2（串行 TTL，半双工）</td>
+</tr>
+<tr>
+<td>驱动方式</td>
+<td>官方底板串行模式（R13/R14），或合格的 UART→TTL 半双工模块</td>
+</tr>
+<tr>
+<td>打印件</td>
+<td><code>stl/scs0009/</code>（4 件，官方专用机身）</td>
+</tr>
+<tr>
+<td>固件驱动</td>
+<td>本指南标定版 <code>scservo</code>（raw 零位、量程和限位）</td>
+</tr>
+<tr>
+<td>参考角（正前）</td>
+<td>以所购型号实测 raw 中位装配；初次 pan ±10°、tilt ±5°</td>
+</tr>
+<tr>
+<td>难度</td>
+<td>★★★</td>
+</tr>
+</tbody></table></div>
+<p><strong>为什么选它</strong>：串行总线架构（和官方 K151 整机同系列舵机；K151 定制版与市售版不能直接等同）、官方全套专用打印件、舵机国产好买。代价：改 ID 要 URT-1 调试器（一次性 ¥100 上下）；SCS0009 出厂默认 1Mbps 与官方固件 scservo 驱动匹配需核对。</p>
+<hr>
+<h2 id="1-物料清单bom">1. 物料清单（BOM）</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>物品</th>
+<th>数量</th>
+<th>参考价(¥)</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SCS0009 舵机</td>
+<td>2</td>
+<td>80–120/个</td>
+<td>飞特淘宝店/代理；金属齿 2.3kg·cm、300° 量程、全反馈</td>
+</tr>
+<tr>
+<td><strong>URT-1 调试器</strong></td>
+<td>1</td>
+<td>~100</td>
+<td>一次性投入：改 ID/波特率用，飞特配套</td>
+</tr>
+<tr>
+<td>M5Stack 主机</td>
+<td>1</td>
+<td>100–250</td>
+<td>CoreS3 / Core2 / Core Basic 均可</td>
+</tr>
+<tr>
+<td>官方底板</td>
+<td>1</td>
+<td>打样 ¥30</td>
+<td>串行模式（见 §3.1）；或 UART→TTL 半双工模块（§3.2）</td>
+</tr>
+<tr>
+<td>电池 + 耗材</td>
+<td>—</td>
+<td>30–50</td>
+<td>同 <a href="../v0-sg90-route/index.html#12-%E8%80%97%E6%9D%90">v0 路线 §1.2</a>，3.7V 400–640mAh PH2.0</td>
+</tr>
+<tr>
+<td>舵机延长线</td>
+<td>2</td>
+<td>—</td>
+<td>SCS0009 配套 3P 线，长短按机身走线</td>
+</tr>
+</tbody></table></div>
+<h3 id="11-打印件本包-stlscs0009">1.1 打印件（本包 <code>stl/scs0009/</code>）</h3>
+<p>shell_SCS0009、feet_SCS0009、bracket_SCS0009_f、bracket_SCS0009_b。</p>
+<ul>
+<li><strong>强烈建议直接用这套官方专用机身</strong>：SCS0009 圆形安装法兰原生吻合，含齿轮传动件；别拿 SG90 壳硬改。</li>
+<li>打印参数同通用（PLA、0.2mm、薄壁 3 层周壁，方向见 <a href="../v0-sg90-route/index.html#13-%E6%89%93%E5%8D%B0%E4%BB%B6%E6%9C%AC%E5%8C%85-stlv0-sg90">v0 路线</a>）。</li>
+<li>STEP 源文件在官方仓库 <code>case/case_SCS0009/</code>（同名 .step）。</li>
+</ul>
+<hr>
+<h2 id="2-舵机初始化关键步骤装壳前做完">2. 舵机初始化（关键步骤，装壳前做完）</h2>
+<ol>
+<li><p><strong>两颗舵机设不同 ID</strong>：ID1 = 脚/pan（水平），ID2 = 脸/tilt（垂直）。信号线接法：</p>
+<p><img src="images/scservo_cable_connection.jpg" alt="SCS0009 接线"></p>
+</li>
+<li><p>用 <strong>URT-1 调试器 + 飞特官方 GUI（fddebug）</strong> 改 ID 和角度：</p>
+<p><img src="images/id.jpg" alt="ID 设置"></p>
+</li>
+<li><p><strong>注意</strong>：官方提醒<strong>不要用飞特 GUI 的 &quot;Recovery&quot;</strong>（已知会导致舵机工作异常）。</p>
+</li>
+<li><p>改完 ID 后<strong>一次只连一颗</strong>验证（同 ID 冲突会连不上）。</p>
+</li>
+</ol>
+<blockquote>
+<p>SCS0009 规格：300°/1024 步（约 0.293°/步）、330° 传感器、2.3kg·cm、6V、半双工 TTL、出厂默认 1Mbps、ID 范围 0–253；规格书的中位标签与量程定义需结合实测，不把 511 当作通用 90°。完整数据手册：<a href="../k151-body-route/datasheets/SCS0009_Feetech_Servo.pdf"><code>../k151-body-route/datasheets/SCS0009_Feetech_Servo.pdf</code></a>。</p>
+</blockquote>
+<hr>
+<h2 id="3-电气连接两种玩法">3. 电气连接（两种玩法）</h2>
+<h3 id="31-官方底板串行模式推荐">3.1 官方底板串行模式（推荐）</h3>
+<p>用官方 <code>m5-pantilt</code> 底板，<strong>制造文件已生成好</strong>：<a href="../pcb/m5-pantilt-v1.0/manufacture/"><code>pcb/m5-pantilt-v1.0/manufacture/jlcpcb/</code></a>（Gerber zip + LCSC 号 BOM + 坐标 + 下单说明）。</p>
+<p><strong>串行模式跳线（关键）</strong>：<strong>只装 R13/R14（0Ω）</strong>——R13 把 J3/J8 数据线并成一条半双工总线，R14 接到 MAX3485 收发线（自动换向，CoreS3 的 GPIO17/18；旧 Core 才是 17/16，连接器视图需核对）。<strong>R9–R12 不装</strong>（那是 PWM 模式的 Core 型号选择跳线）。</p>
+<p>串行版实拍：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>端口</th>
+<th>开关</th>
+<th>2x15 排座</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="images/serial_ports.jpg" alt="serial ports"></td>
+<td><img src="images/serial_switch.jpg" alt="serial switch"></td>
+<td><img src="images/serial_2x15.jpg" alt="serial 2x15"></td>
+</tr>
+</tbody></table></div>
+<p>舵机接 J3/J8（JST EH 3P 口），电池 J5，主机插 J1（背面，注意方向）。</p>
+<h3 id="32-免板方案uartttl-半双工模块">3.2 免板方案：UART→TTL 半双工模块</h3>
+<p>使用带 3.3V UART TX/RX 侧、单线 TTL DATA 侧、收发释放时序说明的模块。默认 CoreS3 TX6/RX7；DATA 并接两颗舵机，舵机独立 5V 供电，主机共地。完整图及要求见 <a href="../k151-body-route/index.html#5-%E6%8E%A5%E7%BA%BF">K151 结构路线 §5</a>。不用 RX 串二极管或普通 USB-TTL TX/RX 短接。URT-1 用于电脑改 ID，与主机 UART 转换器分开选型。</p>
+<hr>
+<h2 id="4-机械装配">4. 机械装配</h2>
+<ol>
+<li>舵机 ID 改好、固件刷好、<strong>两颗舵机停在中位、方向验证正确</strong>之后才动壳（铁律）。</li>
+<li>用工具发 raw=512 并实测位置，再断电装摇臂，使头部正前水平。按所购舵机实测量程，不把旧驱动的 100° 或 K151 零位直接套用。</li>
+<li>其余流程同 <a href="../v0-sg90-route/index.html#3-%E6%9C%BA%E6%A2%B0%E8%A3%85%E9%85%8D%E5%AE%98%E6%96%B9%E5%8A%A8%E5%9B%BE%E6%B5%81%E7%A8%8B">v0 路线 §3</a>：bracket 卡舵机 → feet/shell 锁螺丝 → 接线留余量 → 底板 M2×4×4 锁机身 → 插主机。</li>
+<li>接线理顺、留活动余量，别让线卡住旋转。</li>
+</ol>
+<hr>
+<h2 id="5-固件与标定">5. 固件与标定</h2>
+<p>使用 <a href="../DIY_FIRMWARE.html">自制固件流程</a>：固定 v1.1.0，复制 <code>cores3-scs0009.json</code> <strong>及</strong> <code>scservo-calibrated-driver.js</code> 到上游 host/app，再构建通用 CoreS3。</p>
+<p>原版 SCServo 协议固定按 200°换算，本路线采购的市售规格是 300°/1024；新驱动使用 raw 命令、显式串口、实测量程和限位，不能只复制 JSON 而漏掉驱动。默认 TX6/RX7@1Mbps，若走 m5-pantilt 则改成 TX17/RX18；主机和舵机波特率必须一致，不自动降到 115200。</p>
+<p>先确认 ID1/ID2、raw 零位及方向，再按共用流程量角；零位调 <code>panZeroRaw/tiltZeroRaw</code>，不依赖原驱动未使用的 offset 字段。首次范围 pan ±10°、tilt ±5°，运行一次左右 5°、上下 3° 的 MOD。串行应答正常、读回正确、供电及机械无干涉后才扩展范围。本标定驱动未实现电流/温度堵转保护，不宣称与 K151 定制驱动等价。</p>
+<p>K151 的 Y 轴 5-85°是该整机机械参考，不是本机舵机 raw 角度的通用限制；自制机按实际机构标定。</p>
+<hr>
+<h2 id="6-变体rs30xfutaba日规串行舵机">6. 变体：RS30X（Futaba，日规串行舵机）</h2>
+<p>同一思路的日本品牌版本（Vstone/Best Solution RS30X / RS304MD）：</p>
+<ul>
+<li>参考角 <strong>0°</strong>（可动 −150~150°），与 SCS0009 的 100° 不同，摇臂对位注意。</li>
+<li>国内需代购/转运（约 3000 日元+/颗），不推荐国内用户优先选。</li>
+<li>打印件本包已带：<code>stl/rs30x/</code>（shell_RS30X、feet_RS30X、bracket_RS30X）。</li>
+<li>固件驱动 <code>rs30x</code>；官方示例 MOD <code>setup_rs30x</code> 可做初始化（见 <a href="../firmware-docs/README.md">firmware-docs/</a>）。</li>
+<li>底板同样走串行模式（R13/R14）。</li>
+</ul>
+<hr>
+<h2 id="7-相关路线">7. 相关路线</h2>
+<ul>
+<li>K151 造型的自制结构路线：<a href="../k151-body-route/index.html">K151 机身路线</a>（含 K151 机身 + 开源 PCB 混合玩法）</li>
+<li>更高阶的 Dynamixel 串行路线：<a href="../v1-xl330-route/index.html">v1.0 + XL330</a></li>
+<li>预算优先的 PWM 路线：<a href="../v0-sg90-route/index.html">v0 + SG90</a></li>
+</ul>
+<footer>由 Markdown 自动生成。PDF 保持历史版本，接线与固件以本页面为准。自制路线尚需实物验收。</footer></main></body></html>

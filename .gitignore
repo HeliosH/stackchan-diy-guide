@@ -2,3 +2,4 @@
 Thumbs.db
 *.tmp
 __pycache__/
+node_modules/

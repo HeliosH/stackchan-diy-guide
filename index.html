@@ -1,924 +1,131 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head><meta charset="utf-8">
-<title>Stack-chan 手挫完全指南</title>
-<style>
-@page { size: A4; margin: 15mm 13mm; }
-* { box-sizing: border-box; }
-body { font-family: 'Noto Sans CJK SC','Noto Sans CJK JP',sans-serif; font-size: 10.5pt; line-height: 1.7; color: #1a1a1a; margin: 0; }
-h1 { font-size: 19pt; border-bottom: 3px solid #34495e; padding-bottom: 8px; margin: 0 0 4px; }
-h2 { font-size: 14.5pt; border-left: 6px solid #2e6da3; background: #f2f6fb; padding: 4px 10px; margin: 24px 0 10px; page-break-after: avoid; }
-h3 { font-size: 12pt; margin: 16px 0 8px; page-break-after: avoid; }
-h4 { font-size: 11pt; margin: 12px 0 6px; page-break-after: avoid; }
-p { margin: 6px 0; }
-ul, ol { margin: 6px 0; padding-left: 22px; }
-li { margin: 3px 0; }
-table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 9.3pt; page-break-inside: avoid; }
-th, td { border: 1px solid #b8c2cc; padding: 5px 8px; text-align: left; vertical-align: top; word-break: break-word; }
-th { background: #e8eef7; }
-tr:nth-child(even) td { background: #fafcfe; }
-img { max-width: 100%; max-height: 100mm; object-fit: contain; display: block; margin: 10px auto; page-break-inside: avoid; }
-td img { max-width: 100%; max-height: 60mm; margin: 4px auto; }
-code { font-family: 'DejaVu Sans Mono', monospace; font-size: 8.8pt; background: #f4f4f4; border: 1px solid #e2e2e2; border-radius: 3px; padding: 0 3px; word-break: break-all; }
-pre { background: #f6f8fa; border: 1px solid #dcdfe2; border-radius: 5px; padding: 8px 10px; margin: 8px 0; page-break-inside: avoid; }
-pre code { background: none; border: none; padding: 0; font-size: 8.5pt; white-space: pre-wrap; }
-blockquote { border-left: 4px solid #9db3c8; background: #f7fafc; margin: 10px 0; padding: 6px 12px; color: #3d5466; page-break-inside: avoid; }
-hr { border: none; border-top: 1px solid #ccd4db; margin: 16px 0; }
-a { color: #2e6da3; text-decoration: none; word-break: break-all; }
-strong { color: #0d2b45; }
-</style>
-</head>
-<body>
-<h1>Stack-chan（スタックチャン）手挫完全指南 · 国内版</h1>
-<blockquote>
-<p>本文基于开源仓库 <a href="https://github.com/stack-chan/stack-chan">stack-chan/stack-chan</a>（main 分支，固件 v1.1.0）与 M5Stack 官方 K151 产品文档（<a href="https://docs.m5stack.com/zh_CN/StackChan">中文</a> / <a href="https://docs.m5stack.com/en/StackChan">English</a>）整理。
-配套的图片、外壳 STL、KiCad 底板工程、离线固件包都已放在本目录（见附录 A 文件清单），可离线使用。</p>
-</blockquote>
-<hr />
-<h2>0. 与官方文档核对后的要点（相比上一版教程的更新）</h2>
-<ol>
-<li><strong>官方有中文文档</strong>：https://docs.m5stack.com/zh_CN/StackChan （K151 整机规格、出厂固件指南、App 使用）。</li>
-<li><strong>整机国内直购</strong>：M5Stack 官方淘宝店 https://m5stack.taobao.com ；StackChan 整机淘宝直链 https://item.taobao.com/item.htm?id=1042238294510 ；官方商城 $99（K151）/ $125（K151-R 带遥控手柄版）。</li>
-<li><strong>K151 出厂固件生态全部开源</strong>：<a href="https://github.com/m5stack/StackChan">m5stack/StackChan</a>（出厂固件 + 遥控手柄固件 + iOS/Android App + 服务端），板级支持包 <a href="https://github.com/m5stack/StackChan-BSP">m5stack/StackChan-BSP</a>。</li>
-<li><strong>K151 官方机身结构文件</strong>：<a href="https://github.com/m5stack/M5_Hardware/tree/master/Products/K151_StackChan/Structures">M5_Hardware/Products/K151_StackChan/Structures</a>（10 个 STL，本包已附带，可用于魔改/复刻机身）。</li>
-<li><strong>M5Burner v3 可刷/可恢复 K151 出厂固件</strong>（Windows/macOS/Linux 三平台，下载见 7.7 节）；网页刷机工具（WebSerial）也支持简体中文界面。</li>
-<li><strong>安全须知（官方原文警告）</strong>：Y 轴（垂直）舵机角度控制在 <strong>5°～85°</strong>，超限可能堵转并造成<strong>永久损坏</strong>；X 轴无限制；<strong>不确定通电状态时禁止用手硬掰</strong>任何活动部件。</li>
-<li><strong>App 兼容性</strong>：StackChan World App <strong>只能连接官方核心</strong>（K151 整机 / 遥控套件 / 单独售卖的官方替换核心），<strong>不能</strong>连接第三方 CoreS3 / CoreS3-SE / CoreS3-Lite。</li>
-<li><strong>离线固件包</strong>：官方 release 提供 zip（含 4 个目标板的 esptool 三件套），本包已附带并通过 SHA-256 校验。</li>
-<li>K151 机身<strong>两个 USB-C 口都支持数据</strong>（推荐用底部那个）；机身内置 550 mAh 电池、12 颗 RGB、红外收发、顶部三区触摸、全功能 NFC。</li>
-<li>固件 v1.1.0 新玩法：Stackchan Dock（安卓手机 USB 直连语音对话）、MCP Server MOD、MediaPipe BLE 面部/手势跟踪、XiaoZhi v1 兼容 ChatService。</li>
-</ol>
-<hr />
-<h2>1. Stack-chan 是什么</h2>
-<p>石川知也（meganetaaan）发起的开源"超可爱"桌面机器人：M5Stack 屏幕 + Avatar 表情库当脸，两个舵机做俯仰/偏航"脖子"，会点头、摇头、东张西望。硬件（外壳 STL、底板 KiCad 工程）和固件（Moddable SDK 上的 JavaScript/TypeScript，host + MOD 热装架构）全部开源。</p>
-<p><img alt="整机外观" src="images/case.jpg" /></p>
-<hr />
-<h2>2. 先选一条路线</h2>
-<table>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Stack-chan 国内自制指南</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f8fa;color:#17202a;font:16px/1.75 system-ui,-apple-system,"PingFang SC",sans-serif}
+main{max-width:1120px;margin:32px auto;padding:32px;background:white;border:1px solid #dce3eb;border-radius:12px}
+h1,h2,h3{line-height:1.35;scroll-margin-top:20px}h1{font-size:30px}h2{margin-top:36px;border-bottom:1px solid #e4e8ee;padding-bottom:10px}
+a{color:#175ca3;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}blockquote{border-left:4px solid #528abf;padding:8px 18px;margin:16px 0;background:#eef5fc}
+pre{overflow:auto;background:#f0f3f7;padding:16px;border-radius:8px;line-height:1.55}code{font:13px/1.55 ui-monospace,monospace}p code,li code,td code{background:#f0f3f7;padding:2px 4px}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px;border:1px solid #d6dee8;text-align:left;vertical-align:top}th{background:#eef3f9}
+img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px auto}nav,footer{font-size:14px;color:#596a7c}nav{padding-bottom:16px;border-bottom:1px solid #e4e8ee}footer{margin-top:36px;border-top:1px solid #e4e8ee;padding-top:16px}
+@media(max-width:640px){main{margin:0;padding:20px;border:0;border-radius:0}h1{font-size:25px}pre{font-size:12px}}
+</style></head><body><main><nav><a href="index.html">指南首页</a> · <a href="README.md">Markdown 源文档</a></nav><h1 id="stack-chan-国内自制指南">Stack-chan 国内自制指南</h1>
+<p>基于 <a href="https://github.com/stack-chan/stack-chan/tree/v1.1.0">Stack-chan 社区 v1.1.0</a> 和 <a href="https://docs.m5stack.com/zh_CN/StackChan">M5Stack K151 官方资料</a>整理。Stack-chan 用 M5Stack 屏幕显示表情，两只舵机构成双轴机身；社区固件使用 Moddable JavaScript/TypeScript 和 MOD。</p>
+<p><img src="images/case.jpg" alt="经典自制机外观"></p>
+<p><strong>本版已修正接线、构建目标及舵机量程配置。自制路线完成了文档/源码核对和模拟协议测试，尚未完成实物整机验收。</strong> 网页与 Markdown 同步生成；随附 PDF 为历史版本，电气、固件及采购操作以本版 Markdown 为准，不照旧 PDF 接线。</p>
+<h2 id="1-选择路线">1. 选择路线</h2>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>路线</th>
-<th>内容</th>
-<th>难度</th>
-<th>预算（估）</th>
-<th>工期</th>
-<th>适合</th>
+<th>主机/舵机</th>
+<th>判断与前提</th>
+<th>入口</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td><strong>A. 整机 K151</strong></td>
-<td>淘宝/官方商城买整机，到手刷机即用</td>
-<td>★</td>
-<td>~¥700 上下（$99 / $125 + 运费）</td>
-<td>当天</td>
-<td>只想玩、要 App/AI 功能</td>
+<tbody><tr>
+<td>A 官方整机</td>
+<td>K151 原装核心及机身</td>
+<td>厂家完整产品；按厂家使用说明操作</td>
+<td><a href="k151-kit-route/index.html">K151 整机</a></td>
 </tr>
 <tr>
-<td><strong>B. v1.0 自制</strong></td>
-<td>CoreS3 + XL330 串行舵机×2 + 官方底板（打样）+ 打印壳</td>
-<td>★★★★</td>
-<td>~¥600–900（含主机）</td>
-<td>1–2 个周末</td>
-<td>完整手挫、要串行舵机的性能</td>
+<td>B v1 + XL330</td>
+<td>CoreS3、XL330-M288-T×2</td>
+<td>官方结构参考；需适配实际总线 GPIO 和自定义固件</td>
+<td><a href="v1-xl330-route/index.html">XL330 路线</a></td>
 </tr>
 <tr>
-<td><strong>C. v0 自制</strong></td>
-<td>Core/Basic（或 Core2）+ SG90×2 + 官方底板（打样）+ 打印壳</td>
-<td>★★★</td>
-<td>~¥300–500（含主机）</td>
-<td>1 个周末</td>
-<td>经典造型、性价比高</td>
+<td>C v0 + SG90</td>
+<td>Core Basic/Gray 或 Core2、SG90×2</td>
+<td>基础 DIY，先独立供电台架验证；显式选择 PWM</td>
+<td><a href="v0-sg90-route/index.html">SG90 路线</a></td>
 </tr>
 <tr>
-<td><strong>D. 丐版直插</strong></td>
-<td>已有 M5Stack + SG90×2 杜邦线直插端口（免底板免打板）</td>
-<td>★</td>
-<td>+¥30 即可（已有主机时）</td>
-<td>半天</td>
-<td>快速验证兴趣</td>
+<td>D SCS0009</td>
+<td>CoreS3 等、市售 SCS0009×2</td>
+<td>合格半双工电路；需实测量程、raw 零位及限位</td>
+<td><a href="scs0009-serial-route/index.html">串行路线</a></td>
 </tr>
 <tr>
-<td><strong>E. 零元体验</strong></td>
-<td>网页模拟器 + 积木编辑器，不买任何硬件</td>
-<td>—</td>
-<td>¥0</td>
-<td>10 分钟</td>
-<td>纯体验/预研</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>路线 E 入口：https://stack-chan.github.io/stack-chan/web/ （支持简体中文，含模拟器、积木编辑器、MOD Gallery、刷机器）</p>
-</blockquote>
-<hr />
-<h2>3. 国内采购指南</h2>
-<h3>3.1 主机 / 整机（"主板"从哪买）</h3>
-<table>
-<thead>
-<tr>
-<th>商品</th>
-<th>渠道</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>StackChan 整机（K151）</strong></td>
-<td>淘宝官方店直链：https://item.taobao.com/item.htm?id=1042238294510</td>
-<td>官方直营；K151 = CoreS3 + 机身（550mAh 电池、双反馈舵机、12×RGB、红外、三区触摸、NFC、双 USB-C）</td>
+<td>E K151 造型</td>
+<td>普通 CoreS3、市售 SCS0009、官方 STL</td>
+<td>结构改造；不等价于 K151 专用电子方案，先试装支架</td>
+<td><a href="k151-body-route/index.html">结构复刻</a></td>
 </tr>
 <tr>
-<td>StackChan 遥控套件版（K151-R）</td>
-<td>M5Stack 官方淘宝店 https://m5stack.taobao.com 搜 "StackChan"；官方商城 https://shop.m5stack.com/products/m5stackchan-ai-desktop-robot-kit-with-remote-control-esp32-s3</td>
-<td>多一个 JoyC + StickC-Plus 组装的手柄遥控（ESP-NOW 遥控），$125</td>
+<td>F 网页体验</td>
+<td>不需要硬件</td>
+<td>模拟器可验证软件，不能验证供电/接线/机构</td>
+<td><a href="https://stack-chan.github.io/stack-chan/web/">网页工具</a></td>
 </tr>
-<tr>
-<td><strong>M5Stack CoreS3</strong></td>
-<td>官方淘宝店 https://m5stack.taobao.com （搜 CoreS3）；官方商城 https://shop.m5stack.com/products/m5stack-cores3-esp32s3-iotdevelopment-kit</td>
-<td>路线 B 的主机，约两百多</td>
-</tr>
-<tr>
-<td>M5Stack Core2 / Core Basic/Gray</td>
-<td>同上（官方淘宝店或商城）</td>
-<td>路线 C/D 的主机；Core2 有内置喇叭和电池</td>
-</tr>
-<tr>
-<td>中文文档</td>
-<td>https://docs.m5stack.com/zh_CN/StackChan</td>
-<td>购买前后都可看</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>官方商城（Shopify）从深圳发货，支持国际卡；淘宝店对国内用户最方便、可开发票。M5Stack 是深圳公司，国内现货充足。
-<strong>注意</strong>：自己买 CoreS3 做"脸+脖子"属于自制路线；StackChan World App 只认官方核心（见第 0 节第 7 条）。</p>
-</blockquote>
-<h3>3.2 舵机选型（核心取舍）</h3>
-<table>
-<thead>
-<tr>
-<th>舵机</th>
-<th>类型</th>
-<th>参考角（正前）</th>
-<th>国内渠道</th>
-<th>特点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>SG90 / MG90S</strong></td>
-<td>PWM</td>
-<td>90°</td>
-<td>淘宝任意（¥5–15/个，MG90S 金属齿更耐用）</td>
-<td>便宜；涌流可能拉掉主机电源，堵转会过热冒烟（官方警告），不能读角度/断扭矩</td>
-</tr>
-<tr>
-<td><strong>SCS0009</strong></td>
-<td>串行 TTL</td>
-<td>100°</td>
-<td>深圳飞特（Feetech）产品，淘宝可直购</td>
-<td>串行、可读角度；改 ID 需要 URT-1 调试器或手工工具</td>
-</tr>
-<tr>
-<td><strong>XL330-M288</strong>（v1.0 新规格）</td>
-<td>Dynamixel 串行</td>
-<td>设 ID1=腿/ID2=脖，波特率 1M（默认 57600 需改）</td>
-<td>Robotis 韩国品牌，淘宝有代理店；U2D2 调试器约 ¥200–300</td>
-<td>功能最强（速度/扭矩/温度反馈）；v1.0 外壳官方配套</td>
-</tr>
-<tr>
-<td><strong>RS30X/RS304MD</strong></td>
-<td>串行 TTL</td>
-<td>0°</td>
-<td>日本 Vstone/Best Solution，国内需代购/转运（约 3000 日元+）</td>
-<td>官方文档认可，但国内获取成本高，不推荐</td>
-</tr>
-</tbody>
-</table>
-<p><strong>给国内手挫的建议</strong>：走丐版/性价比选 <strong>SG90（MG90S 更稳）</strong>；要体验串行舵机玩法选 <strong>SCS0009</strong>（本土品牌好买）或 <strong>XL330</strong>（走 v1.0 官方新规格）。</p>
-<h3>3.3 底板（servo driver board）</h3>
+</tbody></table></div>
+<p>先获得可用整机可选 A；学习 DIY 从 C 的小范围台架测试开始。B/D 在串行通信和标定通过后再合壳；E/G 等结构改造宜在基础机完成后进行。价格、现货、工具和 SMT 服务未实时核价，路线里的历史估算不作为采购承诺。</p>
+<h2 id="2-接线与固件入口">2. 接线与固件入口</h2>
+<p><strong>B/C/D/E 的完整配置、构建、烧录和无按键验收见 <a href="DIY_FIRMWARE.html">DIY_FIRMWARE.md</a>。</strong> 配套 <code>firmware-configs/</code> 提供按主机/接线区分的 JSON、SCS0009 raw 标定驱动及一次性小角度 MOD。</p>
 <ul>
-<li><strong>自己打</strong>：官方开源 KiCad 工程，嘉立创打样，详见第 4 章（推荐）。</li>
-<li><strong>不想打板</strong>：舵机直插 M5Stack 端口（杜邦线），引脚见 4.5 节；或参考日本 mongonta 的 M5Bottom 套件（booth 店需代购：https://mongonta.booth.pm/ ）。</li>
-<li><strong>买整机</strong>：K151 机身自带驱动，无需底板。</li>
+<li>CoreS3 GPIO16 用于摄像头，外部 Port.C 是17/18；不能沿用旧 Core 的17/16。</li>
+<li>CoreS3 厂商 M5-Bus 图中26脚是GPIO14，不是GND。按实际图确认真正地线并测通断。</li>
+<li>串行 DATA 必须有正确半双工释放/接收时序。不用 RX 串二极管或普通 USB-TTL TX/RX 短接。</li>
+<li>自制 CoreS3 构建通用 <code>m5stack_cores3</code>；官方 K151 才使用 <code>m5stackchan_cores3</code>。默认 <code>npm run flash/deploy</code> 是 K151，不读取自制机的 <code>manifest_local.json</code>。</li>
+<li>原版 scservo 固定按200°换算、没有传递 <code>driver.serial</code>。本指南为市售300°型号提供 raw 标定驱动；确认配置和替换模块一起安装。</li>
+<li>不要求 CoreS3 有 A/B/C 实体键；验收 MOD 用公开 setPose API 一次测试左右5°、上下3°及回中。</li>
 </ul>
-<h3>3.4 电池与耗材</h3>
-<table>
+<p>先不装摇臂、确认零位再装壳；舵机独立合适5V供电并共地，独立 +5V 不和主机 +5V 直接并接。扩大动作范围前测出机械干涉位置。K151 的 Y轴5-85°只适用于它的机械参考，自制机按实际零位、方向和机构限位。</p>
+<h2 id="3-pcb打印与电源">3. PCB、打印与电源</h2>
+<div class="table-wrap"><table>
 <thead>
 <tr>
-<th>物料</th>
-<th>规格</th>
-<th>国内获取</th>
+<th>模式</th>
+<th>跳线</th>
+<th>GPIO/配置</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>锂电池</td>
-<td>3.7V 400–640mAh（如 401230/501235）带 PH2.0-2P 插头</td>
-<td>淘宝 ¥10–20</td>
+<tbody><tr>
+<td>m5-pantilt 串行</td>
+<td>R13/R14；R9-R12 不装</td>
+<td>按实际主机映射；CoreS3 为17/18</td>
 </tr>
 <tr>
-<td>螺丝</td>
-<td>M2×4 自攻×4、M2×8 自攻×2；可选 M3×15×2；XL330 自带 M2.5×6</td>
-<td>淘宝螺丝包</td>
+<td>PWM，旧 Core</td>
+<td>R9/R11；串行跳线不装</td>
+<td>pan5 / tilt2</td>
 </tr>
 <tr>
-<td>杜邦线</td>
-<td>母对母/公对母若干</td>
-<td>丐版直插必备</td>
+<td>PWM，Core2</td>
+<td>R10/R12；串行跳线不装</td>
+<td>pan19 / tilt27</td>
 </tr>
 <tr>
-<td>PH2.0 端子线</td>
-<td>2P 若干</td>
-<td>接底板电池座</td>
+<td>PWM，CoreS3</td>
+<td>R10/R12；串行跳线不装</td>
+<td>pan7 / tilt6</td>
 </tr>
-<tr>
-<td>3D 打印</td>
-<td>PLA/PETG 约 30–50g</td>
-<td>自印或代打（见第 5 章）</td>
-</tr>
-</tbody>
-</table>
-<h3>3.5 预算汇总（估算，以实际为准）</h3>
-<table>
-<thead>
-<tr>
-<th>路线</th>
-<th>主要开销</th>
-<th>合计</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>D 丐版（已有主机）</td>
-<td>SG90×2 + 杜邦线</td>
-<td><strong>约 ¥30</strong></td>
-</tr>
-<tr>
-<td>C v0 自制（含主机）</td>
-<td>Core Basic/Core2 + SG90×2 + 打样 + 打印 + 电池</td>
-<td><strong>约 ¥300–500</strong></td>
-</tr>
-<tr>
-<td>B v1.0 自制（含主机）</td>
-<td>CoreS3 + XL330×2 + U2D2（一次性投入）+ 打样 + 打印</td>
-<td><strong>约 ¥600–900</strong></td>
-</tr>
-<tr>
-<td>A 整机 K151</td>
-<td>淘宝整机</td>
-<td><strong>约 ¥700 上下</strong></td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2>4. 底板：买还是自己打（自己打详解）</h2>
-<h3>4.1 这块板是什么</h3>
-<p>官方开源底板 <code>m5-pantilt</code>（KiCad 工程）位于仓库 <code>schematics/m5-pantilt/</code>，功能：</p>
-<ul>
-<li>驱动两颗舵机（<strong>PWM×2 或 串行×2</strong>，同一块板按舵机类型选择焊装的器件与跳线）</li>
-<li>通过 M5 Unit PortB 引出端口</li>
-<li>外部 5V 供电口</li>
-<li>电池供电，且<strong>可经 M5Stack 给电池充电</strong></li>
-<li>（可选）电源开关</li>
-</ul>
-<p><img alt="底板正面" src="images/m5-pantilt-top.png" /></p>
-<p><img alt="底板背面" src="images/m5-pantilt-bottom.png" /></p>
-<p>PWM 版（SG90）与串行版（SCS0009/RS30X/Dynamixel）的器件差别（跳线、缓冲 IC 等）详见实拍图与原理图：</p>
-<table>
-<thead>
-<tr>
-<th>PWM 版</th>
-<th>串行版</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><img alt="pwm ports" src="images/pwm_ports.jpg" /></td>
-<td><img alt="serial ports" src="images/serial_ports.jpg" /></td>
-</tr>
-<tr>
-<td><img alt="pwm switch" src="images/pwm_switch.jpg" /></td>
-<td><img alt="serial switch" src="images/serial_switch.jpg" /></td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>官方对比结论（原文翻译）：PWM/SG90 便宜但涌流可能导致 M5Stack 掉电，堵转过限可能冒烟；串行舵机能读角度、限速控制更精细，但贵。板上信号/供电见原理图 [images/m5-pantilt-sch.png] 与完整原理图 PDF（本包 <code>pcb/m5-pantilt-v1.0/m5-pantilt.pdf</code>）。</p>
-</blockquote>
-<h3>4.2 文件都在哪（本包已附带）</h3>
-<pre><code>pcb/m5-pantilt-v1.0/
-├── m5-pantilt.kicad_pro / .kicad_sch / .kicad_pcb   ← KiCad 工程（main 分支 = v1.0 规格）
-├── m5-pantilt.pdf                                    ← 原理图 PDF（核对元件用）
-├── m5-pantilt-all-pos.csv                            ← 贴片坐标（CPL），仓库官方提供
-├── m5-pantilt.kibot.yaml                             ← KiBot 一键生成嘉立创制造文件的配置
-├── gerber/                                           ← 仓库只提交了丝印 + 钻孔
-│   ├── m5-pantilt-B_Silkscreen.gbo
-│   ├── m5-pantilt-F_Silkscreen.gto
-│   ├── m5-pantilt-NPTH.drl / m5-pantilt-PTH.drl
-├── m5-pantilt.pretty/                                ← 自定义封装库
-└── 其他工程配套文件（lib/sym-lib-table/cache 等）
+</tbody></table></div>
+<p>完整 KiCad 工程及 <a href="pcb/m5-pantilt-v1.0/manufacture/index.html">制造文件</a>已附。<code>gerber/</code> 只有历史丝印/钻孔，不可作为完整制板输入；下单用 <code>manufacture/jlcpcb/</code> 内完整 Gerber ZIP。BOM/CPL 仍需在装配预览核对封装、极性、元件方向、跳线及 LCSC 匹配，未完成 DRC/ERC 和实板签核，不能宣称上传就可免核对制造。旧 PDF 原理图与当前 KiCad 的元件版本差异以实际制造基准处理。</p>
+<p>STL 按 <code>stl/v1-xl330/</code>、<code>v0-sg90/</code>、<code>scs0009/</code>、<code>rs30x/</code>、<code>k151-body/</code>、<code>backpack/</code> 分类。先试装支架、舵机轴、轴承和主机卡位再整套打印。材料、支撑、强度和公差按实际打印条件选择，官方参考方向：</p>
+<p><img src="images/print_orientation.jpg" alt="打印方向参考"></p>
+<p>J5 是 BAT 电源路径，充电由具体主机管理，不是独立充电器。电池保护、极性、充电控制和升压路径需确认；不把 AAA/镍氢接到锂电充电端。容量不等于放电电流能力，初次采用桌面稳压电源并测压降。</p>
+<h2 id="4-固件与进阶资料">4. 固件与进阶资料</h2>
+<p>离线 <code>firmware/stack-chan-firmware-v1.1.0.zip</code> 有四个目标的 bootloader、partition table 和应用。SHA-256 与随附校验文件一致、ZIP CRC 检查通过；未独立比对官方 release 下载件。此检查不证明预编译默认驱动和接线适合你的 DIY 机。</p>
+<pre><code class="language-bash">cd firmware
+shasum -a 256 -c stack-chan-firmware-v1.1.0.zip.sha256
 </code></pre>
-<p><strong>重要</strong>：铜层 Gerber 官方没有提交（<code>.gitignore</code> 只忽略 <code>generated/</code>），需要自己生成——这正是"自己打"的第一步。</p>
-<h3>4.3 步骤一：生成制造文件（Gerber + BOM + 坐标）</h3>
-<p><strong>方法 A：KiBot 一键生成（推荐，配置官方已写好）</strong></p>
-<ol>
-<li>安装 <a href="https://www.kicad.org/">KiCad</a>（建议 7/8 版本）与 KiBot：
-   <code>bash
-   pip install kibot</code></li>
-<li>在 <code>pcb/m5-pantilt-v1.0/</code> 目录执行：
-   <code>bash
-   kibot -c m5-pantilt.kibot.yaml -e m5-pantilt.kicad_sch -b m5-pantilt.kicad_pcb</code></li>
-<li>生成物在 <code>generated/</code> 下，其中 <code>Manufacturers/JLCPCB/</code> 是给嘉立创的 Gerber/BOM/坐标文件，另有 <code>BoM/Generic/</code> 的通用 BOM（HTML/XLSX）。</li>
-</ol>
-<p><strong>方法 B：KiCad 手动导出（不装 KiBot）</strong></p>
-<ol>
-<li>用 KiCad 打开 <code>m5-pantilt.kicad_pcb</code> → 文件 → 制造输出 → Gerbers（导出含铜层+丝印+阻焊+钻孔，打包 zip）。</li>
-<li>贴片坐标：文件 → 制造输出 → 元件位置文件（.pos / .csv）；也可以直接用官方给的 <code>m5-pantilt-all-pos.csv</code>。</li>
-<li>BOM：原理图工具 → BOM 导出（或直接对照 <code>m5-pantilt.pdf</code> 手抄，见 4.4）。</li>
-</ol>
-<h3>4.4 步骤二：核对元件清单（BOM）</h3>
-<p>仓库贴片坐标文件（CPL）里只有 3 个 SMD 件，其余都是手插件——所以这块板<strong>非常适合手挫</strong>：</p>
-<table>
-<thead>
-<tr>
-<th>位号</th>
-<th>值/型号</th>
-<th>封装</th>
-<th>面别</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>J1</td>
-<td>2×15 排母（Conn_02x15）</td>
-<td>SMD 立贴</td>
-<td><strong>bottom（背面）</strong></td>
-<td>M5Stack 从上面插下去的插座</td>
-</tr>
-<tr>
-<td>R1</td>
-<td>1kΩ</td>
-<td>0603（手焊盘）</td>
-<td>top</td>
-<td>—</td>
-</tr>
-<tr>
-<td>R2</td>
-<td>100Ω</td>
-<td>0603（手焊盘）</td>
-<td>top</td>
-<td>—</td>
-</tr>
-</tbody>
-</table>
-<p>手插件（对照原理图 PDF 与实拍图核对）：舵机 3P 连接座 ×2、PH2.0-2P 电池座、跳线帽/排针、（串行版）NL27WZ125 电平缓冲（SOT-23）、2SA1015（SOT-23）、可选拨动开关。</p>
-<blockquote>
-<p>BOM 官方页面标注"建设中"，下单前<strong>务必用 <code>m5-pantilt.pdf</code> 或 KiCad 原理图核对一遍</strong>，缺件补件。</p>
-</blockquote>
-<h3>4.5 步骤三：嘉立创下单（两种玩法）</h3>
-<p><strong>玩法 1：只打裸板，全部手焊（最省钱，元件少到 15 分钟焊完）</strong></p>
-<ol>
-<li>打开 https://www.jlc.com （嘉立创）→ PCB 下单。</li>
-<li>上传方法 A/B 生成的 Gerber 压缩包 → 自动解析。</li>
-<li>参数：2 层、板厚 1.6mm（按个人喜好 1.0 也行）、表面处理默认喷锡、数量 5 片。</li>
-<li>新客常有 5 片 ¥2 级别活动；提交付款，一般 2–4 天到货。</li>
-<li>到货后手焊：先 SMD（R1/R2/J1），再插件。J1 在<strong>背面</strong>立贴，焊接时注意方向（照 <code>images/m5-pantilt-bottom.png</code>）。</li>
-</ol>
-<p><strong>玩法 2：让嘉立创 SMT 贴片（省焊接）</strong></p>
-<ol>
-<li>PCB 下单时勾选 <strong>SMT 贴片</strong>，上传 BOM + 坐标（用 <code>m5-pantilt-all-pos.csv</code> 或方法 A 生成的 JLC 格式坐标）。</li>
-<li>元件匹配页面确认 J1/R1/R2。<strong>注意 J1 在 bottom 面</strong>：经济型贴装只贴单面，要么选双面贴装（贵一点），要么把 J1 改为免贴、到手自己焊。</li>
-<li>付款等待，到手后手焊剩余插件件。</li>
-</ol>
-<p><strong>打样完成后</strong>：万用表蜂鸣档查 5V/GND 是否短路，再上 M5Stack 试机。</p>
-<h3>4.6 不打板：舵机直插端口（丐版，零 PCB 成本）</h3>
-<p>官方固件文档明确给出了直插引脚（<code>manifest_local.json</code> 配置 <code>driver.type: "pwm"</code>）：</p>
-<table>
-<thead>
-<tr>
-<th>主机</th>
-<th>端口</th>
-<th>pan（水平）引脚</th>
-<th>tilt（垂直）引脚</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>M5Stack Core2</td>
-<td>Port.A</td>
-<td><strong>GPIO 33</strong></td>
-<td><strong>GPIO 32</strong></td>
-</tr>
-<tr>
-<td>M5Stack Core2</td>
-<td>Port.C</td>
-<td><strong>GPIO 13</strong></td>
-<td><strong>GPIO 14</strong></td>
-</tr>
-<tr>
-<td>M5Stack Core Basic/Gray</td>
-<td>Port.C</td>
-<td><strong>GPIO 16</strong></td>
-<td><strong>GPIO 17</strong></td>
-</tr>
-</tbody>
-</table>
-<p>接线：每颗 SG90 三根线——信号（橙）接上表引脚、VCC（红）接 5V、GND（棕）接 GND。舵机吃电流，建议<strong>外接 5V</strong>（USB 充电器 + 杜邦线分压）并<strong>共地</strong>，否则 SG90 启动瞬间可能把主机拉掉电。</p>
-<blockquote>
-<p>也可参考 mongonta 的 M5Bottom 方案（M5GO Bottom 底座 + SG90，免自制板）：装配图见 <code>images/m5go_assembly01.jpg</code> ~ <code>m5go_assembly11.jpg</code>。</p>
-</blockquote>
-<h3>4.7 老规格（v0.2.1 底板）</h3>
-<p>v0 外壳（Core/Basic + SG90/SCS0009/RS30X）对应的老板图纸在仓库 tag <code>v0.2.1</code>：
-https://github.com/stack-chan/stack-chan/tree/v0.2.1/schematics
-（main 分支上的是 v1.0 板，配 CoreS3 + XL330 + v1.0 外壳；两版不通用，按你选的外壳规格拿图纸。）</p>
-<hr />
-<h2>5. 3D 打印</h2>
-<h3>5.1 打印文件清单（本包附带）</h3>
-<table>
-<thead>
-<tr>
-<th>路线</th>
-<th>目录</th>
-<th>文件</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>v1.0（XL330 + CoreS3）</td>
-<td><code>stl/v1-xl330/</code></td>
-<td>shell、feet_top、feet_bottom、bracket_XL330_f、bracket_XL330_b、gear_XL330（×2 颗）、gear_XL330_narrow（孔紧时的备选）、horn</td>
-</tr>
-<tr>
-<td>v0（SG90 + Core/Basic）</td>
-<td><code>stl/v0-sg90/</code></td>
-<td>shell_SG90、feet_SG90、bracket_SG90_f、bracket_SG90_b、backpack_400mah（电池背包）</td>
-</tr>
-<tr>
-<td>K151 官方机身（魔改参考）</td>
-<td><code>stl/k151-body/</code></td>
-<td>MainBody、Base、BaseCover、ServoBody、ServoArm、ServoCover、ServoSideCover、BearingFixture、LightGuideBar-A/B</td>
-</tr>
-</tbody>
-</table>
-<p>（STEP 可编辑源文件在仓库 <code>case/</code> 各目录，想改造型用 Fusion 360 / FreeCAD 打开。）</p>
-<h3>5.2 打印参数</h3>
+<p>官方 K151 用网页工具选择 M5StackChan CoreS3 或专用离线目录；自制路线按 <a href="DIY_FIRMWARE.html">自定义流程</a> 构建。恢复 K151 厂家出厂固件用 M5Burner。厂家 App 与社区 MOD 是两套生态，刷社区版会覆盖厂家版，普通 CoreS3 不能连接厂家 StackChan World App。</p>
 <ul>
-<li>材料：PLA 即可（ PETG 更韧）；约 30–50g。</li>
-<li>层高 0.2mm；壳体薄壁件建议 3 层周壁。</li>
-<li><strong>官方推荐打印方向</strong>（见下图，摆错方向强度差很多）：</li>
+<li><a href="firmware-docs/README.md">社区 API/MOD/TTS 文档存档及导读</a>。</li>
+<li><a href="hermes-integration/index.html">Hermes 桥接方案</a>：机器人、语音桥接和 Agent API 分层；先验证 Mock/语音链路再接硬件。</li>
+<li><a href="https://github.com/m5stack/StackChan">官方产品及出厂固件</a>、<a href="https://github.com/m5stack/StackChan-BSP">板级支持包</a>。</li>
+<li><a href="https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/">ROBOTIS XL330 规格与通信电路</a>。</li>
+<li>国内采购可从 <a href="https://m5stack.taobao.com">M5Stack 官方店</a>、舵机厂家/授权代理、<a href="https://www.jlc.com">嘉立创</a>及打印服务查询具体型号和实时价格。</li>
 </ul>
-<p><img alt="打印方向" src="images/print_orientation.jpg" /></p>
-<ul>
-<li><code>gear_XL330</code> 的孔公差按 3D 打印精度放大过：装上去晃就用 <code>gear_XL330_narrow</code>。</li>
-</ul>
-<h3>5.3 没有打印机？</h3>
-<ul>
-<li><strong>嘉立创三维猴</strong>：https://3d.jlcpcb.com （官方 v1.0 装配文档点名推荐 JLC 3D 打印，传 STL 即可，对国内最友好）</li>
-<li>淘宝搜"3D打印代打"，按克计费，全套件几十元。</li>
-<li>DMM.make 等海外平台亦可（日本官方推荐，国内没必要）。</li>
-</ul>
-<hr />
-<h2>6. 机械装配</h2>
-<h3>6.1 三条铁律（官方文档原文要求）</h3>
-<ol>
-<li><strong>先把固件刷好、舵机方向验证正确，再把舵机固定进壳</strong>——装反通电就顶壳。</li>
-<li>安装舵机摇臂（horn/gear）时对准<strong>参考角（正前方）</strong>：</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th>舵机</th>
-<th>可动范围</th>
-<th>参考角</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SG90</td>
-<td>0–180°</td>
-<td><strong>90°</strong></td>
-</tr>
-<tr>
-<td>SCS0009</td>
-<td>0–200°</td>
-<td><strong>100°</strong></td>
-</tr>
-<tr>
-<td>RS30X</td>
-<td>−150~150°</td>
-<td><strong>0°</strong></td>
-</tr>
-<tr>
-<td>XL330</td>
-<td>—</td>
-<td>改好 ID 后以正前方装 gear</td>
-</tr>
-</tbody>
-</table>
-<ol>
-<li>装配前把接线理顺、留出活动余量，别让线卡住旋转。</li>
-</ol>
-<h3>6.2 路线 B：v1.0 + XL330 的 10 步装配</h3>
-<p>先做舵机参数设置（需要 U2D2 + SMPS2Dynamixel + 5V 电源 + <a href="https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/">Dynamixel Wizard 2</a>）：</p>
-<ul>
-<li><strong>腿（pan，水平）舵机 → ID=1，脖子（tilt，垂直）舵机 → ID=2，波特率都改 1M</strong>（默认 57600）。</li>
-<li>改 ID 时<strong>一次只连一颗</strong>（同 ID 冲突会连不上）。</li>
-</ul>
-<p><img alt="Dynamixel Wizard" src="images/dynamixel_wizard.png" /></p>
-<p>成品长这样（正/侧）：</p>
-<table>
-<thead>
-<tr>
-<th>正面</th>
-<th>侧面</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><img alt="v1 front" src="images/dynamixel_front.jpg" /></td>
-<td><img alt="v1 side" src="images/dynamixel_side.jpg" /></td>
-</tr>
-</tbody>
-</table>
-<p>装配步骤（对应官方图 <code>dynamixel_01</code> ~ <code>dynamixel_10</code>）：</p>
-<ol>
-<li><strong>腿舵机</strong>：gear_XL330（小十字件）装到 ID=1 舵机上，对准凸起与孔：</li>
-</ol>
-<p><img alt="步骤1" src="images/dynamixel_01.jpeg" /></p>
-<ol>
-<li>装入 feet_top（带缺口凸起的一侧朝前），从背面 M2.5×6 自攻固定，再滑入 feet_bottom：</li>
-</ol>
-<p><img alt="步骤2" src="images/dynamixel_02.jpeg" /></p>
-<ol>
-<li><strong>脖子舵机</strong>：同样给 ID=2 装 gear，M2.5×6 固定，再装 horn：</li>
-</ol>
-<p><img alt="步骤3" src="images/dynamixel_03.jpeg" /></p>
-<ol>
-<li>接上舵机通信线（4cm 线 ×2）：</li>
-</ol>
-<p><img alt="步骤4" src="images/dynamixel_04.jpeg" /></p>
-<ol>
-<li>bracket_XL330_f 把上下两颗舵机组合起来：</li>
-</ol>
-<p><img alt="步骤5" src="images/dynamixel_05.jpeg" /></p>
-<ol>
-<li>bracket_XL330_b 背面锁紧：</li>
-</ol>
-<p><img alt="步骤6" src="images/dynamixel_06.jpeg" /></p>
-<ol>
-<li>底板与两颗舵机连线：</li>
-</ol>
-<p><img alt="步骤7" src="images/dynamixel_07.jpeg" /></p>
-<ol>
-<li>horn 滑入 shell（外壳）：</li>
-</ol>
-<p><img alt="步骤8" src="images/dynamixel_08.jpeg" /></p>
-<ol>
-<li>底板与外壳用 M2×4 盘头自攻锁 4 点：</li>
-</ol>
-<p><img alt="步骤9" src="images/dynamixel_09.jpeg" /></p>
-<ol>
-<li>
-<p>插上 M5Stack（CoreS3），完成：</p>
-<p><img alt="步骤10" src="images/dynamixel_10.jpeg" /></p>
-</li>
-</ol>
-<h3>6.3 路线 C：v0 + SG90 装配（动图流程）</h3>
-<p>官方装配动图（GIF，用看图工具打开）：</p>
-<table>
-<thead>
-<tr>
-<th>1. 两颗舵机卡进 bracket + 电池入 backpack</th>
-<th>2. feet 与 shell 锁螺丝</th>
-<th>3. 舵机/电池接底板 + 装 M5Stack</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><img alt="bracket" src="images/bracket.gif" /></td>
-<td><img alt="shell feet" src="images/shell_and_feet.gif" /></td>
-<td><img alt="board" src="images/m5stack_and_board.gif" /></td>
-</tr>
-</tbody>
-</table>
-<p>文字版流程：</p>
-<ol>
-<li>舵机先<strong>不上壳</strong>，接好线、刷固件，确认两颗舵机停在中位、方向正确。</li>
-<li>对准 90° 参考角装摇臂（十字盘凸起对齐）。</li>
-<li>两颗 SG90 卡进 bracket；电池塞进 backpack，卡进 bracket。</li>
-<li>feet 和 shell 用 M2×8 各 1 颗固定。</li>
-<li>舵机线、电池线接底板（<strong>仔细核对插针方向</strong>）：</li>
-</ol>
-<p><img alt="接线" src="images/connect.jpg" /></p>
-<ol>
-<li>底板 M2×4 ×4 锁到机身，M5Stack 插到 J1 排母上；想锁死主机用底部两孔 M3×15。</li>
-</ol>
-<blockquote>
-<p>mongonta（M5GO Bottom 版）的静态装配图：<code>images/m5go_assembly01.jpg</code> ~ <code>images/m5go_assembly11.jpg</code>，带壳+底座+装饰件（猫耳、河马耳、LEGO 孔）的玩法。</p>
-</blockquote>
-<h3>6.4 路线 C 变体：SCS0009 串行舵机</h3>
-<ul>
-<li>出厂前需给两颗舵机设不同 ID（ID1=脚/pan，ID2=脸/tilt），信号线接法见下图：</li>
-</ul>
-<p><img alt="SCS0009 接线" src="images/scservo_cable_connection.jpg" /></p>
-<ul>
-<li>用飞特 URT-1 + 官方 GUI（fddebug）改 ID 和角度：</li>
-</ul>
-<p><img alt="ID 设置" src="images/id.jpg" /></p>
-<ul>
-<li><strong>注意</strong>：官方提醒不要用飞特 GUI 的 "Recovery"（已知会导致舵机工作异常）。</li>
-</ul>
-<hr />
-<h2>7. 固件</h2>
-<h3>7.1 四种刷法怎么选</h3>
-<table>
-<thead>
-<tr>
-<th>方式</th>
-<th>门槛</th>
-<th>适合</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>网页刷机（WebSerial）</td>
-<td>零环境</td>
-<td>99% 的人，首选</td>
-</tr>
-<tr>
-<td>离线 zip + esptool</td>
-<td>低</td>
-<td>网页工具抽风/想脚本化</td>
-</tr>
-<tr>
-<td>npm 本地构建</td>
-<td>中</td>
-<td>要改代码、要 MOD 开发</td>
-</tr>
-<tr>
-<td>M5Burner</td>
-<td>低</td>
-<td><strong>K151 出厂固件</strong>的安装/恢复</td>
-</tr>
-</tbody>
-</table>
-<h3>7.2 网页刷机（推荐）</h3>
-<ol>
-<li>Chrome/Edge 打开：https://stack-chan.github.io/stack-chan/web/flash/</li>
-<li>设备用<strong>数据线</strong>连电脑（K151 推荐底部 USB-C 口），选择设备型号（如 M5StackChan CoreS3）。</li>
-<li>按页面提示刷入。<strong>会覆盖出厂固件</strong>，恢复方法见 7.7。</li>
-</ol>
-<blockquote>
-<p>网页工具全家桶（简体中文界面）：刷机 / BLE 设置 Wi-Fi / MOD Gallery / 积木编辑器 / 表情编辑器 / WASM 模拟器 / MediaPipe BLE 跟踪
-https://stack-chan.github.io/stack-chan/web/
-开发预览版在 https://stack-chan.github.io/stack-chan/develop/web/ （一般用户用上面的稳定版）</p>
-</blockquote>
-<h3>7.3 离线包 + esptool（本包附带）</h3>
-<p><code>firmware/stack-chan-firmware-v1.1.0.zip</code>（已通过官方 SHA-256 校验）内含 4 个目标：</p>
-<table>
-<thead>
-<tr>
-<th>目标</th>
-<th>适配</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>m5stackchan_cores3</code></td>
-<td>K151 整机</td>
-</tr>
-<tr>
-<td><code>com.m5stack.cores3</code></td>
-<td>CoreS3 裸机</td>
-</tr>
-<tr>
-<td><code>com.m5stack.core2</code></td>
-<td>Core2</td>
-</tr>
-<tr>
-<td><code>com.m5stack</code></td>
-<td>Core Basic/Gray</td>
-</tr>
-</tbody>
-</table>
-<p>（Stack-chan RT 与 Takao Core2+SG90 需从源码构建，不含在包内。）</p>
-<p>每个目标文件夹是 esptool 三件套：<code>bootloader.bin</code> / <code>partition-table.bin</code> / <code>xs_esp32.bin</code>。安装 <code>esptool</code>（<code>pip install esptool</code>）后按 ESP-IDF 标准布局写入（S3：bootloader@0x0、partition-table@0x8000、app@0x10000；ESP32：bootloader@0x1000）：</p>
-<pre><code class="language-bash">esptool --chip esp32s3 --port /dev/ttyACM0 --baud 921600 \
-  write_flash 0x0 bootloader.bin 0x8000 partition-table.bin 0x10000 xs_esp32.bin
+<h2 id="5-素材与许可">5. 素材与许可</h2>
+<p>官方外壳、PCB、装配图、社区固件及文档来源为 <a href="https://github.com/stack-chan/stack-chan">stack-chan/stack-chan</a>，许可 Apache-2.0。K151 结构来源为 <a href="https://github.com/m5stack/M5_Hardware/tree/master/Products/K151_StackChan/Structures">M5_Hardware</a>，按该仓库对应许可核对；产品资料来自 M5Stack，SCS0009 规格书来自飞特。转载图片、数据手册及商品硬件不因本仓库的 LICENSE 自动变为同一许可。</p>
+<p>本指南新增的配置、标定驱动、验收 MOD 和文档脚本按 Apache-2.0 发布。未修改官方存档源码/结构件或固件二进制。后续升级需重新核对 SDK、驱动接口和构建配置。</p>
+<h2 id="6-重建网页与验证配套驱动">6. 重建网页与验证配套驱动</h2>
+<p>使用 Node.js 20 或更新版本，在本仓库执行：</p>
+<pre><code class="language-bash">npm ci --ignore-scripts
+npm test
+npm run docs:build
 </code></pre>
-<blockquote>
-<p>偏移如有出入，以网页刷机或 npm 路线为准（它们会自动处理）。刷机会清空机身设置与已装 MOD（官方 v1.1.0 说明）。</p>
-</blockquote>
-<h3>7.4 npm 本地构建（开发路线）</h3>
-<p>官方在 Ubuntu 24.04 + Node 22 上实测（Windows 可用 WSL）：</p>
-<pre><code class="language-bash">git clone https://github.com/stack-chan/stack-chan.git
-cd stack-chan/firmware
-npm i
-npm run setup                    # 自动装 Moddable SDK + ESP-IDF（基于 xs-dev）
-npm run setup -- --device=esp32
-npm run doctor                   # 自检：能看到 esp32 目标即成功
-npm run flash                    # 标准机 M5StackChan CoreS3
-</code></pre>
-<p>其他硬件目标（子平台已预置驱动类型和引脚，<strong>不要</strong>自己加 <code>--target</code>）：</p>
-<table>
-<thead>
-<tr>
-<th>板子</th>
-<th>构建烧录</th>
-<th>驱动</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>M5StackChan CoreS3（K151）</td>
-<td><code>npm run flash</code></td>
-<td>m5stackchan（串行 TX6/RX7）</td>
-</tr>
-<tr>
-<td>Stack-chan RT</td>
-<td><code>npm run flash:stackchan_rt</code></td>
-<td>dynamixel（TX7/RX6）</td>
-</tr>
-<tr>
-<td>Takao Core2 + SG90</td>
-<td><code>npm run flash:takao_core2_sg90</code></td>
-<td>pwm（pan 19 / tilt 27）</td>
-</tr>
-</tbody>
-</table>
-<p>还有 <code>npm run build / deploy / debug / debug:xsdb</code> 各目标的同名变体；不需要 <code>sudo</code>。</p>
-<h3>7.5 驱动配置（自制接线必改）</h3>
-<p>编辑 <code>stack-chan/firmware/host/app/manifest_local.json</code>（仓库里就是留白的本地配置文件）：</p>
-<pre><code class="language-json">{
-  &quot;include&quot;: [&quot;./manifest.json&quot;],
-  &quot;config&quot;: {
-    &quot;driver&quot;: {
-      &quot;type&quot;: &quot;pwm&quot;,
-      &quot;pwmPan&quot;: 33,
-      &quot;pwmTilt&quot;: 32
-    }
-  }
-}
-</code></pre>
-<table>
-<thead>
-<tr>
-<th>配置项</th>
-<th>可选值</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>driver.type</code></td>
-<td><code>m5stackchan</code> / <code>scservo</code> / <code>rs30x</code> / <code>pwm</code> / <code>dynamixel</code> / <code>none</code></td>
-<td>舵机驱动类型</td>
-</tr>
-<tr>
-<td><code>driver.panId</code> / <code>tiltId</code></td>
-<td>1–254</td>
-<td>串行舵机 ID（pan=水平/腿，tilt=垂直/脖子）</td>
-</tr>
-<tr>
-<td><code>driver.offsetPan</code> / <code>offsetTilt</code></td>
-<td>−90~90</td>
-<td>机械零位微调</td>
-</tr>
-<tr>
-<td><code>tts.type</code></td>
-<td><code>local</code> / <code>voicevox</code> / <code>voicevox-web</code> / <code>elevenlabs</code> / <code>openai</code> / <code>remote</code></td>
-<td>语音合成</td>
-</tr>
-<tr>
-<td><code>tts.host</code> / <code>tts.port</code> / <code>tts.volume</code></td>
-<td>—</td>
-<td>TTS 服务器与音量</td>
-</tr>
-</tbody>
-</table>
-<p><strong>验收标准（官方原文）</strong>：装好后按 A 键每 5 秒随机看向一处、B 键依次看向左右上下、C 键表情反色。<strong>会左右摇头 = 驱动配置成功。</strong></p>
-<h3>7.6 MOD：应用热装</h3>
-<p>host 只刷一次，之后秒级换"应用"：</p>
-<pre><code class="language-bash">npm run mod -- ./mods/examples/look_around/manifest.json
-# 多设备时指定串口：
-npm run mod -- ./mods/examples/look_around/manifest.json --port /dev/ttyACM1
-</code></pre>
-<p>不想写代码用网页积木编辑器；想擦掉 MOD 回默认行为用 <code>npm run erase-flash</code>（注意会清整个 flash，含设置）。</p>
-<h3>7.7 K151 出厂固件与 App（整机路线）</h3>
-<p><strong>出厂固件恢复/更新（M5Burner）</strong>：</p>
-<ol>
-<li>下载 M5Burner v3：<a href="https://m5burner-cdn.m5stack.com/app/M5Burner-v3-beta-win-x64.zip">Windows</a> · <a href="https://m5burner-cdn.m5stack.com/app/M5Burner-v3-mac-x64.dmg">macOS</a> · <a href="https://m5burner-cdn.m5stack.com/app/M5Burner-v3-beta-linux-x64.zip">Linux</a></li>
-<li>打开 M5Burner → 搜索 <strong>StackChan</strong> → 勾选 <strong>Only Official</strong> → Download。</li>
-<li>USB-C 连接（建议底部口）→ 烧录。</li>
-</ol>
-<p><strong>StackChan World App</strong>（视频查看、远程化身控制、App Center 等）：</p>
-<ul>
-<li>iOS：https://apps.apple.com/us/app/stackchan-world/id6756086326</li>
-<li>Google Play：https://play.google.com/store/apps/details?id=com.m5stack.stackchan</li>
-<li><strong>APK 直装包</strong>（国内友好，深圳 OSS 直链）：https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1205/StackChan_World_apk.zip</li>
-</ul>
-<p><strong>出厂固件生态源码</strong>（全开源）：https://github.com/m5stack/StackChan</p>
-<h3>7.8 其他开发方式（K151 官方教程）</h3>
-<ul>
-<li>UiFlow2 图形化：https://docs.m5stack.com/en/uiflow2/stackchan/program</li>
-<li>Arduino IDE：https://docs.m5stack.com/en/arduino/stackchan/program</li>
-<li>Qoder 伴侣机器人固件：https://docs.m5stack.com/en/guide/stackchan/qoder</li>
-<li>社区 Arduino 项目：AI Stack-chan（ChatGPT 语音对话）https://github.com/robo8080/AI_StackChan2 ；PWM 舵机测试 https://github.com/mongonta0716/stack-chan-tester</li>
-</ul>
-<hr />
-<h2>8. 开机验收与首次设置</h2>
-<h3>自制路线</h3>
-<ol>
-<li>检查所有接线（舵机、电池、底板方向）。</li>
-<li>USB 供电开机 → 屏幕出现 Avatar 脸。</li>
-<li>按 A/B/C 键测试（见 7.5 验收标准）。</li>
-<li><code>npm run mod -- look_around</code> 试装一个 MOD。</li>
-</ol>
-<h3>K151 整机（官方流程）</h3>
-<ol>
-<li>装好 App（见 7.7），注册/登录 M5Stack 账号（与 UiFlow、M5Burner、论坛同一账号）。</li>
-<li>底部 USB-C 供电或左侧短按电源键开机 → 屏幕显示欢迎页。</li>
-<li>点 Start → <strong>把机器人放在稳固平整桌面、不要碰它</strong> → 再点 Start 开始<strong>舵机自检</strong>。</li>
-</ol>
-<h3>安全须知（官方原文）</h3>
-<ul>
-<li><strong>Y 轴（垂直）舵机角度保持 5°～85°</strong>，极端角度可能堵转并造成<strong>永久损坏</strong>；X 轴无限制。</li>
-<li><strong>不确定电机是否通电/受控时，禁止用手硬旋转任何活动部件</strong>——可能损坏硬件。</li>
-<li>通电状态下不要拧它的头（尤其串行舵机扭矩常开）。</li>
-</ul>
-<hr />
-<h2>9. 进阶玩法（v1.1.0 已内置/可选装）</h2>
-<ul>
-<li><strong>语音对话</strong>：ChatGPT MOD（<code>mods/examples/chatgpt</code>）、Codex Voice、XiaoZhi v1 兼容 ChatService（Opus 语音）、OpenAI Realtime 直连。</li>
-<li><strong>Stackchan Dock</strong>：安卓手机 USB 直连 CoreS3，用机身麦克风/喇叭做语音对话。</li>
-<li><strong>MCP Server MOD</strong>：让 Stack-chan 变成 MCP 工具端（记得设 <code>mcp.token</code> Bearer 认证）。</li>
-<li><strong>MediaPipe BLE 跟踪</strong>：摄像头捕捉你的脸/表情/手势，机器人实时模仿（<code>mods/examples/mediapipe_ble</code> + 网页工具 https://stack-chan.github.io/stack-chan/web/mediapipe/ ）。</li>
-<li><strong>TTS</strong>：VOICEVOX / ElevenLabs / OpenAI，<code>tts.type</code> 一行配置。</li>
-<li><strong>表情/积木</strong>：网页表情编辑器自定义脸 + 积木编辑器拖积木出 MOD。</li>
-<li>更多示例 MOD：<code>firmware/mods/examples/</code>（look_around、face_tracker、mimic_follow、lip_sync、web_radio、monologue、cheerup 等）。</li>
-</ul>
-<hr />
-<h2>10. 避坑清单（含官方原话警告）</h2>
-<ol>
-<li><strong>舵机零位没对准就装壳</strong> → 通电顶壳、堵转、烧舵机。先刷固件验证方向再固定（官方要求）。</li>
-<li><strong>SG90 涌流拉掉主机电源</strong> → 舵机单独 5V 供电、与主机共地；堵转过限"可能过热冒烟"（官方原话）。</li>
-<li><strong>Y 轴超 5°~85°</strong> → 堵转永久损坏（官方原话）；写 MOD 时注意限位。</li>
-<li><strong>串行舵机同 ID</strong> → 改 ID/参数时一次只接一颗。</li>
-<li><strong>飞特 GUI 的 "Recovery" 别用</strong>（官方确认有坑）。</li>
-<li><strong>烧录不用 sudo</strong>；刷固件会清掉设置和 MOD。</li>
-<li><strong>跟着 release 走</strong>，develop 分支 API 会变。</li>
-<li><strong>别手动跑 <code>mcconfig/mcrun/mcpack</code></strong>，用仓库 npm 脚本（会管理 dist/ 输出目录）。</li>
-<li><strong>自制接线的 CoreS3</strong>：直插引脚方案官方只给了 Core2/Core Basic 的表；CoreS3 裸机建议走 K151 或打板路线。</li>
-<li><strong>J1 排母在底板背面</strong>：嘉立创经济贴装是单面，注意选双面贴或 J1 免贴手焊。</li>
-<li><strong>App 只认官方核心</strong>：自制 CoreS3 机器不能用 StackChan World App，用开源固件的网页工具生态。</li>
-</ol>
-<hr />
-<h2>附录 A：本套件文件清单</h2>
-<pre><code>stackchan-diy-kit/
-├── StackChan手挫完全指南.md          ← 本文档
-├── images/                           ← 45 张官方装配图/动图/板子实拍（正文已引用）
-├── stl/
-│   ├── v1-xl330/    （8 件：v1.0 外壳全家桶）
-│   ├── v0-sg90/     （5 件：v0 SG90 外壳 + 电池背包）
-│   └── k151-body/   （10 件：K151 官方机身结构，魔改参考）
-├── pcb/
-│   └── m5-pantilt-v1.0/  （KiCad 完整工程 + 原理图 PDF + 贴片坐标 CSV + kibot 配置 + 丝印/钻孔）
-└── firmware/
-    ├── stack-chan-firmware-v1.1.0.zip        （官方预编译固件，4 目标 ×3 件，SHA-256 已验）
-    └── stack-chan-firmware-v1.1.0.zip.sha256
-</code></pre>
-<h2>附录 B：链接汇总</h2>
-<p><strong>开源项目</strong></p>
-<ul>
-<li>主仓库（固件/外壳/底板/文档）：https://github.com/stack-chan/stack-chan</li>
-<li>网页工具（刷机/设置/Gallery/编辑器/模拟器，中文）：https://stack-chan.github.io/stack-chan/web/</li>
-<li>离线固件 release：https://github.com/stack-chan/stack-chan/releases/latest</li>
-<li>M5Stack 出厂生态：https://github.com/m5stack/StackChan ｜ BSP：https://github.com/m5stack/StackChan-BSP</li>
-<li>K151 机身结构：https://github.com/m5stack/M5_Hardware/tree/master/Products/K151_StackChan/Structures</li>
-<li>AI Stack-chan（Arduino）：https://github.com/robo8080/AI_StackChan2</li>
-<li>PWM 测试固件（Arduino）：https://github.com/mongonta0716/stack-chan-tester</li>
-<li>mongonta 套件（日本）：https://mongonta.booth.pm/</li>
-</ul>
-<p><strong>购物</strong></p>
-<ul>
-<li>M5Stack 官方淘宝店：https://m5stack.taobao.com</li>
-<li>StackChan 整机淘宝直链：https://item.taobao.com/item.htm?id=1042238294510</li>
-<li>官方商城（$99/$125）：https://shop.m5stack.com/products/stackchan-kawaii-co-created-open-source-ai-desktop-robot</li>
-<li>嘉立创 PCB：https://www.jlc.com ｜ 三维猴 3D 打印：https://3d.jlcpcb.com</li>
-</ul>
-<p><strong>文档</strong></p>
-<ul>
-<li>M5Stack 中文产品文档：https://docs.m5stack.com/zh_CN/StackChan</li>
-<li>固件开发文档（克隆仓库后看 <code>firmware/docs/</code>）：getting-started / flashing-firmware / api / mods</li>
-<li>Dynamixel Wizard 2：https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/</li>
-<li>Moddable SDK：https://github.com/Moddable-OpenSource/moddable</li>
-<li>社区 Discord：https://discord.gg/eGhd9adnBm</li>
-<li>纸书（日文，手挫圣经）：《つくれる！スーパーカワイイ ロボット スタックチャン》O'Reilly Japan, 2022</li>
-</ul>
-<hr />
-<p><em>祝手挫顺利。装配口诀：先刷固件、对准零位、再锁螺丝。</em></p>
-</body>
-</html>
+<p>网页从上述路线 Markdown 自动生成，避免接线说明在两份文档里分叉。测试使用模拟舵机协议，检查 raw 角度换算、机械限位、串口传递及错误处理，不代替设备构建和实机测试。PDF 不参与此生成流程。</p>
+<footer>由 Markdown 自动生成。PDF 保持历史版本，接线与固件以本页面为准。自制路线尚需实物验收。</footer></main></body></html>

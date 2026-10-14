@@ -1,229 +1,85 @@
-# Stack-chan（スタックチャン）手挫指南 · 国内版
+# Stack-chan 国内自制指南
 
-> 基于开源仓库 [stack-chan/stack-chan](https://github.com/stack-chan/stack-chan)（main 分支，固件 v1.1.0）与 M5Stack 官方 K151 产品文档（[中文](https://docs.m5stack.com/zh_CN/StackChan)）整理。
-> 图片、外壳 STL、KiCad 底板工程与制造文件、离线固件包、官方进阶文档均已入库存档（附录 A），可离线使用。
+基于 [Stack-chan 社区 v1.1.0](https://github.com/stack-chan/stack-chan/tree/v1.1.0) 和 [M5Stack K151 官方资料](https://docs.m5stack.com/zh_CN/StackChan)整理。Stack-chan 用 M5Stack 屏幕显示表情，两只舵机构成双轴机身；社区固件使用 Moddable JavaScript/TypeScript 和 MOD。
 
----
+![经典自制机外观](images/case.jpg)
 
-## 1. 项目背景
+**本版已修正接线、构建目标及舵机量程配置。自制路线完成了文档/源码核对和模拟协议测试，尚未完成实物整机验收。** 网页与 Markdown 同步生成；随附 PDF 为历史版本，电气、固件及采购操作以本版 Markdown 为准，不照旧 PDF 接线。
 
-**Stack-chan** 是石川知也（meganetaaan）发起的开源"超可爱"桌面机器人：M5Stack 屏幕当脸（Avatar 表情库），两颗舵机做俯仰/偏航"脖子"，会点头、摇头、东张西望、说话。硬件（外壳 STL、底板 KiCad 工程）与固件（Moddable SDK 上的 JavaScript/TypeScript，host + MOD 热装架构）全部开源（Apache-2.0）。
+## 1. 选择路线
 
-![整机外观](images/case.jpg)
-
-2024 年起 M5Stack 推出官方整机 **StackChan（K151）**，淘宝可直购；与此同时开源社区路线（自制外壳 + 底板 + 舵机）依然活跃，两者固件生态互通。
-
-**本仓库**把这些散落在官方仓库各处（case/、schematics/、firmware/docs/）、日本代购渠道、英文/日文文档里的资料，整理成**面向国内玩家的完整自制方案包**：每条路线一个独立目录、自带 BOM/打印件/装配/接线/固件全流程，素材本地化（淘宝采购、嘉立创打样打板、jsdelivr 镜像下载）。
-
-> **零成本预研**：不买任何硬件，先用官方网页工具体验——模拟器 / 积木编辑器 / MOD Gallery（简体中文界面）：https://stack-chan.github.io/stack-chan/web/
-
----
-
-## 2. 方案总览
-
-按投入从低到高排列；**每个方案目录自带完整流程（选型 → 采购 → 打印 → 装配 → 接线 → 固件 → 验收）**，点进去照做即可。
-
-| 方案 | 名称 | 主机 | 舵机 | 底板 | 预算（含主机） | 难度 | 入口 |
-|---|---|---|---|---|---|---|---|
-| **A** | K151 官方整机 | CoreS3（整机） | SCS0009 ×2（内置） | 不需要 | ~¥700 | ★ | [`k151-kit-route/`](k151-kit-route/README.md) |
-| **B** | v1.0 + XL330 | CoreS3 | Dynamixel XL330-M288 ×2 | 官方板（打样） | ¥600–900 | ★★★★ | [`v1-xl330-route/`](v1-xl330-route/README.md) |
-| **C** | v0 + SG90（经典） | Core Basic/Gray/Core2 | SG90/MG90S ×2 | 可选（有零 PCB 变体） | ¥300–500 | ★★★（丐版 ★） | [`v0-sg90-route/`](v0-sg90-route/README.md) |
-| **D** | SCS0009 串行机身 | CoreS3/Core2/Core | Feetech SCS0009 ×2 | 可选（有免板变体） | ¥350–550 | ★★★ | [`scs0009-serial-route/`](scs0009-serial-route/README.md) |
-| **E** | K151 机身复刻 | CoreS3 | SCS0009 ×2 | 免板（二极管半双工） | ¥450–650 | ★★ | [`k151-body-route/`](k151-body-route/README.md) |
-| **F** | 零元体验 | —（网页模拟器） | — | — | ¥0 | — | https://stack-chan.github.io/stack-chan/web/ |
-
-### 方案简介
-
-**A · K151 官方整机** —— 不手挫，淘宝直购官方整机，到手开机即用：550mAh 电池、双反馈舵机、12×RGB、红外、三区触摸、NFC、双 USB-C。配官方 StackChan World App（AI 对话、远程化身）；出厂固件、遥控手柄、App、服务端全开源，随时可刷社区固件再刷回来。适合只想玩/送礼/给自制路线当参考机。
-
-**B · v1.0 + XL330** —— 官方最新一代自制规格：v1.0 外壳 + Dynamixel XL330 串行舵机（速度/扭矩/温度全反馈，1Mbps 总线）。需要 U2D2 调试器给舵机改 ID（一次性投入）。性能天花板，也是官方文档最完善的一条。**最适合"完整手挫"的进阶玩家。**
-
-**C · v0 + SG90** —— 经典中的经典（纸书封面同款造型）：v0 外壳 + 白菜价 SG90 PWM 舵机。含 **丐版直插变体**（已有主机 + 杜邦线，+¥30 半天玩起来）和 **M5GO Bottom 变体**（mongonta 方案）。性价比首选，代价是舵机无反馈、涌流可能拉掉主机电源。
-
-**D · SCS0009 串行机身** —— 官方认可的国产串行舵机路线：飞特 SCS0009（与 K151 整机同款舵机）+ 官方专用打印件，能读角度、限流限速。改 ID 需要 URT-1 调试器。另附 **RS30X（Futaba）日规变体**。串行总线体验的国内友好版。
-
-**E · K151 机身复刻** —— 用 M5Stack 官方开源的 10 件结构 STL 复刻 K151 机身：CoreS3 + 2×SCS0009 二极管半双工直连，免打板。含完整硬件逆向（原理框图/接线/舵机协议）与 **G 混合玩法**（官方机身 + 开源 m5-pantilt 底板）。
-
-**F · 零元体验** —— 官方网页工具（简体中文）：WASM 模拟器跑整机行为、积木编辑器零代码写 MOD、MOD Gallery 现成应用试玩。买硬件前先来这里找感觉。
-
----
-
-## 3. 方案对比
-
-### 3.1 硬件维度
-
-| 维度 | A 整机 | B v1.0+XL330 | C v0+SG90 | D SCS0009 | E K151 复刻 |
-|---|---|---|---|---|---|
-| 舵机类型 | 串行（内置） | Dynamixel 串行 | PWM | 串行 TTL | 串行 TTL |
-| 位置/状态反馈 | ✅ | ✅ 最强 | ❌ | ✅ | ✅ |
-| 免打板 | ✅ | ❌ 需打样 | ✅（丐版） | ✅（直连变体） | ✅ |
-| 电池 | ✅ 550mAh 内置 | 背包锂电（可充电） | 背包锂电 / Core2 内置 | 背包锂电 | 机身电池仓 |
-| 官方 App 支持 | ✅ 只认官方核心 | ❌ | ❌ | ❌ | ❌ |
-| 机身外观 | 官方 K151 | 官方 v1.0 | 官方 v0 经典 | 官方专用件 | 官方 K151 复刻 |
-| 魔改自由度 | 低 | 高 | 高 | 高 | 最高（10 件结构件） |
-
-### 3.2 投入维度
-
-| 维度 | A | B | C | D | E |
-|---|---|---|---|---|---|
-| 预算（含主机） | ~¥700 | ¥600–900 | ¥300–500（丐版 +¥30） | ¥350–550 | ¥450–650 |
-| 工期 | 当天 | 1–2 个周末 | 1 个周末（丐版半天） | 1 个周末 | 1 个周末 |
-| 需要焊接 | 否 | 少量（贴片/插件） | 丐版无 | 直连变体无 | 二极管直连少量 |
-| 一次性工具投入 | 无 | U2D2 ¥200–300 | 无 | URT-1 ~¥100 | 无 |
-| 3D 打印 | 不需要 | 需要 | 需要 | 需要 | 需要 |
-
-### 3.3 选型建议
-
-- **只想玩 / 送人 / 预算 ¥700 左右** → **A**
-- **第一次手挫、预算敏感** → **C**（先用丐版直插验证兴趣，再补壳）
-- **想体验串行总线 + 国产好买** → **D**
-- **完整手挫、要最强性能、预算充足** → **B**
-- **要官方 K151 造型但想自己造** → **E**（顺带看它的 G 混合玩法）
-- **还在犹豫** → **F** 网页模拟器，10 分钟找到感觉
-
-> ⚠️ **通用安全须知（官方原文）**：Y 轴（垂直/脖子）舵机角度控制在 **5°–85°**，超限可能堵转并造成**永久损坏**；X 轴无限制；不确定通电状态时**禁止用手硬掰**任何活动部件。
->
-> **通用装配铁律**：① 先刷固件、验证舵机方向正确，再固定进壳；② 摇臂对准各舵机参考角（SG90=90°，SCS0009=100°，RS30X=0°，XL330=设 ID 后正前方）；③ 接线留活动余量。
-
----
-
-## 4. 通用资源速查
-
-以下内容各方案共用，路线文档里已按需引用/内联，这里做总索引。
-
-### 4.1 采购渠道
-
-| 商品 | 渠道 |
-|---|---|
-| StackChan 整机（K151）/ 遥控版（K151-R） | 淘宝直链 https://item.taobao.com/item.htm?id=1042238294510 ；官方商城 https://shop.m5stack.com |
-| M5Stack 主机（CoreS3 / Core2 / Core） | 官方淘宝店 https://m5stack.taobao.com （现货充足、可开票） |
-| SG90/MG90S、杜邦线、螺丝包、PH2.0 线 | 淘宝任意 |
-| SCS0009 + URT-1 调试器 | 飞特（Feetech）淘宝店/代理 |
-| XL330-M288-T + U2D2 | Robotis 韩国品牌，淘宝代理店 |
-| 锂电池 3.7V 400–640mAh（401230/501235，PH2.0-2P） | 淘宝 ¥10–20 |
-| PCB 打样 + SMT + 3D 打印 | 嘉立创 https://www.jlc.com ＋ 三维猴 https://3d.jlcpcb.com |
-
-### 4.2 3D 打印
-
-- 打印件清单按路线看各方案 §"打印件"（`stl/` 全目录见附录 A）。
-- 通用参数：PLA 即可（PETG 更韧），层高 0.2mm，薄壁件 3 层周壁，约 30–50g。
-- **官方推荐打印方向**（摆错强度差很多）：![打印方向](images/print_orientation.jpg)
-- 没有打印机：三维猴传 STL 即可 / 淘宝代打按克计费。
-- STEP 源文件在官方仓库 `case/` 各目录（与本包 STL 同名）；国内直连不稳可用 jsdelivr，如 `https://cdn.jsdelivr.net/gh/stack-chan/stack-chan@main/case/v1/shell.step`。
-
-### 4.3 官方底板（m5-pantilt）
-
-自制路线 B/C/D 共用的舵机驱动板，**一块板按跳线分 PWM / 串行两种模式**：
-
-| 模式 | 舵机 | 跳线 | 用途 |
+| 路线 | 主机/舵机 | 判断与前提 | 入口 |
 |---|---|---|---|
-| PWM | SG90 | 装 R9/R11（CoreS3、Core）或 R10/R12（Core2） | 路线 C |
-| 串行 | SCS0009/RS30X/XL330 | **只装 R13/R14**（R9–R12 不装） | 路线 B/D |
+| A 官方整机 | K151 原装核心及机身 | 厂家完整产品；按厂家使用说明操作 | [K151 整机](k151-kit-route/README.md) |
+| B v1 + XL330 | CoreS3、XL330-M288-T×2 | 官方结构参考；需适配实际总线 GPIO 和自定义固件 | [XL330 路线](v1-xl330-route/README.md) |
+| C v0 + SG90 | Core Basic/Gray 或 Core2、SG90×2 | 基础 DIY，先独立供电台架验证；显式选择 PWM | [SG90 路线](v0-sg90-route/README.md) |
+| D SCS0009 | CoreS3 等、市售 SCS0009×2 | 合格半双工电路；需实测量程、raw 零位及限位 | [串行路线](scs0009-serial-route/README.md) |
+| E K151 造型 | 普通 CoreS3、市售 SCS0009、官方 STL | 结构改造；不等价于 K151 专用电子方案，先试装支架 | [结构复刻](k151-body-route/README.md) |
+| F 网页体验 | 不需要硬件 | 模拟器可验证软件，不能验证供电/接线/机构 | [网页工具](https://stack-chan.github.io/stack-chan/web/) |
 
-- 完整 KiCad 工程：`pcb/m5-pantilt-v1.0/`（原理图 PDF + 自定义封装库）。
-- **制造文件已生成好**（Gerber zip + 带 LCSC 号 BOM + 贴片坐标 + 下单说明，无需装 KiCad）：[`pcb/m5-pantilt-v1.0/manufacture/`](pcb/m5-pantilt-v1.0/manufacture/README.md) 。
-- 核心元件：U1=MAX3485（半双工收发）、Q1=IRLML6402（电源软开关）、Q2=BC857（方向控制）、D1=SS54、D2=PMEG3030EP；J1 在**背面**。
-- 电池接 J5（PH2.0），可经 M5Stack 充电；外部 5V 接 J7。
-- 老规格（v0.2.1 时代）图纸在官方仓库 tag `v0.2.1`。
+先获得可用整机可选 A；学习 DIY 从 C 的小范围台架测试开始。B/D 在串行通信和标定通过后再合壳；E/G 等结构改造宜在基础机完成后进行。价格、现货、工具和 SMT 服务未实时核价，路线里的历史估算不作为采购承诺。
 
-### 4.4 固件刷法（四选一）
+## 2. 接线与固件入口
 
-| 方式 | 门槛 | 适合 |
+**B/C/D/E 的完整配置、构建、烧录和无按键验收见 [DIY_FIRMWARE.md](DIY_FIRMWARE.md)。** 配套 `firmware-configs/` 提供按主机/接线区分的 JSON、SCS0009 raw 标定驱动及一次性小角度 MOD。
+
+- CoreS3 GPIO16 用于摄像头，外部 Port.C 是17/18；不能沿用旧 Core 的17/16。
+- CoreS3 厂商 M5-Bus 图中26脚是GPIO14，不是GND。按实际图确认真正地线并测通断。
+- 串行 DATA 必须有正确半双工释放/接收时序。不用 RX 串二极管或普通 USB-TTL TX/RX 短接。
+- 自制 CoreS3 构建通用 `m5stack_cores3`；官方 K151 才使用 `m5stackchan_cores3`。默认 `npm run flash/deploy` 是 K151，不读取自制机的 `manifest_local.json`。
+- 原版 scservo 固定按200°换算、没有传递 `driver.serial`。本指南为市售300°型号提供 raw 标定驱动；确认配置和替换模块一起安装。
+- 不要求 CoreS3 有 A/B/C 实体键；验收 MOD 用公开 setPose API 一次测试左右5°、上下3°及回中。
+
+先不装摇臂、确认零位再装壳；舵机独立合适5V供电并共地，独立 +5V 不和主机 +5V 直接并接。扩大动作范围前测出机械干涉位置。K151 的 Y轴5-85°只适用于它的机械参考，自制机按实际零位、方向和机构限位。
+
+## 3. PCB、打印与电源
+
+| 模式 | 跳线 | GPIO/配置 |
 |---|---|---|
-| [网页刷机 WebSerial](https://stack-chan.github.io/stack-chan/web/flash/) | 零环境 | 99% 的人，首选 |
-| 离线 zip + esptool（本包 [`firmware/stack-chan-firmware-v1.1.0.zip`](firmware/stack-chan-firmware-v1.1.0.zip)，SHA-256 已验） | 低 | 网页抽风/脚本化 |
-| npm 本地构建 | 中 | 改代码、MOD 开发 |
-| M5Burner v3 | 低 | K151 出厂固件安装/恢复（仅方案 A） |
+| m5-pantilt 串行 | R13/R14；R9-R12 不装 | 按实际主机映射；CoreS3 为17/18 |
+| PWM，旧 Core | R9/R11；串行跳线不装 | pan5 / tilt2 |
+| PWM，Core2 | R10/R12；串行跳线不装 | pan19 / tilt27 |
+| PWM，CoreS3 | R10/R12；串行跳线不装 | pan7 / tilt6 |
 
-- 离线包含 4 目标：`m5stackchan_cores3`（K151）/ `com.m5stack.cores3` / `com.m5stack.core2` / `com.m5stack`；每目标 esptool 三件套（S3：bootloader@0x0、pt@0x8000、app@0x10000；ESP32：bootloader@0x1000）。Stack-chan RT 与 Takao 目标需源码构建。
-- npm 路线：`npm i && npm run setup && npm run setup -- --device=esp32 && npm run doctor && npm run flash`（Ubuntu 24.04 + Node 22 实测；Windows 用 WSL 或官方 Docker/devcontainer）。各目标 `npm run flash[:stackchan_rt|:takao_core2_sg90]`；单刷 MOD：`npm run mod -- mods/examples/xxx/manifest.json`。
-- 驱动配置（自制接线必改 `manifest_local.json`）：`driver.type` = `m5stackchan` / `scservo` / `rs30x` / `pwm` / `dynamixel` / `none`；`panId/tiltId`（串行 ID）、`pwmPan/pwmTilt`（PWM 引脚）、`offsetPan/offsetTilt`（零位微调）；`tts.*`（语音合成）。**验收标准：A 键随机看、B 键四方看、C 键反色；会摇头 = 成功。**
+完整 KiCad 工程及 [制造文件](pcb/m5-pantilt-v1.0/manufacture/README.md)已附。`gerber/` 只有历史丝印/钻孔，不可作为完整制板输入；下单用 `manufacture/jlcpcb/` 内完整 Gerber ZIP。BOM/CPL 仍需在装配预览核对封装、极性、元件方向、跳线及 LCSC 匹配，未完成 DRC/ERC 和实板签核，不能宣称上传就可免核对制造。旧 PDF 原理图与当前 KiCad 的元件版本差异以实际制造基准处理。
 
-### 4.5 进阶玩法（装好之后）
+STL 按 `stl/v1-xl330/`、`v0-sg90/`、`scs0009/`、`rs30x/`、`k151-body/`、`backpack/` 分类。先试装支架、舵机轴、轴承和主机卡位再整套打印。材料、支撑、强度和公差按实际打印条件选择，官方参考方向：
 
-- **MOD 生态**：[MOD Gallery](https://stack-chan.github.io/stack-chan/web/mod-gallery/) 现成应用商店 / [积木编辑器](https://stack-chan.github.io/stack-chan/web/editor/) 零代码 / [模拟器](https://stack-chan.github.io/stack-chan/web/simulator/)。
-- **官方进阶文档存档 + 中文导读**（API / 换音色唱歌 / 外接 TTS / 多机互联 / 网页改设置 / 迷你应用 / 31 个示例 MOD 索引）：[`firmware-docs/`](firmware-docs/README.md)。
-- **接入 Hermes 智能体当大脑**（Stack-chan 出眼耳口身、HermesAgent 出脑；两个开源案例的架构与上手）：[`hermes-integration/`](hermes-integration/README.md)。
-- 刷社区固件会覆盖 K151 出厂固件（两套独立实现），恢复用 M5Burner。
+![打印方向参考](images/print_orientation.jpg)
 
----
+J5 是 BAT 电源路径，充电由具体主机管理，不是独立充电器。电池保护、极性、充电控制和升压路径需确认；不把 AAA/镍氢接到锂电充电端。容量不等于放电电流能力，初次采用桌面稳压电源并测压降。
 
-## 附录 A：本仓库文件清单
+## 4. 固件与进阶资料
 
-```
-stackchan-diy-guide/  （本仓库）
-├── README.md                       ← 本文档（项目门户 + 通用速查）
-├── images/                           ← 49 张官方装配图/动图/板子实拍（正文已引用）
-├── k151-kit-route/                   ← 方案 A：K151 整机（购买/App/固件切换）
-├── v1-xl330-route/                   ← 方案 B：v1.0 + XL330（专篇：BOM/打样/10 步装配/固件）
-│   ├── README.md  ├── images/（27 张）  └── reference/（官方装配指南 EN/JA 原文）
-├── v0-sg90-route/                    ← 方案 C：v0 + SG90（含丐版直插/M5GO 变体）
-│   ├── README.md  └── images/（25 张：动图/装配/M5GO 全套）
-├── scs0009-serial-route/             ← 方案 D：SCS0009 串行机身（含 RS30X 变体）
-│   └── README.md  + images/（9 张）
-├── k151-body-route/                  ← 方案 E：K151 机身复刻（含 G 混合玩法 §11）
-│   ├── README.md  ├── images/（20 张）  └── datasheets/（7 份 PDF）
-├── stl/
-│   ├── v1-xl330/    （8 件：v1.0 外壳全家桶）
-│   ├── v0-sg90/     （5 件：v0 SG90 外壳 + 400mAh 电池背包）
-│   ├── scs0009/     （4 件：SCS0009 官方专用机身）
-│   ├── rs30x/       （3 件：Futaba RS30X 官方机身）
-│   ├── k151-body/   （10 件：K151 官方机身结构，魔改参考）
-│   └── backpack/    （4 件：官方电池背包 400mAh / 640mAh / AAA / 卡西欧电池规格）
-├── pcb/
-│   └── m5-pantilt-v1.0/  （KiCad 完整工程 + 原理图 PDF + kibot 配置 + 丝印/钻孔）
-│       └── manufacture/  （已生成的嘉立创制造文件：Gerber zip + BOM(含LCSC号) + CPL + BOM.md + 下单说明）
-├── firmware/
-│   ├── stack-chan-firmware-v1.1.0.zip        （官方预编译固件，4 目标 ×3 件，SHA-256 已验）
-│   └── stack-chan-firmware-v1.1.0.zip.sha256
-├── firmware-docs/                    ← 官方进阶固件文档存档 + 中文导读
-│   ├── README.md      （导读 + 31 个示例 MOD 索引）
-│   ├── api.md / mods-README.md / firmware-README.md
-│   ├── stackchan-voice.md / text-to-speech.md
-│   └── local-peer-communication.md / setting-preferences-web.md / mini-apps_ja.md
-└── hermes-integration/               ← Stack-chan × Hermes 联动（两个开源案例的架构/对比/上手）
+离线 `firmware/stack-chan-firmware-v1.1.0.zip` 有四个目标的 bootloader、partition table 和应用。SHA-256 与随附校验文件一致、ZIP CRC 检查通过；未独立比对官方 release 下载件。此检查不证明预编译默认驱动和接线适合你的 DIY 机。
+
+```bash
+cd firmware
+shasum -a 256 -c stack-chan-firmware-v1.1.0.zip.sha256
 ```
 
-## 附录 B：链接汇总
+官方 K151 用网页工具选择 M5StackChan CoreS3 或专用离线目录；自制路线按 [自定义流程](DIY_FIRMWARE.md) 构建。恢复 K151 厂家出厂固件用 M5Burner。厂家 App 与社区 MOD 是两套生态，刷社区版会覆盖厂家版，普通 CoreS3 不能连接厂家 StackChan World App。
 
-**开源项目**
+- [社区 API/MOD/TTS 文档存档及导读](firmware-docs/README.md)。
+- [Hermes 桥接方案](hermes-integration/README.md)：机器人、语音桥接和 Agent API 分层；先验证 Mock/语音链路再接硬件。
+- [官方产品及出厂固件](https://github.com/m5stack/StackChan)、[板级支持包](https://github.com/m5stack/StackChan-BSP)。
+- [ROBOTIS XL330 规格与通信电路](https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/)。
+- 国内采购可从 [M5Stack 官方店](https://m5stack.taobao.com)、舵机厂家/授权代理、[嘉立创](https://www.jlc.com)及打印服务查询具体型号和实时价格。
 
-- 主仓库（固件/外壳/底板/文档）：https://github.com/stack-chan/stack-chan
-- 网页工具全家桶（刷机/设置/Gallery/编辑器/模拟器，中文）：https://stack-chan.github.io/stack-chan/web/
-- 离线固件 release：https://github.com/stack-chan/stack-chan/releases
-- K151 出厂固件 + App（M5Stack 官方）：https://github.com/m5stack/StackChan
-- K151 板级支持包：https://github.com/m5stack/StackChan-BSP
-- K151 官方机身结构：https://github.com/m5stack/M5_Hardware/tree/master/Products/K151_StackChan/Structures
-- AI Stack-chan（Arduino）：https://github.com/robo8080/AI_StackChan2
-- PWM 测试固件（Arduino）：https://github.com/mongonta0716/stack-chan-tester
-- mongonta 套件（日本）：https://mongonta.booth.pm/
+## 5. 素材与许可
 
-**购物**
+官方外壳、PCB、装配图、社区固件及文档来源为 [stack-chan/stack-chan](https://github.com/stack-chan/stack-chan)，许可 Apache-2.0。K151 结构来源为 [M5_Hardware](https://github.com/m5stack/M5_Hardware/tree/master/Products/K151_StackChan/Structures)，按该仓库对应许可核对；产品资料来自 M5Stack，SCS0009 规格书来自飞特。转载图片、数据手册及商品硬件不因本仓库的 LICENSE 自动变为同一许可。
 
-- M5Stack 官方淘宝店：https://m5stack.taobao.com
-- StackChan 整机淘宝直链：https://item.taobao.com/item.htm?id=1042238294510
-- 官方商城（$99/$125）：https://shop.m5stack.com/products/stackchan-kawaii-co-created-open-source-ai-desktop-robot
-- 嘉立创 PCB：https://www.jlc.com ｜ 三维猴 3D 打印：https://3d.jlcpcb.com
+本指南新增的配置、标定驱动、验收 MOD 和文档脚本按 Apache-2.0 发布。未修改官方存档源码/结构件或固件二进制。后续升级需重新核对 SDK、驱动接口和构建配置。
 
-**文档**
+## 6. 重建网页与验证配套驱动
 
-- M5Stack 中文产品文档：https://docs.m5stack.com/zh_CN/StackChan
-- 固件开发文档（克隆仓库后看 `firmware/docs/`）：getting-started / flashing-firmware / api / mods
-- Dynamixel Wizard 2：https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/
-- Moddable SDK：https://github.com/Moddable-OpenSource/moddable
-- 社区 Discord：https://discord.gg/eGhd9adnBm
-- 纸书（日文，手挫圣经）：《つくれる！スーパーカワイイ ロボット スタックチャン》O'Reilly Japan, 2022
+使用 Node.js 20 或更新版本，在本仓库执行：
 
-## 附录 C：来源与致谢
+```bash
+npm ci --ignore-scripts
+npm test
+npm run docs:build
+```
 
-| 内容 | 来源 | 许可 |
-|---|---|---|
-| 外壳 STL、底板 KiCad 工程、装配图/动图、预编译固件 v1.1.0、进阶固件文档 | https://github.com/stack-chan/stack-chan | Apache-2.0 |
-| K151 官方机身结构 STL（10 件） | https://github.com/m5stack/M5_Hardware（版权归 M5Stack） | 见原仓库 |
-| K151 规格与安全须知、M5Burner / App 下载渠道 | https://docs.m5stack.com/zh_CN/StackChan | 官方文档 |
-| M5GO Bottom 版装配图 | mongonta（Takao Akaki），经 stack-chan 仓库 contributed 目录收录 | 见原仓库 |
-
-- 本仓库（教程文字部分除外）均为上述开源资料的转存汇总，供个人复刻学习使用；商用或二次分发前请确认上游许可。
-- 教程文字由 Ekko Agent 受仓库主人委托整理，欢迎纠错 PR。
-
-*装配口诀：先刷固件、对准零位、再锁螺丝。*
+网页从上述路线 Markdown 自动生成，避免接线说明在两份文档里分叉。测试使用模拟舵机协议，检查 raw 角度换算、机械限位、串口传递及错误处理，不代替设备构建和实机测试。PDF 不参与此生成流程。

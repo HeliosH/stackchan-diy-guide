@@ -1,7 +1,7 @@
-# 路线 C/D：v0 经典机身 + SG90 舵机（性价比之手）
+# 路线 C：v0 经典机身 + SG90 舵机（性价比之手）
 
 > Stack-chan 最经典、最便宜的自制路线：**v0 官方外壳 + 两颗 SG90 PWM 舵机 + M5Stack Core（Basic/Gray）或 Core2**。
-> 含两个省钱变体：**D 丐版直插**（零 PCB，杜邦线直插）和 **M5GO Bottom 版**（mongonta 方案）。
+> 含两个省钱变体：**C1 直插**（零 PCB，杜邦线直插）和 **M5GO Bottom 版**（mongonta 方案）。
 > 预算约 **¥300–500**（含主机；已有主机 + 丐版直插只要 **+¥30**），工期 1 个周末。
 
 ![v0 整机](images/case.jpg)
@@ -14,8 +14,8 @@
 | 舵机 | SG90 ×2（¥5–15/个）；**推荐 MG90S 金属齿** |
 | 驱动方式 | PWM（丐版直插免底板；或官方底板 PWM 模式） |
 | 打印件 | `stl/v0-sg90/`（5 件） |
-| 固件目标 | `com.m5stack`（Core）或 `com.m5stack.core2`（Core2） |
-| 参考角（正前） | **90°**，可动 0–180° |
+| 固件构建 | 通用 `m5stack`（Core）或 `m5stack_core2`（Core2），显式 PWM 配置 |
+| 参考角（正前） | 90°起测，动作范围按驱动限位及实际机构验证 |
 | 难度 | ★★★（打板装壳）/ ★（丐版直插） |
 
 **为什么选它**：主机便宜（Core Basic 二手/闲鱼更便宜）、舵机白菜价、外壳是"纸书封面同款"经典造型。代价：SG90 不能读角度、涌流可能拉掉主机电源、堵转会过热冒烟（官方警告）。
@@ -56,7 +56,7 @@ shell_SG90、feet_SG90、bracket_SG90_f、bracket_SG90_b、backpack_400mah（电
 
 ## 2. 舵机接线
 
-### 2.1 变体 D：丐版直插（零 PCB，+¥30 玩起来）
+### 2.1 变体 C1：直插（零 PCB，+¥30 玩起来）
 
 官方固件文档明确给出直插引脚（`manifest_local.json` 配 `driver.type: "pwm"`）：
 
@@ -66,9 +66,9 @@ shell_SG90、feet_SG90、bracket_SG90_f、bracket_SG90_b、backpack_400mah（电
 | M5Stack Core2 | Port.C | **GPIO 13** | **GPIO 14** |
 | M5Stack Core Basic/Gray | Port.C | **GPIO 16** | **GPIO 17** |
 
-每颗 SG90 三根线：**信号（橙）接上表引脚、VCC（红）接 5V、GND（棕）接 GND**。舵机吃电流，强烈建议**外接 5V**（USB 充电器 + 杜邦线分压）并**共地**，否则 SG90 启动瞬间可能把主机拉掉电。
+每颗 SG90 三根线：**信号（橙）接上表引脚、VCC（红）接 5V、GND（棕）接 GND**。舵机吃电流，强烈建议**外接 5V**（合适线径直接配电，不能用电阻分压供电）并**共地**，否则 SG90 启动瞬间可能把主机拉掉电。
 
-### 2.2 变体 C 正式版：官方底板 PWM 模式
+### 2.2 变体 C2：官方底板 PWM 模式
 
 用官方 `m5-pantilt` 底板（`pcb/m5-pantilt-v1.0/`），**制造文件已生成好**：Gerber zip + 带 LCSC 号 BOM + 贴片坐标在 [`pcb/m5-pantilt-v1.0/manufacture/jlcpcb/`](../pcb/m5-pantilt-v1.0/manufacture/)，下单流程见其 [README](../pcb/m5-pantilt-v1.0/manufacture/README.md)（2 层 1.6mm，5 片打样约 ¥30）。
 
@@ -76,8 +76,8 @@ shell_SG90、feet_SG90、bracket_SG90_f、bracket_SG90_b、backpack_400mah（电
 
 | 主机 | 装哪两个 |
 |---|---|
-| CoreS3 / Core Basic / Gray（PWM1_C1/PWM2_C1 路径） | **R9 + R11** |
-| Core2（PWM1_C2/PWM2_C2 路径） | **R10 + R12** |
+| Core Basic / Gray（PWM1_C1/PWM2_C1 路径） | **R9 + R11** |
+| Core2 / CoreS3（PWM1_C2/PWM2_C2 路径） | **R10 + R12** |
 
 PWM 版实拍（器件面/排座/跳线位置）：
 
@@ -131,42 +131,21 @@ M5GO Bottom 底座 + SG90，日本 mongonta 的成熟方案，装配图 11 张�
 
 ## 4. 固件
 
-### 4.1 刷机（三选一）
+### 4.1 明确选择 PWM，再构建
 
-- **网页刷机（首选）**：Chrome/Edge 打开 https://stack-chan.github.io/stack-chan/web/flash/ ，选 `M5Stack` / `M5Stack Core2` 目标。
-- **离线包**：本仓库 [`firmware/stack-chan-firmware-v1.1.0.zip`](../firmware/stack-chan-firmware-v1.1.0.zip) 内 `com.m5stack`（Core）或 `com.m5stack.core2`（Core2）文件夹，esptool 三件套（ESP32 布局：bootloader@0x1000、partition-table@0x8000、app@0x10000）：
+通用 Core/Core2 目标只预置部分引脚，**不保证默认 driver.type 是 pwm**。直插和底板也使用不同 GPIO，必须按 [自制固件配置表](../DIY_FIRMWARE.md#1-台架接线) 选择 JSON。
 
-  ```bash
-  esptool --chip esp32 --port /dev/ttyACM0 --baud 921600 \
-    write_flash 0x1000 bootloader.bin 0x8000 partition-table.bin 0x10000 xs_esp32.bin
-  ```
+- Core Basic/Gray Port.C 直插：`core-sg90-portc.json`（pan16 / tilt17）。
+- Core2 Port.A 直插：`core2-sg90-porta.json`（pan33 / tilt32）；Port.C 则自行改成 pan13 / tilt14。
+- 官方底板：旧 Core 用 `core-sg90-board.json`（5/2），Core2 用 `core2-sg90-board.json`（19/27）；CoreS3 用 `cores3-sg90-board.json`（7/6），并对应上述跳线。
 
-- **npm 源码构建**：`npm run build / deploy` + `--target com.m5stack` 系列参数，详见主指南通用章节。
+按 [构建及烧录流程](../DIY_FIRMWARE.md#4-构建及烧录)，将配置复制为上游 `manifest_local.json`，明确指定通用主机，烧录该输出。网页/离线只选择主机型号不能替代驱动配置；旧 NVS 的 driver.type 也可能覆盖新配置，需检查设置。
 
-### 4.2 驱动配置（丐版直插/非标准引脚必改）
+Takao 的 Core2 + SG90 有专用目标（pan19 / tilt27），只适用于接线一致的板：`npm run flash:takao_core2_sg90`。它不适用于 Port.A 直插。
 
-编辑固件仓库 `firmware/host/app/manifest_local.json`：
+### 4.2 小范围验收
 
-```json
-{
-  "include": ["./manifest.json"],
-  "config": {
-    "driver": {
-      "type": "pwm",
-      "pwmPan": 16,
-      "pwmTilt": 17
-    }
-  }
-}
-```
-
-（上例 = Core Basic Port.C 引脚；Core2 Port.A 用 33/32。）用官方底板 PWM 模式 + 标准主机时**无需配置**，对应目标已预置。
-
-> Takao（mongonta）Core2 + SG90 有专用快捷目标：`npm run flash:takao_core2_sg90`（pwm，pan 19 / tilt 27）。
-
-### 4.3 验收
-
-**官方验收标准**：按 A 键每 5 秒随机看向一处、B 键依次看向左右上下、C 键表情反色。**会左右摇头 = 驱动配置成功。**
+先不上摇臂，确认两颗舵机回参考中位，再装摇臂。执行 [无按键小范围 MOD](../DIY_FIRMWARE.md#5-无按键小范围验收)；不要要求所有主机都有 A/B/C 三个实体键。检查动作方向、主机复位和机械干涉。SG90 没有位置反馈，不能用软件姿态估计当作实测反馈，也不能靠 setTorque(false) 真正切断其电源。装配时必须断开舵机供电。
 
 ---
 

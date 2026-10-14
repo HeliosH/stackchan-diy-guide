@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>自制机固件：固定版本、接线与验收</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f8fa;color:#17202a;font:16px/1.75 system-ui,-apple-system,"PingFang SC",sans-serif}
+main{max-width:1120px;margin:32px auto;padding:32px;background:white;border:1px solid #dce3eb;border-radius:12px}
+h1,h2,h3{line-height:1.35;scroll-margin-top:20px}h1{font-size:30px}h2{margin-top:36px;border-bottom:1px solid #e4e8ee;padding-bottom:10px}
+a{color:#175ca3;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}blockquote{border-left:4px solid #528abf;padding:8px 18px;margin:16px 0;background:#eef5fc}
+pre{overflow:auto;background:#f0f3f7;padding:16px;border-radius:8px;line-height:1.55}code{font:13px/1.55 ui-monospace,monospace}p code,li code,td code{background:#f0f3f7;padding:2px 4px}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px;border:1px solid #d6dee8;text-align:left;vertical-align:top}th{background:#eef3f9}
+img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px auto}nav,footer{font-size:14px;color:#596a7c}nav{padding-bottom:16px;border-bottom:1px solid #e4e8ee}footer{margin-top:36px;border-top:1px solid #e4e8ee;padding-top:16px}
+@media(max-width:640px){main{margin:0;padding:20px;border:0;border-radius:0}h1{font-size:25px}pre{font-size:12px}}
+</style></head><body><main><nav><a href="index.html">指南首页</a> · <a href="DIY_FIRMWARE.md">Markdown 源文档</a></nav><h1 id="自制机固件固定版本接线与验收">自制机固件：固定版本、接线与验收</h1>
+<p>本流程针对社区固件 <strong>v1.1.0</strong>，不是 M5Stack 出厂固件。配置及驱动经过静态检查和模拟协议测试；本仓库尚未完成实物整机验证。官方 K151 使用专用 <code>m5stackchan_cores3</code> 目标，自制 CoreS3 使用通用 <code>m5stack_cores3</code> 目标，两者不可按“芯片相同”互换。</p>
+<h2 id="1-台架接线">1. 台架接线</h2>
+<p>先不装摇臂、不合外壳。主机经 USB 供电；舵机使用独立稳压 5V 电源并与主机共地。XL330 双舵机建议预留至少 3A，SCS0009/SG90 按所购型号的启动、堵转电流和实际压降选电源；首次用限流电源逐只试机。<strong>独立电源的 +5V 不与主机 +5V 直接并接</strong>，也不把舵机接到 3V3。使用 m5-pantilt 的 J7 供电则遵守其电源路径，不另接一条并联电源。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>主机/接法</th>
+<th>TX 或 pan</th>
+<th>RX 或 tilt</th>
+<th>配置文件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CoreS3 + 外置 UART→TTL 半双工转换器 + SCS0009</td>
+<td>GPIO6 TX</td>
+<td>GPIO7 RX</td>
+<td><code>cores3-scs0009.json</code></td>
+</tr>
+<tr>
+<td>CoreS3 + m5-pantilt 串行模式 + XL330</td>
+<td>GPIO17 TX</td>
+<td>GPIO18 RX</td>
+<td><code>cores3-xl330.json</code></td>
+</tr>
+<tr>
+<td>Core Basic/Gray，SG90 直插扩展 Port.C</td>
+<td>GPIO16 pan</td>
+<td>GPIO17 tilt</td>
+<td><code>core-sg90-portc.json</code></td>
+</tr>
+<tr>
+<td>Core2，SG90 直插 Port.A</td>
+<td>GPIO33 pan</td>
+<td>GPIO32 tilt</td>
+<td><code>core2-sg90-porta.json</code></td>
+</tr>
+<tr>
+<td>Core Basic/Gray + m5-pantilt PWM，R9/R11</td>
+<td>GPIO5 pan</td>
+<td>GPIO2 tilt</td>
+<td><code>core-sg90-board.json</code></td>
+</tr>
+<tr>
+<td>Core2 + m5-pantilt PWM，R10/R12</td>
+<td>GPIO19 pan</td>
+<td>GPIO27 tilt</td>
+<td><code>core2-sg90-board.json</code></td>
+</tr>
+<tr>
+<td>CoreS3 + m5-pantilt PWM，R10/R12</td>
+<td>GPIO7 pan</td>
+<td>GPIO6 tilt</td>
+<td><code>cores3-sg90-board.json</code></td>
+</tr>
+</tbody></table></div>
+<p>CoreS3 的外部 Port.C 为 GPIO17/18；GPIO16 是摄像头信号，不能沿用旧 Core 的 17/16 组合。按 <a href="https://docs.m5stack.com/en/core/CoreS3">厂家 M5-Bus 观察方向</a>，21/22=GPIO6/7、1/3/5=GND、28=5V，<strong>26=GPIO14，不是 GND</strong>。KiCad 排针编号从另一观察方向绘制，应以 GPIO/网络及物理位置核对：插入前断电，测出板上 DI/RO 与主机引出的 TX/RX 连通关系，不能混用两张图的数字。</p>
+<p>串行转换器须明确具有 <strong>3.3V UART TX/RX 输入输出、TTL 单线 DATA 侧、发送释放/接收时序</strong>。不能使用 RS-485 A/B 模块代替，也不能短接普通 USB-TTL 的 TX/RX，更不能使用旧版 RX 串二极管的接法。URT-1 / U2D2 是电脑配置工具，不能默认当作主机 UART 转换器。m5-pantilt 使用 R13/R14 串行跳线，R9-R12 全不装；PWM 则反过来。</p>
+<h2 id="2-准备固定版本源码">2. 准备固定版本源码</h2>
+<pre><code class="language-bash">git clone --branch v1.1.0 --recurse-submodules https://github.com/stack-chan/stack-chan.git stack-chan-firmware
+cd stack-chan-firmware/firmware
+npm i
+npm run setup
+npm run setup -- --device=esp32
+npm run doctor
+</code></pre>
+<p>以下命令都在这个 <code>firmware</code> 目录执行。将 <code>GUIDE_DIR</code> 换成你本机本指南的绝对路径；包含空格的路径必须保留引号。</p>
+<pre><code class="language-bash">GUIDE_DIR=&quot;/absolute/path/to/stackchan-diy-guide&quot;
+cp &quot;$GUIDE_DIR/firmware-configs/cores3-xl330.json&quot; host/app/manifest_local.json
+</code></pre>
+<p>根据上表替换配置文件名。D/E 路线还必须复制标定驱动：</p>
+<pre><code class="language-bash">cp &quot;$GUIDE_DIR/firmware-configs/cores3-scs0009.json&quot; host/app/manifest_local.json
+cp &quot;$GUIDE_DIR/firmware-configs/scservo-calibrated-driver.js&quot; host/app/
+</code></pre>
+<p>该 manifest 用 <code>modules.scservo-driver</code> 替换上游同名模块。<strong>原版 scservo 不传递 <code>driver.serial</code>、不读取 <code>offsetPan/offsetTilt</code>，且固定按 200° 换算；本指南的替换驱动明确传递串口、使用 raw 位置和可配置量程。不要只复制 JSON 而漏掉驱动。</strong></p>
+<h2 id="3-市售-scs0009-标定">3. 市售 SCS0009 标定</h2>
+<p>配置起点是 ID1/ID2、1Mbps、300°/1024 步、raw 零位 512。它是所附市售规格书的起始假设，不适用于未经确认的 K151 定制舵机或 STS/SMS 系列。</p>
+<ol>
+<li>用 URT-1 和飞特软件一次连接一只，确认型号、ID、波特率；第二只写 ID2，掉电重读。不要使用未经确认的 Recovery。</li>
+<li>不装摇臂，发 raw=512，确认轴位置；断电装摇臂，使头部正前方水平。不要把 raw=512 当作所有舵机的绝对 90°。</li>
+<li>用小 raw 增量量角。例如 300°/1024 规格下，34 步约为 10°。按测量修正 <code>angleRangeDegrees</code>，反向则改对应 <code>panDirection</code> / <code>tiltDirection</code> 为 1。</li>
+<li>零位用 <code>panZeroRaw</code> / <code>tiltZeroRaw</code> 调整，当前默认活动范围 pan ±10°、tilt ±5°。扩大 <code>panMin/Max</code>、<code>tiltMin/Max</code> 前实测机身干涉；这些是相对装配零位的角度，不能把 K151 整机的绝对 5-85°直接填进来。</li>
+</ol>
+<p>本驱动用 raw 命令绕过上游 200° 换算，并对输出限位。它保留串行应答错误，<strong>未增加电流/温度读取或固件堵转保护</strong>；舵机自身保护也不代替机械限位。</p>
+<p>CoreS3 若使用 m5-pantilt 串行板带 SCS0009，将配置中的 TX/RX 改为 17/18；旧 Core 通常为 17/16、Core2 为 14/13，但仍须按所用板实测连通性。波特率保持 1Mbps，只有实测需要时才同时修改主机与舵机，不因旧文档的“≤115200”说法单方面降速。</p>
+<h2 id="4-构建及烧录">4. 构建及烧录</h2>
+<p>官方 v1.1.0 的默认 <code>npm run flash</code> / <code>deploy</code> 读取 K151 manifest，不读取上面修改的本地 manifest。此处使用官方 <code>run-mcconfig.mjs</code> 包装器，明确指定通用主机及本地配置：</p>
+<pre><code class="language-bash"># CoreS3（B/D/E，或 CoreS3 PWM）
+node scripts/run-mcconfig.mjs -m -p esp32/m5stack_cores3 -t build &quot;$PWD/host/app/manifest_local.json&quot;
+# Core Basic/Gray（C，二选一，不要全执行）
+node scripts/run-mcconfig.mjs -m -p esp32/m5stack -t build &quot;$PWD/host/app/manifest_local.json&quot;
+# Core2（C，二选一，不要全执行）
+node scripts/run-mcconfig.mjs -m -p esp32/m5stack_core2 -t build &quot;$PWD/host/app/manifest_local.json&quot;
+</code></pre>
+<p>以实际主机选择其中一行，构建成功后检查 <code>dist/bin/esp32/&lt;主机目标&gt;/release/stack-chan-host/</code> 的三个 bin。先核对唯一串口，按需备份 flash/NVS；将 <code>PORT</code> 换成实际串口，例如 Linux <code>/dev/ttyACM0</code> 或 macOS <code>/dev/cu.usbmodem...</code>。</p>
+<pre><code class="language-bash"># CoreS3 的 ESP32-S3 布局
+PORT=&quot;/dev/ttyACM0&quot;
+OUT=&quot;dist/bin/esp32/m5stack_cores3/release/stack-chan-host&quot;
+esptool --chip esp32s3 --port &quot;$PORT&quot; write_flash \
+  0x0 &quot;$OUT/bootloader.bin&quot; 0x8000 &quot;$OUT/partition-table.bin&quot; 0x10000 &quot;$OUT/xs_esp32.bin&quot;
+</code></pre>
+<p>Core Basic/Gray 或 Core2：<code>--chip esp32</code>，bootloader 偏移为 <code>0x1000</code>，<code>OUT</code> 分别改成 <code>m5stack</code> 或 <code>m5stack_core2</code> 的输出目录，其余两个偏移相同。若更换驱动类型，先通过设置清除/修改旧的持久化 <code>driver.type</code>，否则 NVS 设置可能覆盖 manifest；不要为此未经备份就擦除整个 flash。</p>
+<p>离线包中的通用 Core/Core2 默认不保证是 PWM，CoreS3 默认 Dynamixel 串口也不是这块板的 17/18。B/C/D/E 推荐按上述自定义配置构建；不要承诺网页选主机型号后舵机自动匹配。K151 专用预编译包只用于官方整机。</p>
+<h2 id="5-无按键小范围验收">5. 无按键小范围验收</h2>
+<p>先保持摇臂拆下或机身运动空间无遮挡，安装本指南的小范围 MOD：</p>
+<pre><code class="language-bash">mkdir -p mods/diy-smoke
+cp &quot;$GUIDE_DIR/firmware-configs/diy-smoke/manifest.json&quot; mods/diy-smoke/
+cp &quot;$GUIDE_DIR/firmware-configs/diy-smoke/mod.js&quot; mods/diy-smoke/
+# ESP32-S3：此命令只编译并写入 MOD，不重新刷 K151 host
+npm run mod:m5stackchan_cores3 -- mods/diy-smoke/manifest.json --port &quot;$PORT&quot;
+# ESP32 Core/Core2 用同芯片 MOD 目标，替代上一行
+# npm run mod:takao_core2_sg90 -- mods/diy-smoke/manifest.json --port &quot;$PORT&quot;
+</code></pre>
+<p>MOD 与 host 须使用同一套 Moddable/XS 版本。其代码只用公开 motion API 和 Timer，无 K151/Takao 专用外设；MOD 编译目标只是选择相同芯片的工具链，不改变已烧录的本地 host。若工具提示版本不兼容，停止安装，检查是否混用了另一套 SDK/预编译 host。</p>
+<p>重启后执行一次回中、左右各 5°、上下各 3°、回中，随后请求关闭扭矩；串口应出现 <code>[diy-smoke] complete</code>，无应答/失败应出现错误。PWM 舵机不能靠该 API 真正断电，装配前必须切断舵机电源。CoreS3 不要求 A/B/C 实体键，也不使用有转头阈值的 <code>lookAt</code> 代替小角度 <code>setPose</code>。</p>
+<p>验收需同时满足：显示正常、ID1/ID2 独立动作且方向正确、串行机可读回位置、无复位/明显压降/异响、线束和外壳在全测试范围内无干涉。仅“会摇头”不足以判断成功。完成台架验收后再装壳，并从小范围重新测试。</p>
+<h2 id="依据与版本边界">依据与版本边界</h2>
+<ul>
+<li><a href="https://github.com/stack-chan/stack-chan/blob/v1.1.0/firmware/package.json">v1.1.0 package.json</a>：通用构建脚本及 MOD 工具。</li>
+<li><a href="https://github.com/stack-chan/stack-chan/blob/v1.1.0/firmware/host/platforms/m5stackchan_cores3/manifest.json">K151 平台</a>：锁定驱动、GPIO6/7、PY32 电源及专用零位。</li>
+<li><a href="https://github.com/stack-chan/stack-chan/blob/v1.1.0/firmware/host/modules/motion/protocols/scservo.ts">上游 SCServo 协议</a>：raw 命令和应答接口。</li>
+<li><a href="https://docs.m5stack.com/en/core/CoreS3">CoreS3 PinMap</a>、<a href="https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/">XL330 参数与通信电路</a>。</li>
+</ul>
+<p>升级社区固件后重新核对 manifest 合并顺序、MotionDriver 接口和构建输出；本地标定驱动不是官方上游固件的一部分。</p>
+<footer>由 Markdown 自动生成。PDF 保持历史版本，接线与固件以本页面为准。自制路线尚需实物验收。</footer></main></body></html>

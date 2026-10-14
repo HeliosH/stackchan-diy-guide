@@ -33,8 +33,8 @@
 ## 2. 开箱验收
 
 1. 包装内：整机 ×1、Type-C 线、说明书（以实际清单为准）。
-2. 开机：长按电源键，屏幕出脸即正常。
-3. 硬件自检要点：脖子两个方向能转到头不顶壳；触摸头顶三区有反应；12 颗 RGB 灯正常。
+2. 开机：短按电源键；长按 6 秒是关机。首次按屏幕向导在稳定平面执行自检。
+3. 硬件自检要点：两轴在小范围动作时无异响、无干涉，不要试顶到极限；触摸头顶三区有反应；12 颗 RGB 灯正常。
 4. **安全须知（官方原文警告）**：
    - **Y 轴（垂直）舵机角度控制在 5°–85°**，超限可能堵转并造成**永久损坏**；
    - X 轴无限制；**不确定通电状态时禁止用手硬掰**任何活动部件。
@@ -44,7 +44,7 @@
 
 - **StackChan World App**（iOS/Android）：视频查看、远程化身控制、App Center、AI 对话。
   ⚠️ **App 只能连接官方核心**（K151 整机 / 遥控套件 / 官方替换核心），**不能**连接第三方 CoreS3 / CoreS3-SE / CoreS3-Lite。
-- 出厂固件 v1.1.0 新玩法：**Stackchan Dock**（安卓手机 USB 直连语音对话）、MCP Server MOD、MediaPipe BLE 面部/手势跟踪、XiaoZhi v1 兼容 ChatService。
+- **社区固件 v1.1.0** 新玩法（需刷社区固件，会覆盖出厂固件）：**Stackchan Dock**（安卓手机 USB 直连语音对话）、MCP Server MOD、MediaPipe BLE 面部/手势跟踪、XiaoZhi v1 兼容 ChatService。
 - App 下载与使用教程：https://docs.m5stack.com/zh_CN/StackChan
 
 ## 4. 固件：出厂版 vs 开源社区版
@@ -64,7 +64,7 @@ K151 有**两套固件生态**，可以来回切：
 2. 打开 M5Burner → 搜索 **StackChan** → 勾选 **Only Official** → Download。
 3. USB-C 连接（建议底部口）→ 烧录。
 
-**刷社区固件**：Chrome/Edge 打开 https://stack-chan.github.io/stack-chan/web/flash/ 选 `M5StackChan CoreS3`；或用本仓库离线包 [`firmware/stack-chan-firmware-v1.1.0.zip`](../firmware/stack-chan-firmware-v1.1.0.zip) 的 `m5stackchan_cores3` 目标（esptool 用法与 SHA-256 校验见主指南）。刷社区固件前建议先用 M5Burner 备份。
+**刷社区固件**：Chrome/Edge 打开 https://stack-chan.github.io/stack-chan/web/flash/ 选 `M5StackChan CoreS3`；或用本仓库离线包 [`firmware/stack-chan-firmware-v1.1.0.zip`](../firmware/stack-chan-firmware-v1.1.0.zip) 的 `m5stackchan_cores3` 目标（esptool 用法与 SHA-256 校验见主指南）。刷社区固件前建议按当前工具支持的方式备份 flash/NVS；恢复出厂固件用 M5Burner。
 
 ## 5. 硬件规格速查（复刻/魔改参考）
 
