@@ -4277,7 +4277,7 @@
     (property "Value" "MAX3485" (at 129.54 124.46 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_SO:SO-8_5.3x6.2mm_P1.27mm" (at 123.19 153.67 0)
+    (property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" (at 123.19 153.67 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://datasheets.maximintegrated.com/en/ds/MAX3483-MAX3491.pdf" (at 123.19 134.62 0)

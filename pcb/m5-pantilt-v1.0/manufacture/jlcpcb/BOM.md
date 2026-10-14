@@ -1,30 +1,46 @@
-# m5-pantilt v1.0 元件清单（由 KiCad 原理图自动生成）
+# m5-pantilt v1.0 元件清单
 
-> 生成命令：`kicad-cli sch export python-bom`；LCSC 编号来自官方原理图元件库。
-> 装配类型按实际封装区分；是否可机器装配以当前服务为准。THT 连接器建议手焊。**LOGO 丝印图形不是元件。**
+> LCSC 编号来自官方原理图元件库 + 本仓库补充核实（J3/J8、J6 为 2026-10 经嘉立创元件库逐一验证的原厂 JST 料）；**匹配编号后仍须检查实际型号/封装，是否可机器装配以嘉立创当前服务为准**。
+> `SMD 可贴` = 嘉立创 SMT 可贴装；`THT 手焊` = 通孔件到手手焊；`来料` = 不参与贴片订单，自购后手焊。**LOGO 丝印图形不是元件。**
+
+## 一、贴片订单内（SMT，随 PCB 一起贴）
 
 | 位号 | 值 | 封装 | LCSC | 装配 |
 |---|---|---|---|---|
-| C1,C2,C3,C4 | 100u | C_1206_3216Metric_Pad1.33x1.80mm_HandSolder | C15008 | SMD 可贴 |
-| C5 | 0.1u | C_0603_1608Metric | C14663 | SMD 可贴 |
+| C1,C2,C3,C4 | 100µ | C_1206_3216Metric_Pad1.33x1.80mm_HandSolder | C15008 | SMD 可贴 |
+| C5 | 0.1µ | C_0603_1608Metric | C14663 | SMD 可贴 |
 | D1 | SS54 | D_SMA | C2931790 | SMD 可贴 |
 | D2 | PMEG3030EP | D_SOD-128 | C255587 | SMD 可贴 |
-| J1 | Conn_02x15_Odd_Even | PinHeader_2x15_P2.54mm_Vertical_SMD | — | SMD 排针，按服务能力/手焊 |
-| J2 | Conn_02x15_Odd_Even | PinSocket_2x15_P2.54mm_Vertical_SMD | — | SMD 可贴 |
-| J3,J8 | Conn_01x03 | JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical | — | THT，按服务能力/手焊 |
-| J5 | BAT | JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical | C2319 | THT，按服务能力/手焊 |
-| J6 | Conn_01x04 | JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal | — | THT 手焊 |
-| J7 | 5V_POWER | JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical | C20079 | THT 手焊 |
 | Q1 | IRLML6402 | SOT-23 | C2886430 | SMD 可贴 |
 | Q2 | BC857 | SOT-23 | C2139 | SMD 可贴 |
 | R1 | 10k | R_0603_1608Metric | C25804 | SMD 可贴 |
-| R13,R14 | 0 | R_0603_1608Metric | C21189 | SMD 可贴 |
 | R2 | 5.1k | R_0603_1608Metric | C23186 | SMD 可贴 |
 | R3,R4 | 1k | R_0603_1608Metric_Pad0.98x0.95mm_HandSolder | C21190 | SMD 可贴 |
 | R5 | 47k | R_0603_1608Metric_Pad0.98x0.95mm_HandSolder | C25819 | SMD 可贴 |
 | R6 | 2k | R_0603_1608Metric | C22975 | SMD 可贴 |
 | R7 | 20k | R_0603_1608Metric | C4184 | SMD 可贴 |
 | R8,R15 | 2.2k | R_0603_1608Metric | C4190 | SMD 可贴 |
-| R9,R10,R11,R12 | 0 | R_0603_1608Metric_Pad0.98x0.95mm_HandSolder | C21189 | SMD 可贴 |
-| SW1 | SW_SPDT | SW_CuK_OS102011MA1QN1_SPDT_Angled | — | THT 手焊 |
-| U1 | MAX3485 | SO-8_5.3x6.2mm_P1.27mm | C668204 | SMD 可贴 |
+| **R13,R14** | **0Ω** | R_0603_1608Metric | C21189 | SMD 可贴（串行舵机版必装） |
+| U1 | MAX3485 | **SOIC-8_3.9x4.9mm_P1.27mm（窄体）** | C668204 | SMD 可贴 |
+
+> **R9–R12（0Ω）不在贴装清单里**：它们是 PWM/SG90 版的 Core 型号选择跳线（Core Basic/Gray 短 R9+R11，Core2/CoreS3 短 R10+R12）。串行舵机版（本路线默认）**不装**。如果你做 PWM 版，自行购买 0603 0Ω 手焊即可（LCSC C21189）。
+
+## 二、通孔件（有料号，可随单采购，到手手焊）
+
+| 位号 | 值 | 封装 | LCSC | 说明 |
+|---|---|---|---|---|
+| J3,J8 | Conn_01x03 | JST EH B3B-EH-A（立贴 2.5mm） | **C160259** | 舵机口 ×2（JST 原厂） |
+| J5 | BAT | JST PH B2B-PH-K（立贴 2.0mm） | C2319 | 电池口（Boom Precision PH-2A） |
+| J6 | Conn_01x04 | JST PH S4B-PH-K（侧贴 2.0mm） | **C157926** | PH 4pin（JST 原厂，侧入式） |
+| J7 | 5V_POWER | JST XH B2B-XH-A（立贴 2.5mm） | C20079 | 5V 外供电口 |
+
+## 三、来料/自备件（不在 SMT 订单里，自购后手焊）
+
+| 位号 | 规格 | 采购建议 |
+|---|---|---|
+| J1 | 2×15 P2.54 **贴片**排针（焊在背面 Bottom） | M-BUS 引出。选型自由度大（针高可选），淘宝搜"2.54 贴片排针 2x15"；单排 40P 贴片排针（LCSC C2337）裁切亦可 |
+| J2 | 2×15 P2.54 **贴片**排母 | M5Stack 主机插这里。注意排母高度需与机身配合（常规 8.5mm 或加高），淘宝搜"贴片排母 2x15" |
+| SW1 | C&K OS102011MA1QN1（SPDT 侧拨，弯脚） | LCSC 在售直脚版 OS102011MS2QN1（C221829），**封装不同不能直接换**；弯脚原版建议淘宝购 C&K 原厂或国产同尺寸仿品（搜"OS102011"） |
+
+> J1/J2 官方原理图也未指定料号（M-BUS 连接器高度随机箱结构而定），故按来料处理。
+> **LOGO 丝印图形不是元件**；Hole1–Hole4 为安装孔，不在贴装坐标（CPL）内。

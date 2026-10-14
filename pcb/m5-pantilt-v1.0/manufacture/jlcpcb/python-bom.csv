@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/ubuntu/.hermes-web-ui/.ekko/workspace/default/mv7hx9xw5uz9on/stackchan-diy-kit/pcb/m5-pantilt-v1.0/m5-pantilt.kicad_sch</source>
-    <date>Wed 14 Oct 2026 02:00:09 PM CST</date>
+    <date>Wed 14 Oct 2026 05:36:19 PM CST</date>
     <tool>Eeschema 7.0.11+dfsg-1build4</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -514,7 +514,7 @@
     </comp>
     <comp ref="U1">
       <value>MAX3485</value>
-      <footprint>Package_SO:SO-8_5.3x6.2mm_P1.27mm</footprint>
+      <footprint>Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
       <datasheet>https://datasheets.maximintegrated.com/en/ds/MAX3483-MAX3491.pdf</datasheet>
       <fields>
         <field name="LCSC">C668204</field>

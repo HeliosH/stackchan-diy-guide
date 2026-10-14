@@ -188,13 +188,13 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 
 #### 5.1.4 核对元件清单（BOM）
 
-完整 BOM（23 组、带 LCSC 号）见 [`manufacture/jlcpcb/BOM.md`](../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md)，由 KiCad 原理图自动生成。核心构成：
+完整 BOM 见 [`manufacture/jlcpcb/BOM.md`](../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md)：**SMT 贴装 19 组**（全部带验证过的 LCSC 号）+ **通孔采购 4 组**（J3/J8/J5/J6/J7）+ **来料自备 3 件**（J1/J2/SW1）。核心构成：
 
 | 类别 | 元件 |
 |---|---|
-| IC | **U1 = MAX3485**（SO-8，半双工收发）、Q1 = IRLML6402（电源软开关）、Q2 = BC857（方向控制） |
+| IC | **U1 = MAX3485**（窄体 SOIC-8，半双工收发；注意 C668204 是窄体 3.9×4.9mm 封装，PCB 已按窄体出 Gerber）、Q1 = IRLML6402（电源软开关）、Q2 = BC857（方向控制） |
 | 二极管 | D1 = SS54、D2 = PMEG3030EP |
-| 阻容 | 100µ×4、0.1µ×1；0603 电阻×15（其中 **R13/R14 = 0Ω 跳线，串行模式必装**） |
+| 阻容 | 100µ×4、0.1µ×1；0603 电阻×15（其中 **R13/R14 = 0Ω 跳线，串行模式必装**；R9–R12 不在贴装清单） |
 | 连接器 | J1/J2 = 2×15 M-BUS 排母/排针（**J1 在背面**）、J3/J8 = JST EH 3pin 舵机口、J5 = PH2.0 电池、J7 = XH 5V |
 | 手插件 | J6（PH 4pin）、SW1（SPDT 开关，可选） |
 
@@ -212,8 +212,8 @@ KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)
 
 **玩法 2：让嘉立创 SMT 贴片（省焊接）**
 
-1. PCB 下单时勾选 **SMT 贴片**，上传 `manufacture/jlcpcb/m5-pantilt-bom-jlc.csv` 和 `m5-pantilt-cpl-jlc.csv`；不要用旧版不完整坐标。
-2. 元件匹配页面按 LCSC 号确认各元件。**两个关键点**：① J1 在 bottom 面——经济贴装只贴单面，建议 J1 免贴到手自己焊（或选双面贴装加价）；② **把 R9/R10/R11/R12 设为"不贴"**（串行模式不用，见 5.1 跳线说明）。
+1. PCB 下单时勾选 **SMT 贴片**，上传 `manufacture/jlcpcb/m5-pantilt-bom-jlc.csv` 和 `m5-pantilt-cpl-jlc.csv`；不要用旧版不完整坐标（`m5-pantilt-all-pos.csv` 仅为官方原始全量坐标）。
+2. 元件匹配页面按 LCSC 号确认各元件，**匹配后仍须抽查实际型号/封装**。R9–R12（PWM 模式跳线）**已从 BOM/坐标里剔除**，不会出现在匹配页；J1/J2/SW1 为来料件也不在订单里，到手自己焊（J1 在背面立贴，注意方向，照 `images/m5-pantilt-bottom.png`）。
 3. 付款等待，到手后手焊剩余插件件。
 
 **打样完成后**：万用表蜂鸣档查 5V/GND 是否短路，再上 M5Stack 试机。
