@@ -65,7 +65,7 @@
 | **SG90 / MG90S** | PWM | 90° | 淘宝任意（¥5–15/个，MG90S 金属齿更耐用） | 便宜；涌流可能拉掉主机电源，堵转会过热冒烟（官方警告），不能读角度/断扭矩 |
 | **SCS0009** | 串行 TTL | 100° | 深圳飞特（Feetech）产品，淘宝可直购 | 串行、可读角度；改 ID 需要 URT-1 调试器或手工工具 |
 | **XL330-M288**（v1.0 新规格） | Dynamixel 串行 | 设 ID1=腿/ID2=脖，波特率 1M（默认 57600 需改） | Robotis 韩国品牌，淘宝有代理店；U2D2 调试器约 ¥200–300 | 功能最强（速度/扭矩/温度反馈）；v1.0 外壳官方配套 |
-| **RS30X/RS304MD** | 串行 TTL | 0° | 日本 Vstone/Best Solution，国内需代购/转运（约 3000 日元+） | 官方文档认可，但国内获取成本高，不推荐 |
+| **RS30X/RS304MD** | 串行 TTL | 0° | 日本 Vstone/Best Solution，国内需代购/转运（约 3000 日元+） | 官方文档认可，但国内获取成本高，不推荐；机身打印件本包已带（`stl/rs30x/`），固件示例见 `setup_rs30x` MOD |
 
 **给国内手挫的建议**：走丐版/性价比选 **SG90（MG90S 更稳）**；要体验串行舵机玩法选 **SCS0009**（本土品牌好买）或 **XL330**（走 v1.0 官方新规格）。
 
@@ -118,6 +118,8 @@ PWM 版（SG90）与串行版（SCS0009/RS30X/Dynamixel）的器件差别（跳�
 |---|---|
 | ![pwm ports](images/pwm_ports.jpg) | ![serial ports](images/serial_ports.jpg) |
 | ![pwm switch](images/pwm_switch.jpg) | ![serial switch](images/serial_switch.jpg) |
+| ![PWM 版 2x15 排座](images/pwm_2x15.jpg) | ![串行版 2x15 排座](images/serial_2x15.jpg) |
+| ![PWM 跳线](images/pwm_jumper.jpg) | ![PWM 元件面](images/pwm_parts.jpg) |
 
 > 官方对比结论（原文翻译）：PWM/SG90 便宜但涌流可能导致 M5Stack 掉电，堵转过限可能冒烟；串行舵机能读角度、限速控制更精细，但贵。板上信号/供电见原理图 [images/m5-pantilt-sch.png] 与完整原理图 PDF（本包 `pcb/m5-pantilt-v1.0/m5-pantilt.pdf`）。
 
@@ -222,9 +224,12 @@ https://github.com/stack-chan/stack-chan/tree/v0.2.1/schematics
 |---|---|---|
 | v1.0（XL330 + CoreS3） | `stl/v1-xl330/` | shell、feet_top、feet_bottom、bracket_XL330_f、bracket_XL330_b、gear_XL330（×2 颗）、gear_XL330_narrow（孔紧时的备选）、horn |
 | v0（SG90 + Core/Basic） | `stl/v0-sg90/` | shell_SG90、feet_SG90、bracket_SG90_f、bracket_SG90_b、backpack_400mah（电池背包） |
+| SCS0009 专用机身 | `stl/scs0009/` | shell_SCS0009、feet_SCS0009、bracket_SCS0009_f、bracket_SCS0009_b（§6.4 路线用它，免改 SG90 件） |
+| RS30X（Futaba）机身 | `stl/rs30x/` | shell_RS30X、feet_RS30X、bracket_RS30X |
+| 电池背包（各路线通用） | `stl/backpack/` | backpack_400mah / backpack_640mah / backpack_aaa / backpack_casio_battery（按电池四选一，见 §3.4） |
 | K151 官方机身（魔改参考） | `stl/k151-body/` | MainBody、Base、BaseCover、ServoBody、ServoArm、ServoCover、ServoSideCover、BearingFixture、LightGuideBar-A/B |
 
-（STEP 可编辑源文件在仓库 `case/` 各目录，想改造型用 Fusion 360 / FreeCAD 打开。）
+（STEP 可编辑源文件在官方仓库 `case/` 各目录，与本包 STL 同名，如 `case/v1/shell.step`；想改造型用 Fusion 360 / FreeCAD 打开。官方仓库直链国内不稳，可用 jsdelivr：`https://cdn.jsdelivr.net/gh/stack-chan/stack-chan@main/case/v1/shell.step`。）
 
 ### 5.2 打印参数
 
@@ -350,6 +355,7 @@ https://github.com/stack-chan/stack-chan/tree/v0.2.1/schematics
   ![ID 设置](images/id.jpg)
 
 - **注意**：官方提醒不要用飞特 GUI 的 "Recovery"（已知会导致舵机工作异常）。
+- **官方有 SCS0009 专用机身**（`stl/scs0009/`：shell + feet + bracket×2），比魔改 SG90 版合体多了齿轮传动件，SCS0009 圆形安装法兰直接吻合，**强烈建议 SCS0009 用户直接用这套**，别拿 SG90 壳硬改。
 
 ---
 
@@ -420,6 +426,8 @@ npm run flash                    # 标准机 M5StackChan CoreS3
 
 还有 `npm run build / deploy / debug / debug:xsdb` 各目标的同名变体；不需要 `sudo`。
 
+> **装不了 Moddable SDK？**（Windows 不想用 WSL、或环境总装不上）官方仓库还提供容器化开发环境：`firmware/docker/`（Dockerfile + 用法）和 `.devcontainer/`（VS Code Dev Container 一键拉起）。另外官方强调：M5Stack 出厂固件和本仓库固件是**两套独立实现**，刷本仓库固件会覆盖出厂固件，想恢复用 M5Burner（见 §7.8）。
+
 ### 7.5 驱动配置（自制接线必改）
 
 编辑 `stack-chan/firmware/host/app/manifest_local.json`（仓库里就是留白的本地配置文件）：
@@ -482,6 +490,27 @@ npm run mod -- ./mods/examples/look_around/manifest.json --port /dev/ttyACM1
 - Qoder 伴侣机器人固件：https://docs.m5stack.com/en/guide/stackchan/qoder
 - 社区 Arduino 项目：AI Stack-chan（ChatGPT 语音对话）https://github.com/robo8080/AI_StackChan2 ；PWM 舵机测试 https://github.com/mongonta0716/stack-chan-tester
 
+### 7.9 进阶固件文档（官方原文 + 中文导读）
+
+装好之后想继续玩——自己写 MOD、换音色、接自己的 TTS、多机互联——官方 `firmware/docs/` 有一批进阶文档，本包已存档在 [`firmware-docs/`](firmware-docs/) 并写了中文导读，逐篇一句话：
+
+| 想干什么 | 看哪篇 | 要点 |
+|---|---|---|
+| **自己写 MOD** | [`api.md`](firmware-docs/api.md) | MOD 收到 `StackchanContext` 能力对象（UI / motion / audio / input 可替换）；右手坐标系：X=脸前、Y=脸左、Z=头顶，**单位米/弧度**；官方 API 文档标注"建设中"，完整签名看源码 TSDoc，示例抄 `mods/examples/look_around/` |
+| **换音色 / 唱歌** | [`stackchan-voice.md`](firmware-docs/stackchan-voice.md) | 内置离线 TTS（CoreS3 默认），`voice: normal/cute`；`robot.audio.sing('#C4,450ki…')` 按拍唱歌，积木编辑器"テンポ…で…を歌う"块免写记谱 |
+| **接自己的 TTS** | [`text-to-speech.md`](firmware-docs/text-to-speech.md) | 预生成（构建时抓 wav）或远程流式；支持 Google Cloud TTS / Coqui / VoiceVox / ElevenLabs，配置写在 `manifest_local.json` 的 `config.tts` |
+| **两台互联 / BLE 控制** | [`local-peer-communication.md`](firmware-docs/local-peer-communication.md) | `context.connectivity.localPeer` 统一 API：ESP-NOW（首选）或 BLE（Nordic UART，`STK-LP-XXXX`），无需联网；消息上限 2 KiB |
+| **网页改设置** | [`setting-preferences-web.md`](firmware-docs/setting-preferences-web.md) | 按住 C 键/触摸开机 → 浏览器开官方设置页 → BLE 连接改配置，**全程不用配 Wi-Fi** |
+| **迷你应用** | [`mini-apps_ja.md`](firmware-docs/mini-apps_ja.md) | 实验性：脸屏幕可被 320×196 的 Piu 小应用临时替换（AppBar 下沿），外部 archive 只许 import `miniapp`/`piu/MC`/`piu/Timeline` |
+
+**MOD 生态三件套**（官方网页工具，中文界面）：
+
+- [MOD Gallery](https://stack-chan.github.io/stack-chan/web/mod-gallery/)：现成 MOD 商店，可先在模拟器试跑再装到设备
+- [积木编辑器](https://stack-chan.github.io/stack-chan/web/editor/)：Blockly 拖积木生成 MOD，零代码
+- [模拟器](https://stack-chan.github.io/stack-chan/web/simulator/)：浏览器里跑 MOD，不动真机
+
+官方 `firmware/mods/examples/` 有 **31 个示例 MOD** 可抄（对话/口型/多机/温湿度/MCP/网络电台…全目录见 [`firmware-docs/README.md`](firmware-docs/README.md)）。
+
 ---
 
 ## 8. 开机验收与首次设置
@@ -543,12 +572,14 @@ stackchan-diy-guide/  （本仓库）
 ├── StackChan手挫完全指南.pdf        ← PDF 版（23 页 A4，图片内嵌）
 ├── index.html                      ← 网页版（浏览器打开，GIF 动图会动；可直接开 GitHub Pages）
 ├── LICENSE                         ← Apache-2.0（随上游 stack-chan 仓库）
-├── images/                           ← 45 张官方装配图/动图/板子实拍（正文已引用）
+├── images/                           ← 49 张官方装配图/动图/板子实拍（正文已引用）
 ├── stl/
 │   ├── v1-xl330/    （8 件：v1.0 外壳全家桶）
 │   ├── v0-sg90/     （5 件：v0 SG90 外壳 + 400mAh 电池背包）
+│   ├── scs0009/     （4 件：SCS0009 官方专用机身）
+│   ├── rs30x/       （3 件：Futaba RS30X 官方机身）
 │   ├── k151-body/   （10 件：K151 官方机身结构，魔改参考）
-│   └── backpack/    （3 件：官方电池背包 400mAh / 640mAh / AAA 规格）
+│   └── backpack/    （4 件：官方电池背包 400mAh / 640mAh / AAA / 卡西欧电池规格）
 ├── v1-xl330-route/                  ← 路线 B 专篇（v1.0 官方外壳 + XL330：方案/BOM/装配/固件）
 │   ├── README.md
 │   ├── images/       （21 张：v1.0 官方装配图/成品图/底板实拍）
@@ -560,9 +591,14 @@ stackchan-diy-guide/  （本仓库）
 ├── pcb/
 │   └── m5-pantilt-v1.0/  （KiCad 完整工程 + 原理图 PDF + kibot 配置 + 丝印/钻孔）
 │       └── manufacture/  （已生成的嘉立创制造文件：Gerber zip + BOM(含LCSC号) + CPL + BOM.md + 下单说明）
-└── firmware/
-    ├── stack-chan-firmware-v1.1.0.zip        （官方预编译固件，4 目标 ×3 件，SHA-256 已验）
-    └── stack-chan-firmware-v1.1.0.zip.sha256
+├── firmware/
+│   ├── stack-chan-firmware-v1.1.0.zip        （官方预编译固件，4 目标 ×3 件，SHA-256 已验）
+│   └── stack-chain-firmware-v1.1.0.zip.sha256（同上校验文件）
+└── firmware-docs/                    ← 官方进阶固件文档存档 + 中文导读（§7.9）
+    ├── README.md      （导读 + 31 个示例 MOD 索引）
+    ├── api.md / mods-README.md / firmware-README.md
+    ├── stackchan-voice.md / text-to-speech.md
+    ├── local-peer-communication.md / setting-preferences-web.md / mini-apps_ja.md
 ```
 
 ## 附录 B：链接汇总
