@@ -143,6 +143,7 @@
 
 - **MOD 生态**：[MOD Gallery](https://stack-chan.github.io/stack-chan/web/mod-gallery/) 现成应用商店 / [积木编辑器](https://stack-chan.github.io/stack-chan/web/editor/) 零代码 / [模拟器](https://stack-chan.github.io/stack-chan/web/simulator/)。
 - **官方进阶文档存档 + 中文导读**（API / 换音色唱歌 / 外接 TTS / 多机互联 / 网页改设置 / 迷你应用 / 31 个示例 MOD 索引）：[`firmware-docs/`](firmware-docs/README.md)。
+- **接入 Hermes 智能体当大脑**（Stack-chan 出眼耳口身、HermesAgent 出脑；两个开源案例的架构与上手）：[`hermes-integration/`](hermes-integration/README.md)。
 - 刷社区固件会覆盖 K151 出厂固件（两套独立实现），恢复用 M5Burner。
 
 ---
@@ -175,11 +176,12 @@ stackchan-diy-guide/  （本仓库）
 ├── firmware/
 │   ├── stack-chan-firmware-v1.1.0.zip        （官方预编译固件，4 目标 ×3 件，SHA-256 已验）
 │   └── stack-chan-firmware-v1.1.0.zip.sha256
-└── firmware-docs/                    ← 官方进阶固件文档存档 + 中文导读
-    ├── README.md      （导读 + 31 个示例 MOD 索引）
-    ├── api.md / mods-README.md / firmware-README.md
-    ├── stackchan-voice.md / text-to-speech.md
-    └── local-peer-communication.md / setting-preferences-web.md / mini-apps_ja.md
+├── firmware-docs/                    ← 官方进阶固件文档存档 + 中文导读
+│   ├── README.md      （导读 + 31 个示例 MOD 索引）
+│   ├── api.md / mods-README.md / firmware-README.md
+│   ├── stackchan-voice.md / text-to-speech.md
+│   └── local-peer-communication.md / setting-preferences-web.md / mini-apps_ja.md
+└── hermes-integration/               ← Stack-chan × Hermes 联动（两个开源案例的架构/对比/上手）
 ```
 
 ## 附录 B：链接汇总
