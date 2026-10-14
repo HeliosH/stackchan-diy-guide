@@ -351,7 +351,7 @@ img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px
 <li>BOM：原理图工具 → BOM 导出（或直接对照 <code>m5-pantilt.pdf</code> 手抄，见 5.1.4）。</li>
 </ol>
 <h4 id="514-核对元件清单bom">5.1.4 核对元件清单（BOM）</h4>
-<p>完整 BOM（23 组、带 LCSC 号）见 <a href="../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md"><code>manufacture/jlcpcb/BOM.md</code></a>，由 KiCad 原理图自动生成。核心构成：</p>
+<p>完整 BOM（贴装 19 组、通孔采购 4 组、来料 3 件，带 LCSC 号）见 <a href="../pcb/m5-pantilt-v1.0/manufacture/jlcpcb/BOM.md"><code>manufacture/jlcpcb/BOM.md</code></a>，由 KiCad 原理图自动生成。核心构成：</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -361,7 +361,7 @@ img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px
 </thead>
 <tbody><tr>
 <td>IC</td>
-<td><strong>U1 = MAX3485</strong>（SO-8，半双工收发）、Q1 = IRLML6402（电源软开关）、Q2 = BC857（方向控制）</td>
+<td><strong>U1 = MAX3485</strong>（窄体 SOIC-8，半双工收发；C668204 为窄体 3.9×4.9mm 封装，PCB 已按窄体出 Gerber 并重铺铜）、Q1 = IRLML6402（电源软开关）、Q2 = BC857（方向控制）</td>
 </tr>
 <tr>
 <td>二极管</td>
@@ -373,7 +373,7 @@ img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px
 </tr>
 <tr>
 <td>连接器</td>
-<td>J1/J2 = 2×15 M-BUS 排母/排针（<strong>J1 在背面</strong>）、J3/J8 = JST EH 3pin 舵机口、J5 = PH2.0 电池、J7 = XH 5V</td>
+<td>J1/J2 = 2×15 M-BUS 排针/排母（来料自备，<strong>J1 在背面</strong>）、J3/J8 = JST EH 3pin 舵机口（C160259）、J5 = PH2.0 电池（C2319）、J6 = PH 4pin（C157926）、J7 = XH 5V（C20079）</td>
 </tr>
 <tr>
 <td>手插件</td>
@@ -395,7 +395,7 @@ img{display:block;max-width:100%;max-height:540px;object-fit:contain;margin:18px
 <p><strong>玩法 2：让嘉立创 SMT 贴片（省焊接）</strong></p>
 <ol>
 <li>PCB 下单时勾选 <strong>SMT 贴片</strong>，上传 <code>manufacture/jlcpcb/m5-pantilt-bom-jlc.csv</code> 和 <code>m5-pantilt-cpl-jlc.csv</code>；不要用旧版不完整坐标。</li>
-<li>元件匹配页面按 LCSC 号确认各元件。<strong>两个关键点</strong>：① J1 在 bottom 面——经济贴装只贴单面，建议 J1 免贴到手自己焊（或选双面贴装加价）；② <strong>把 R9/R10/R11/R12 设为&quot;不贴&quot;</strong>（串行模式不用，见 5.1 跳线说明）。</li>
+<li>元件匹配页面按 LCSC 号确认各元件，<strong>匹配后仍须抽查实际型号/封装</strong>。R9–R12（PWM 模式跳线）<strong>已从 BOM/坐标里剔除</strong>，不会出现在匹配页；J1/J2/SW1 为来料件也不在订单里，到手自己焊（J1 在背面立贴，注意方向，照 <code>images/m5-pantilt-bottom.png</code>）。通孔件 J3/J8/J5/J6/J7 可勾选&quot;通孔插件装配&quot;交给代工，或省钱到手手焊。</li>
 <li>付款等待，到手后手焊剩余插件件。</li>
 </ol>
 <p><strong>打样完成后</strong>：万用表蜂鸣档查 5V/GND 是否短路，再上 M5Stack 试机。</p>

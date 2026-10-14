@@ -50,9 +50,7 @@
         }
       },
       "diff_pair_dimensions": [],
-      "drc_exclusions": [
-        "silk_overlap|108798655|89944864|1d20c966-0439-42a1-b5e3-5e76b52f827f|93afd2e8-e16c-4e06-b872-cf0e624aee35"
-      ],
+      "drc_exclusions": [],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
