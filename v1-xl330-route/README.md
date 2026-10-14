@@ -97,13 +97,104 @@
 
 ### 5.1 自己打样 m5-pantilt v1.0（推荐）
 
-KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)，**打样、贴片、下单全流程见主指南 §4**（Gerber 生成 → 嘉立创下单 → SMT 贴 MAX3485/三极管 → 手焊阻容）。要点：
+KiCad 完整工程在本包 [`../pcb/m5-pantilt-v1.0/`](../pcb/m5-pantilt-v1.0/)。要点先记住：
 
-- 两层板，~¥30（打样）+ ~¥20（SMT 经济套餐）
+- 两层板，~¥30（打样）+ 可选 ~¥20（SMT 经济套餐）
 - 串行舵机模式跳线：**短接 R13/R14**；CoreS3 用 **R9/R11**（短 R10 是 Core2）
 - XL330 @1Mbps 是这块板的**原生设计工况**（自动换向电路就是为 Dynamixel 设计的），无需降速
 
-![底板实物](images/m5-pantilt-top.png)
+![底板正面](images/m5-pantilt-top.png)
+
+![底板背面](images/m5-pantilt-bottom.png)
+
+串行版（本路线）舵机口与拨动开关实拍：
+
+![串行版舵机口](images/serial_ports.jpg)
+
+![串行版开关](images/serial_switch.jpg)
+
+#### 5.1.1 这块板是什么
+
+官方开源底板 `m5-pantilt` 的功能：
+
+- 驱动两颗串行舵机（J3/J8 两个 3-pin TTL 口，自动换向半双工总线）
+- 双 30-pin 排母（J1/J2）直插 M5Stack 背面 M-BUS
+- 外部 5V 供电口、电池供电，且**可经 M5Stack 给电池充电**
+- （可选）电源开关
+
+信号与供电细节见原理图截图（下图）与完整原理图 PDF（`../pcb/m5-pantilt-v1.0/m5-pantilt.pdf`）。
+
+![原理图](images/m5-pantilt-sch.png)
+
+#### 5.1.2 工程文件清单（本包已附带）
+
+```
+../pcb/m5-pantilt-v1.0/
+├── m5-pantilt.kicad_pro / .kicad_sch / .kicad_pcb   ← KiCad 工程（main 分支 = v1.0 规格）
+├── m5-pantilt.pdf                                    ← 原理图 PDF（核对元件用）
+├── m5-pantilt-all-pos.csv                            ← 贴片坐标（CPL），仓库官方提供
+├── m5-pantilt.kibot.yaml                             ← KiBot 一键生成嘉立创制造文件的配置
+├── gerber/                                           ← 仓库只提交了丝印 + 钻孔
+│   ├── m5-pantilt-B_Silkscreen.gbo
+│   ├── m5-pantilt-F_Silkscreen.gto
+│   └── m5-pantilt-NPTH.drl / m5-pantilt-PTH.drl
+├── m5-pantilt.pretty/                                ← 自定义封装库
+└── 其他工程配套文件（lib/sym-lib-table/cache 等）
+```
+
+**重要**：铜层 Gerber 官方没有提交（`.gitignore` 只忽略 `generated/`），需要自己生成——这正是下单的第一步。
+
+#### 5.1.3 步骤一：生成制造文件（Gerber + BOM + 坐标）
+
+**方法 A：KiBot 一键生成（推荐，配置官方已写好）**
+
+1. 安装 [KiCad](https://www.kicad.org/)（建议 7/8 版本）与 KiBot：
+   ```bash
+   pip install kibot
+   ```
+2. 在 `pcb/m5-pantilt-v1.0/` 目录执行：
+   ```bash
+   kibot -c m5-pantilt.kibot.yaml -e m5-pantilt.kicad_sch -b m5-pantilt.kicad_pcb
+   ```
+3. 生成物在 `generated/` 下，其中 `Manufacturers/JLCPCB/` 是给嘉立创的 Gerber/BOM/坐标文件，另有 `BoM/Generic/` 的通用 BOM（HTML/XLSX）。
+
+**方法 B：KiCad 手动导出（不装 KiBot）**
+
+1. 用 KiCad 打开 `m5-pantilt.kicad_pcb` → 文件 → 制造输出 → Gerbers（导出含铜层+丝印+阻焊+钻孔，打包 zip）。
+2. 贴片坐标：文件 → 制造输出 → 元件位置文件（.pos / .csv）；也可以直接用官方给的 `m5-pantilt-all-pos.csv`。
+3. BOM：原理图工具 → BOM 导出（或直接对照 `m5-pantilt.pdf` 手抄，见 5.1.4）。
+
+#### 5.1.4 步骤二：核对元件清单（BOM）
+
+仓库贴片坐标文件（CPL）里只有 3 个 SMD 件，其余都是手插件——所以这块板**非常适合手挫**：
+
+| 位号 | 值/型号 | 封装 | 面别 | 说明 |
+|---|---|---|---|---|
+| J1 | 2×15 排母（Conn_02x15） | SMD 立贴 | **bottom（背面）** | M5Stack 从上面插下去的插座 |
+| R1 | 1kΩ | 0603（手焊盘） | top | — |
+| R2 | 100Ω | 0603（手焊盘） | top | — |
+
+手插件（对照原理图 PDF 与实拍图核对）：舵机 3P 连接座 ×2（即 J3/J8）、PH2.0-2P 电池座、跳线帽/排针、串行版的 **NL27WZ125 电平缓冲（SOT-23）**、**2SA1015（SOT-23）**、可选拨动开关。
+
+> BOM 官方页面标注"建设中"，下单前**务必用 `m5-pantilt.pdf` 或 KiCad 原理图核对一遍**，缺件补件。
+
+#### 5.1.5 步骤三：嘉立创下单（两种玩法）
+
+**玩法 1：只打裸板，全部手焊（最省钱，元件少到 15 分钟焊完）**
+
+1. 打开 https://www.jlc.com （嘉立创）→ PCB 下单。
+2. 上传 5.1.3 生成的 Gerber 压缩包 → 自动解析。
+3. 参数：2 层、板厚 1.6mm（按个人喜好 1.0 也行）、表面处理默认喷锡、数量 5 片。
+4. 新客常有 5 片 ¥2 级别活动；提交付款，一般 2–4 天到货。
+5. 到货后手焊：先 SMD（R1/R2/J1），再插件。**J1 在背面立贴，焊接时注意方向**（照 `images/m5-pantilt-bottom.png`）；串行版别忘了焊 NL27WZ125、2SA1015 并按 5.1 开头说的设跳线。
+
+**玩法 2：让嘉立创 SMT 贴片（省焊接）**
+
+1. PCB 下单时勾选 **SMT 贴片**，上传 BOM + 坐标（用 `m5-pantilt-all-pos.csv` 或方法 A 生成的 JLC 格式坐标）。
+2. 元件匹配页面确认 J1/R1/R2。**注意 J1 在 bottom 面**：经济型贴装只贴单面，要么选双面贴装（贵一点），要么把 J1 改为免贴、到手自己焊。
+3. 付款等待，到手后手焊剩余插件件。
+
+**打样完成后**：万用表蜂鸣档查 5V/GND 是否短路，再上 M5Stack 试机。
 
 ### 5.2 买现成套件
 
@@ -274,7 +365,7 @@ npm run deploy                     # 烧录
 
 | 路径 | 内容 |
 |---|---|
-| `images/`（21 个） | 官方 v1.0 装配图 dynamixel_01–10、成品图 front/side、Dynamixel Wizard 截图、底板实拍、打印方向、bracket/shell 装配动图等（均取自官方仓库 `case/docs/images/`，已在本包 images/ 中，此处为路线独立副本） |
+| `images/`（27 个） | 官方 v1.0 装配图 dynamixel_01–10、成品图 front/side、Dynamixel Wizard 截图、底板实拍、打印方向、bracket/shell 装配动图等（均取自官方仓库 `case/docs/images/`，已在本包 images/ 中，此处为路线独立副本） |
 | `reference/` | 官方 v1.0 装配指南原文（英文/日文 Markdown，`stack-chan` 仓库 `case/v1/dynamixel.md`） |
 | `../stl/v1-xl330/`（8 件 STL + gear 备选） | v1.0 外壳官方原版 |
 | `../pcb/m5-pantilt-v1.0/` | 底板 KiCad 完整工程 + Gerber + 原理图 PDF |
