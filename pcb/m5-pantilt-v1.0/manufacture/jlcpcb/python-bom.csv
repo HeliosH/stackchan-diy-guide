@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>m5-pantilt.kicad_sch</source>
-    <date>2026-10-15T12:00:17</date>
+    <date>2026-10-15T17:32:22</date>
     <tool>Eeschema 10.0.7</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -456,12 +456,12 @@
     </comp>
     <comp ref="Q1">
       <value>IRLML6402</value>
-      <footprint>m5-pantilt:SOT-23</footprint>
+      <footprint>m5-pantilt:SOT-23_HandSolder_Pads</footprint>
       <datasheet>https://www.infineon.com/dgdl/irlml6402pbf.pdf?fileId=5546d462533600a401535668d5c2263c</datasheet>
       <fields>
         <field name="URL">https://akizukidenshi.com/catalog/g/gI-02553/</field>
         <field name="LCSC">C2886430</field>
-        <field name="Footprint">m5-pantilt:SOT-23</field>
+        <field name="Footprint">m5-pantilt:SOT-23_HandSolder_Pads</field>
         <field name="Datasheet">https://www.infineon.com/dgdl/irlml6402pbf.pdf?fileId=5546d462533600a401535668d5c2263c</field>
         <field name="Description" />
       </fields>
@@ -486,11 +486,11 @@
     </comp>
     <comp ref="Q2">
       <value>BC857</value>
-      <footprint>m5-pantilt:SOT-23_Mirrored</footprint>
+      <footprint>m5-pantilt:SOT-23</footprint>
       <datasheet>https://www.onsemi.com/pub/Collateral/BC860-D.pdf</datasheet>
       <fields>
         <field name="LCSC">C2139</field>
-        <field name="Footprint">m5-pantilt:SOT-23_Mirrored</field>
+        <field name="Footprint">m5-pantilt:SOT-23</field>
         <field name="Datasheet">https://www.onsemi.com/pub/Collateral/BC860-D.pdf</field>
         <field name="Description" />
       </fields>
@@ -1219,7 +1219,26 @@
       </pins>
     </libpart>
   </libparts>
-  <libraries />
+  <libraries>
+    <library logical="Connector_Generic">
+      <uri>${KICAD10_SYMBOL_DIR}/Connector_Generic.kicad_symdir</uri>
+    </library>
+    <library logical="Device">
+      <uri>${KICAD10_SYMBOL_DIR}/Device.kicad_symdir</uri>
+    </library>
+    <library logical="Interface_UART">
+      <uri>${KICAD10_SYMBOL_DIR}/Interface_UART.kicad_symdir</uri>
+    </library>
+    <library logical="Switch">
+      <uri>${KICAD10_SYMBOL_DIR}/Switch.kicad_symdir</uri>
+    </library>
+    <library logical="Transistor_BJT">
+      <uri>${KICAD10_SYMBOL_DIR}/Transistor_BJT.kicad_symdir</uri>
+    </library>
+    <library logical="Transistor_FET">
+      <uri>${KICAD10_SYMBOL_DIR}/Transistor_FET.kicad_symdir</uri>
+    </library>
+  </libraries>
   <nets>
     <net code="1" name="+3V3" class="Default">
       <node ref="C5" pin="1" pintype="passive" />
