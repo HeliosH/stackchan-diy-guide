@@ -1,7 +1,7 @@
 {
   "$schema": "https://schemas.kicad.org/erc.v1.json",
   "coordinate_units": "mm",
-  "date": "2026-10-14T18:53:48",
+  "date": "2026-10-15T12:00:15",
   "ignored_checks": [
     {
       "description": "Global label only appears once in the schematic",
@@ -32,7 +32,7 @@
       "uuid_path": "/a27eb049-c992-4f11-a026-1e6a8d9d0160",
       "violations": [
         {
-          "description": "Symbol '+3.3V' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR0106 [+3.3V]",
@@ -44,10 +44,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol '+5V' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR0107 [+5V]",
@@ -59,10 +59,40 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'PWR_FLAG' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+          "items": [
+            {
+              "description": "Symbol J7 [Conn_01x02]",
+              "pos": {
+                "x": 20.32,
+                "y": 109.22
+              },
+              "uuid": "00000000-0000-0000-0000-00006112c5c6"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+          "items": [
+            {
+              "description": "Symbol J5 [Conn_01x02]",
+              "pos": {
+                "x": 20.32,
+                "y": 138.43
+              },
+              "uuid": "00000000-0000-0000-0000-000060c74b9f"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #FLG0105 [PWR_FLAG]",
@@ -74,10 +104,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR0103 [GND]",
@@ -89,10 +119,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR013 [GND]",
@@ -104,10 +134,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'PWR_FLAG' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #FLG0101 [PWR_FLAG]",
@@ -119,10 +149,25 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Footprint 'SW_CuK_OS102011MA1QN1_SPDT_Angled' not found in library 'Button_Switch_THT'",
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R5 [R]",
+              "pos": {
+                "x": 34.29,
+                "y": 143.51
+              },
+              "uuid": "00000000-0000-0000-0000-000061dec6ed"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Switch'",
           "items": [
             {
               "description": "Symbol SW1 [SW_SPDT]",
@@ -134,25 +179,25 @@
             }
           ],
           "severity": "warning",
-          "type": "footprint_link_issues"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'SW_SPDT' doesn't match copy in library 'Switch'",
+          "description": "The current configuration does not include the symbol library 'Connector_Generic'",
           "items": [
             {
-              "description": "Symbol SW1 [SW_SPDT]",
+              "description": "Symbol J2 [Conn_02x15_Odd_Even]",
               "pos": {
-                "x": 34.29,
-                "y": 156.21
+                "x": 36.83,
+                "y": 45.72
               },
-              "uuid": "00000000-0000-0000-0000-000060cc23e9"
+              "uuid": "00000000-0000-0000-0000-000064cdf4cd"
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR0102 [GND]",
@@ -164,10 +209,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'D' doesn't match copy in library 'Device'",
+          "description": "The current configuration does not include the symbol library 'Device'",
           "items": [
             {
               "description": "Symbol D1 [D]",
@@ -179,10 +224,25 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol '+5V' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Transistor_FET'",
+          "items": [
+            {
+              "description": "Symbol Q1 [IRLML6402]",
+              "pos": {
+                "x": 44.45,
+                "y": 135.89
+              },
+              "uuid": "00000000-0000-0000-0000-000061ddc391"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR012 [+5V]",
@@ -194,10 +254,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR0105 [GND]",
@@ -209,10 +269,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'PWR_FLAG' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #FLG0103 [PWR_FLAG]",
@@ -224,10 +284,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'PWR_FLAG' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #FLG0104 [PWR_FLAG]",
@@ -239,10 +299,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol '+5V' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR03 [+5V]",
@@ -254,10 +314,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol '+3.3V' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR0104 [+3.3V]",
@@ -269,10 +329,25 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol '+3.3V' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R1 [R]",
+              "pos": {
+                "x": 71.12,
+                "y": 120.65
+              },
+              "uuid": "202ce841-9799-487b-99b7-75e313de629f"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR02 [+3.3V]",
@@ -284,10 +359,40 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'BC857' doesn't match copy in library 'Transistor_BJT'",
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R2 [R]",
+              "pos": {
+                "x": 81.28,
+                "y": 129.54
+              },
+              "uuid": "b82df952-3fb3-4e09-9ff8-6b87cc7e46fc"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+          "items": [
+            {
+              "description": "Symbol J1 [Conn_02x15_Odd_Even]",
+              "pos": {
+                "x": 90.17,
+                "y": 86.36
+              },
+              "uuid": "00000000-0000-0000-0000-000060bc2c3a"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "Footprint 'SOT-23_Mirrored' not found in library 'm5-pantilt'",
           "items": [
             {
               "description": "Symbol Q2 [BC857]",
@@ -299,10 +404,40 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "footprint_link_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Transistor_BJT'",
+          "items": [
+            {
+              "description": "Symbol Q2 [BC857]",
+              "pos": {
+                "x": 92.71,
+                "y": 129.54
+              },
+              "uuid": "fd72c6fd-8d01-4c84-aa64-052ccdf03377"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R7 [R]",
+              "pos": {
+                "x": 95.25,
+                "y": 146.05
+              },
+              "uuid": "00000000-0000-0000-0000-000064c2d7a7"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR04 [GND]",
@@ -314,10 +449,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol '+3.3V' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR0108 [+3.3V]",
@@ -329,10 +464,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'MAX3485' doesn't match copy in library 'Interface_UART'",
+          "description": "The current configuration does not include the symbol library 'Interface_UART'",
           "items": [
             {
               "description": "Symbol U1 [MAX3485]",
@@ -344,10 +479,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR0109 [GND]",
@@ -359,10 +494,85 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol '+5V' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R6 [R]",
+              "pos": {
+                "x": 137.16,
+                "y": 127.0
+              },
+              "uuid": "d5da4752-cd55-4f6d-aea2-a0a9d2d835e7"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol C5 [C]",
+              "pos": {
+                "x": 146.05,
+                "y": 127.0
+              },
+              "uuid": "00000000-0000-0000-0000-000064ba5a4b"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+          "items": [
+            {
+              "description": "Symbol J6 [Conn_01x04]",
+              "pos": {
+                "x": 149.86,
+                "y": 81.28
+              },
+              "uuid": "00000000-0000-0000-0000-000060c9a55e"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R8 [R]",
+              "pos": {
+                "x": 157.48,
+                "y": 128.27
+              },
+              "uuid": "00000000-0000-0000-0000-000064ba6071"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R15 [R]",
+              "pos": {
+                "x": 157.48,
+                "y": 142.24
+              },
+              "uuid": "00000000-0000-0000-0000-000064ba6374"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR09 [+5V]",
@@ -374,10 +584,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR010 [GND]",
@@ -389,10 +599,10 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol '+5V' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR07 [+5V]",
@@ -404,10 +614,25 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol D2 [D_Schottky]",
+              "pos": {
+                "x": 185.42,
+                "y": 74.93
+              },
+              "uuid": "e51f3d8e-8377-45a7-b8a7-e916a9bfd063"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR08 [GND]",
@@ -419,10 +644,55 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R3 [R]",
+              "pos": {
+                "x": 205.74,
+                "y": 99.06
+              },
+              "uuid": "00000000-0000-0000-0000-000060c80000"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R4 [R]",
+              "pos": {
+                "x": 205.74,
+                "y": 125.73
+              },
+              "uuid": "00000000-0000-0000-0000-000060c8863a"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol C2 [C]",
+              "pos": {
+                "x": 208.28,
+                "y": 87.63
+              },
+              "uuid": "00000000-0000-0000-0000-000061ea93dc"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR014 [GND]",
@@ -434,10 +704,25 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol C3 [C]",
+              "pos": {
+                "x": 208.28,
+                "y": 113.03
+              },
+              "uuid": "00000000-0000-0000-0000-000061eb9195"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR015 [GND]",
@@ -449,10 +734,25 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol C1 [C]",
+              "pos": {
+                "x": 219.71,
+                "y": 87.63
+              },
+              "uuid": "00000000-0000-0000-0000-000060cb98bd"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR0101 [GND]",
@@ -464,10 +764,25 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
         },
         {
-          "description": "Symbol 'GND' doesn't match copy in library 'power'",
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol C4 [C]",
+              "pos": {
+                "x": 219.71,
+                "y": 113.03
+              },
+              "uuid": "00000000-0000-0000-0000-000061dd33e8"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'power'",
           "items": [
             {
               "description": "Symbol #PWR016 [GND]",
@@ -479,7 +794,127 @@
             }
           ],
           "severity": "warning",
-          "type": "lib_symbol_mismatch"
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R9 [R]",
+              "pos": {
+                "x": 220.98,
+                "y": 38.1
+              },
+              "uuid": "00000000-0000-0000-0000-000062f00fd0"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R10 [R]",
+              "pos": {
+                "x": 220.98,
+                "y": 46.99
+              },
+              "uuid": "00000000-0000-0000-0000-000062f2bcba"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R11 [R]",
+              "pos": {
+                "x": 220.98,
+                "y": 55.88
+              },
+              "uuid": "00000000-0000-0000-0000-000062f42c81"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R12 [R]",
+              "pos": {
+                "x": 220.98,
+                "y": 64.77
+              },
+              "uuid": "00000000-0000-0000-0000-000062f4da9d"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R13 [R]",
+              "pos": {
+                "x": 229.87,
+                "y": 99.06
+              },
+              "uuid": "00000000-0000-0000-0000-000062f8bb17"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Device'",
+          "items": [
+            {
+              "description": "Symbol R14 [R]",
+              "pos": {
+                "x": 229.87,
+                "y": 125.73
+              },
+              "uuid": "00000000-0000-0000-0000-000062f969a1"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+          "items": [
+            {
+              "description": "Symbol J3 [Conn_01x03]",
+              "pos": {
+                "x": 248.92,
+                "y": 83.82
+              },
+              "uuid": "00000000-0000-0000-0000-000064d4e0a6"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
+        },
+        {
+          "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+          "items": [
+            {
+              "description": "Symbol J8 [Conn_01x03]",
+              "pos": {
+                "x": 248.92,
+                "y": 109.22
+              },
+              "uuid": "00000000-0000-0000-0000-000064d3a231"
+            }
+          ],
+          "severity": "warning",
+          "type": "lib_symbol_issues"
         }
       ]
     }

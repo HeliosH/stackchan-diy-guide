@@ -54,7 +54,7 @@ for ref, expected in {'Hole1': (146.8, 53.25), 'Hole2': (146.8, 96.95),
 # Sample interior points of every non-ground U1 pad, including the inner edge
 # that overlapped GND before zone refilling. This is a regression, not a full DRC.
 u1 = fps['U1']
-assert u1[1] == 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm'
+assert u1[1] == 'm5-pantilt:SOIC-8_3.9x4.9mm_P1.27mm', u1[1]  # moved into the project library 2026-10
 assert len(c.child(u1, 'at')) == 3 or float(c.child(u1, 'at')[3]) == 0
 samples = []
 for pad in c.children(u1, 'pad'):

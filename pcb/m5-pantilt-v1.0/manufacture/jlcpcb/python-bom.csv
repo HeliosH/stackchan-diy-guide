@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>m5-pantilt.kicad_sch</source>
-    <date>2026-10-14T18:53:51</date>
+    <date>2026-10-15T12:00:17</date>
     <tool>Eeschema 10.0.7</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -26,11 +26,11 @@
   <components>
     <comp ref="C1">
       <value>100u</value>
-      <footprint>Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
+      <footprint>m5-pantilt:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
       <fields>
         <field name="URL">https://akizukidenshi.com/catalog/g/gP-15633/</field>
         <field name="LCSC">C15008</field>
-        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -54,11 +54,11 @@
     </comp>
     <comp ref="C2">
       <value>100u</value>
-      <footprint>Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
+      <footprint>m5-pantilt:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
       <fields>
         <field name="URL">https://akizukidenshi.com/catalog/g/gP-15633/</field>
         <field name="LCSC">C15008</field>
-        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -82,11 +82,11 @@
     </comp>
     <comp ref="C3">
       <value>100u</value>
-      <footprint>Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
+      <footprint>m5-pantilt:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
       <fields>
         <field name="URL">https://akizukidenshi.com/catalog/g/gP-15633/</field>
         <field name="LCSC">C15008</field>
-        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -110,11 +110,11 @@
     </comp>
     <comp ref="C4">
       <value>100u</value>
-      <footprint>Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
+      <footprint>m5-pantilt:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
       <fields>
         <field name="URL">https://akizukidenshi.com/catalog/g/gP-15633/</field>
         <field name="LCSC">C15008</field>
-        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -138,10 +138,10 @@
     </comp>
     <comp ref="C5">
       <value>0.1u</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>m5-pantilt:C_0603_1608Metric</footprint>
       <fields>
         <field name="LCSC">C14663</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">m5-pantilt:C_0603_1608Metric</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -164,10 +164,10 @@
     </comp>
     <comp ref="D1">
       <value>SS54</value>
-      <footprint>Diode_SMD:D_SMA</footprint>
+      <footprint>m5-pantilt:D_SMA</footprint>
       <fields>
         <field name="LCSC">C2931790</field>
-        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="Footprint">m5-pantilt:D_SMA</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -190,10 +190,10 @@
     </comp>
     <comp ref="D2">
       <value>PMEG3030EP</value>
-      <footprint>Diode_SMD:D_SOD-128</footprint>
+      <footprint>m5-pantilt:D_SOD-128</footprint>
       <fields>
         <field name="LCSC">C255587</field>
-        <field name="Footprint">Diode_SMD:D_SOD-128</field>
+        <field name="Footprint">m5-pantilt:D_SOD-128</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -216,10 +216,10 @@
     </comp>
     <comp ref="J1">
       <value>Conn_02x15_Odd_Even</value>
-      <footprint>Connector_PinHeader_2.54mm:PinHeader_2x15_P2.54mm_Vertical_SMD</footprint>
+      <footprint>m5-pantilt:PinHeader_2x15_P2.54mm_Vertical_SMD</footprint>
       <fields>
         <field name="URL">https://www.switch-science.com/catalog/3654/</field>
-        <field name="Footprint">Connector_PinHeader_2.54mm:PinHeader_2x15_P2.54mm_Vertical_SMD</field>
+        <field name="Footprint">m5-pantilt:PinHeader_2x15_P2.54mm_Vertical_SMD</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -270,9 +270,9 @@
     </comp>
     <comp ref="J2">
       <value>Conn_02x15_Odd_Even</value>
-      <footprint>Connector_PinSocket_2.54mm:PinSocket_2x15_P2.54mm_Vertical_SMD</footprint>
+      <footprint>m5-pantilt:PinSocket_2x15_P2.54mm_Vertical_SMD</footprint>
       <fields>
-        <field name="Footprint">Connector_PinSocket_2.54mm:PinSocket_2x15_P2.54mm_Vertical_SMD</field>
+        <field name="Footprint">m5-pantilt:PinSocket_2x15_P2.54mm_Vertical_SMD</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -322,9 +322,9 @@
     </comp>
     <comp ref="J3">
       <value>Conn_01x03</value>
-      <footprint>Connector_JST:JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical</footprint>
+      <footprint>m5-pantilt:JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical</footprint>
       <fields>
-        <field name="Footprint">Connector_JST:JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical</field>
+        <field name="Footprint">m5-pantilt:JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -347,11 +347,11 @@
     </comp>
     <comp ref="J5">
       <value>BAT</value>
-      <footprint>Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical</footprint>
+      <footprint>m5-pantilt:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical</footprint>
       <fields>
         <field name="URL">https://akizukidenshi.com/catalog/g/gC-12802/</field>
         <field name="LCSC">C2319</field>
-        <field name="Footprint">Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical</field>
+        <field name="Footprint">m5-pantilt:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -375,10 +375,10 @@
     </comp>
     <comp ref="J6">
       <value>Conn_01x04</value>
-      <footprint>Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal</footprint>
+      <footprint>m5-pantilt:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal</footprint>
       <fields>
         <field name="URL">https://www.sengoku.co.jp/mod/sgk_cart/detail.php?code=EEHD-55FC</field>
-        <field name="Footprint">Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal</field>
+        <field name="Footprint">m5-pantilt:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -403,11 +403,11 @@
     </comp>
     <comp ref="J7">
       <value>5V_POWER</value>
-      <footprint>Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical</footprint>
+      <footprint>m5-pantilt:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical</footprint>
       <fields>
         <field name="URL">https://akizukidenshi.com/catalog/g/gC-12802/</field>
         <field name="LCSC">C20079</field>
-        <field name="Footprint">Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical</field>
+        <field name="Footprint">m5-pantilt:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -431,9 +431,9 @@
     </comp>
     <comp ref="J8">
       <value>Conn_01x03</value>
-      <footprint>Connector_JST:JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical</footprint>
+      <footprint>m5-pantilt:JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical</footprint>
       <fields>
-        <field name="Footprint">Connector_JST:JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical</field>
+        <field name="Footprint">m5-pantilt:JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -456,12 +456,12 @@
     </comp>
     <comp ref="Q1">
       <value>IRLML6402</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <footprint>m5-pantilt:SOT-23</footprint>
       <datasheet>https://www.infineon.com/dgdl/irlml6402pbf.pdf?fileId=5546d462533600a401535668d5c2263c</datasheet>
       <fields>
         <field name="URL">https://akizukidenshi.com/catalog/g/gI-02553/</field>
         <field name="LCSC">C2886430</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Footprint">m5-pantilt:SOT-23</field>
         <field name="Datasheet">https://www.infineon.com/dgdl/irlml6402pbf.pdf?fileId=5546d462533600a401535668d5c2263c</field>
         <field name="Description" />
       </fields>
@@ -486,11 +486,11 @@
     </comp>
     <comp ref="Q2">
       <value>BC857</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <footprint>m5-pantilt:SOT-23_Mirrored</footprint>
       <datasheet>https://www.onsemi.com/pub/Collateral/BC860-D.pdf</datasheet>
       <fields>
         <field name="LCSC">C2139</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Footprint">m5-pantilt:SOT-23_Mirrored</field>
         <field name="Datasheet">https://www.onsemi.com/pub/Collateral/BC860-D.pdf</field>
         <field name="Description" />
       </fields>
@@ -514,10 +514,10 @@
     </comp>
     <comp ref="R1">
       <value>10k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric_Mirrored</footprint>
       <fields>
         <field name="LCSC">C25804</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric_Mirrored</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -540,10 +540,10 @@
     </comp>
     <comp ref="R2">
       <value>5.1k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric_Mirrored</footprint>
       <fields>
         <field name="LCSC">C23186</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric_Mirrored</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -566,11 +566,11 @@
     </comp>
     <comp ref="R3">
       <value>1k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
       <fields>
         <field name="URL">https://www.sengoku.co.jp/mod/sgk_cart/detail.php?code=EEHD-57GK</field>
         <field name="LCSC">C21190</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -594,11 +594,11 @@
     </comp>
     <comp ref="R4">
       <value>1k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
       <fields>
         <field name="LCSC">C21190</field>
         <field name="URL">https://www.sengoku.co.jp/mod/sgk_cart/detail.php?code=EEHD-57GK</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -622,10 +622,10 @@
     </comp>
     <comp ref="R5">
       <value>47k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder_Mirrored</footprint>
       <fields>
         <field name="LCSC">C25819</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder_Mirrored</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -648,10 +648,10 @@
     </comp>
     <comp ref="R6">
       <value>2k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric</footprint>
       <fields>
         <field name="LCSC">C22975</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -674,10 +674,10 @@
     </comp>
     <comp ref="R7">
       <value>20k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric</footprint>
       <fields>
         <field name="LCSC">C4184</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -700,10 +700,10 @@
     </comp>
     <comp ref="R8">
       <value>2.2k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric</footprint>
       <fields>
         <field name="LCSC">C4190</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -726,10 +726,10 @@
     </comp>
     <comp ref="R9">
       <value>0</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
       <fields>
         <field name="LCSC">C21189</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -752,10 +752,10 @@
     </comp>
     <comp ref="R10">
       <value>0</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
       <fields>
         <field name="LCSC">C21189</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -778,10 +778,10 @@
     </comp>
     <comp ref="R11">
       <value>0</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
       <fields>
         <field name="LCSC">C21189</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -804,10 +804,10 @@
     </comp>
     <comp ref="R12">
       <value>0</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</footprint>
       <fields>
         <field name="LCSC">C21189</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -830,10 +830,10 @@
     </comp>
     <comp ref="R13">
       <value>0</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric</footprint>
       <fields>
         <field name="LCSC">C21189</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -856,10 +856,10 @@
     </comp>
     <comp ref="R14">
       <value>0</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric</footprint>
       <fields>
         <field name="LCSC">C21189</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -882,10 +882,10 @@
     </comp>
     <comp ref="R15">
       <value>2.2k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>m5-pantilt:R_0603_1608Metric</footprint>
       <fields>
         <field name="LCSC">C4190</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">m5-pantilt:R_0603_1608Metric</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -908,10 +908,10 @@
     </comp>
     <comp ref="SW1">
       <value>SW_SPDT</value>
-      <footprint>Button_Switch_THT:SW_CuK_OS102011MA1QN1_SPDT_Angled</footprint>
+      <footprint>m5-pantilt:SW_CuK_OS102011MA1QN1_SPDT_Angled</footprint>
       <fields>
         <field name="URL">https://www.digikey.jp/ja/products/detail/c-k/OS102011MA1QN1/1981430</field>
-        <field name="Footprint">Button_Switch_THT:SW_CuK_OS102011MA1QN1_SPDT_Angled</field>
+        <field name="Footprint">m5-pantilt:SW_CuK_OS102011MA1QN1_SPDT_Angled</field>
         <field name="Datasheet" />
         <field name="Description" />
       </fields>
@@ -934,11 +934,11 @@
     </comp>
     <comp ref="U1">
       <value>MAX3485</value>
-      <footprint>Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
+      <footprint>m5-pantilt:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
       <datasheet>https://datasheets.maximintegrated.com/en/ds/MAX3483-MAX3491.pdf</datasheet>
       <fields>
         <field name="LCSC">C668204</field>
-        <field name="Footprint">Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</field>
+        <field name="Footprint">m5-pantilt:SOIC-8_3.9x4.9mm_P1.27mm</field>
         <field name="Datasheet">https://datasheets.maximintegrated.com/en/ds/MAX3483-MAX3491.pdf</field>
         <field name="Description" />
       </fields>
@@ -1219,26 +1219,7 @@
       </pins>
     </libpart>
   </libparts>
-  <libraries>
-    <library logical="Connector_Generic">
-      <uri>${KICAD10_SYMBOL_DIR}/Connector_Generic.kicad_sym</uri>
-    </library>
-    <library logical="Device">
-      <uri>${KICAD10_SYMBOL_DIR}/Device.kicad_sym</uri>
-    </library>
-    <library logical="Interface_UART">
-      <uri>${KICAD10_SYMBOL_DIR}/Interface_UART.kicad_sym</uri>
-    </library>
-    <library logical="Switch">
-      <uri>${KICAD10_SYMBOL_DIR}/Switch.kicad_sym</uri>
-    </library>
-    <library logical="Transistor_BJT">
-      <uri>${KICAD10_SYMBOL_DIR}/Transistor_BJT.kicad_sym</uri>
-    </library>
-    <library logical="Transistor_FET">
-      <uri>${KICAD10_SYMBOL_DIR}/Transistor_FET.kicad_sym</uri>
-    </library>
-  </libraries>
+  <libraries />
   <nets>
     <net code="1" name="+3V3" class="Default">
       <node ref="C5" pin="1" pintype="passive" />
